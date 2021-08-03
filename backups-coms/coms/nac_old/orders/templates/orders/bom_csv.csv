@@ -1,0 +1,2 @@
+{% for row in data %}{{ row.chassis}},{{ row.code|safe }},{{ row.description|safe }},{{ row.count|floatformat }}
+{% endfor %}

@@ -1,0 +1,19 @@
+# Local development dependencies go here
+-r base.txt
+
+
+# django dev tools - django-debug-toolbar 1.10 is not compatible with django 1.8
+django-debug-toolbar<1.10
+
+# for fixtures
+pyyaml>=3.11
+
+# test dependencies
+coverage>=3.7
+mock>=1.0
+
+# python module dependencies
+pip-autoremove>=0.9
+pipdeptree
+isort
+

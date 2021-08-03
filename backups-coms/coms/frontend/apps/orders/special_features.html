@@ -1,0 +1,168 @@
+<div ng-if="message" class="alert {{ message.type }}">
+    <div ng-repeat="text in message.message_list">{{ text }}</div>
+    
+</div>
+
+<div id="special_features">
+    <!-- <label ><b>{{ order.model }} </b></label>
+    <p> Is Dealership User<label>{{ permissions.user_details }}</label> -->
+        
+        <div ng-if=checkdisplayview()>  
+        
+
+    <div class="row top-row" ng-if="permissions.set_custom_series">
+        <div class="col-sm-5 col-sm-offset-1">
+            <label for="custom_series_name">Custom series name:</label>
+            <input id="custom_series_name" ng-model="order.custom_series_name" />
+        </div>
+        <div class="col-sm-5">
+            <label for="custom_series_code">Custom series code:</label>
+            <input id="custom_series_code" ng-model="order.custom_series_code" />
+        </div>
+    </div>
+
+    <table>
+        <tr>
+            <th>Customer Description</th>
+            <th ng-if="permissions.modify_special_features_wholesale" class="price-header">$ Wholesale</th>
+            <th class="price-header">$ Retail</th>
+            <th class="attachment-header">Attachment</th>
+            <th class="button-header">Remove</th>
+            <th class="button-header">Approved</th>
+        </tr>
+
+    <tr ng-repeat-start="feature in order.special_features" ng-class-odd="'odd'" ng-class-even="'even'">
+            <td>
+                <input type="text" class="form-control" placeholder="e.g. ..." ng-disabled="!order.isEditable()"
+                    ng-change="onFeatureDetailChange(feature)"
+                    ng-model="feature.customer_description"/>
+            </td>
+
+            <td ng-if="permissions.modify_special_features_wholesale">
+                <input ng-disabled="order.customer_plans_approved"
+                    type="text" class="form-control"  maxlength="8"
+                    ng-change="onFeatureDetailChange(feature)"
+                    ng-model="feature.wholesale_price" />
+            </td>
+
+            <td>
+                <input type="text" class="form-control" maxlength="8"
+                    ng-change="onFeatureDetailChange(feature)"
+                    ng-model="feature.retail_price" ng-disabled="!order.isEditable()" />
+            </td>
+
+            <td>
+                <div class="form-group attachment">
+                    <div ng-if="feature.new_document || feature.document">
+                        <label>
+                            Specification doc:
+                        </label>
+                        <a ng-if="!feature.new_document" href="{{ feature.document.url }}" target="_blank">{{ feature.document.name }}</a>
+                        <span ng-if="feature.new_document">{{ feature.new_document.name }}</span>
+                        <button class="form-control btn btn-default" ng-if="order.isEditable()"
+                            ng-click="removeFeatureDocument(feature)">
+                            Remove Document
+                        </button>
+                    </div>
+                    <div ng-if="!feature.new_document && !feature.document">
+                        <button class="form-control btn btn-default" ngf-select ng-disabled="!order.isEditable()"
+                            ng-model="feature.new_document">
+                            Add Document
+                        </button>
+                    </div>
+                </div>
+            </td>
+
+            <td>
+                <button type="text" class="form-control btn btn-primary remove-special-feature" ng-disabled="!order.isEditable()"
+                        ng-click="removeSpecialFeature($index)">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </button>
+            </td>
+
+            <td class="approval-state">
+                <span ng-if="feature.approved !== null"
+                      class="status glyphicon {{ feature.approved ? 'glyphicon-ok-sign' : 'glyphicon-remove-sign' }}"
+                      ng-class="permissions.approve_special_features ? 'clickable' : ''"
+                      ng-click="permissions.approve_special_features ? feature.approved = null : ''"></span>
+
+                <span ng-if="!permissions.approve_special_features && feature.approved === null" class="status glyphicon glyphicon-question-sign"></span>
+
+                <div ng-if="permissions.approve_special_features && feature.approved === null">
+                    <button type="button" class="btn btn-xs btn-success" ng-click="feature.approved = true">
+                        <span class="glyphicon glyphicon-ok-sign"></span>
+                    </button>
+                    <button type="button" class="btn btn-xs btn-danger" ng-click="feature.approved = false">
+                        <span class="glyphicon glyphicon-remove-sign"></span>
+                    </button>
+                </div>
+            </td>
+        </tr>
+
+        <tr ng-if="feature.approved === false" ng-class-odd="'odd'" ng-class-even="'even'">
+            <td colspan="999">
+                <input class="form-control error" ng-model="feature.reject_reason" ng-readonly="!permissions.approve_special_features" placeholder="Enter reason for rejection.."/>
+            </td>
+        </tr>
+
+        <tr ng-if="permissions.modify_special_features" ng-class-odd="'odd'" ng-class-even="'even'">
+            <td class="label">Work Centre:</td>
+            <td colspan="3">
+                <label>  {{ getCategory(feature) }}  
+                    
+                 </label>
+                <select class="form-control"
+                    ng-model="feature.selectedCategory"
+                    ng-change="onSpecialFeatureCategorySelect(feature)"
+                    ng-options="c as c.title for c in choices.categories track by c.id">
+
+                    <option value="">(None)</option>
+                </select>
+            </td>
+            <td colspan="999"></td>
+        </tr>
+
+        <tr ng-if="permissions.modify_special_features" ng-class-odd="'odd'" ng-class-even="'even'">
+            <td class="label">Replaces Item:</td>
+            <td colspan="3">
+                <label>     Item : {{  replaceItem }} 
+                </label>
+                <select class="form-control"
+                    ng-model="feature.selectedDepartment"
+                    ng-change="onSpecialFeatureDepartmentSelect(feature)"
+                    ng-options="d as d.title disable when d.id == null for d in feature.departmentList track by d.id">
+
+                    <option value="">(None)</option>
+                </select>
+            </td>
+            <td colspan="999"></td>
+        </tr>
+
+        <tr ng-repeat-end ng-if="permissions.modify_special_features" ng-class-odd="'odd'" ng-class-even="'even'">
+            <td class="label">Factory Description / Production Note:</td>
+            <td colspan="3">
+                <input class="form-control" type="text" ng-model="feature.factory_description" />
+            </td>
+            <td colspan="999"></td>
+        </tr>
+
+        <tr class="spacer"><td></td></tr>
+
+        <tr ng-if="order.isEditable()">
+            <td colspan="{{ permissions.modify_special_features_wholesale ? '4' : '3' }}">&nbsp;</td>
+            <td>
+                <button type="text" class="form-control btn btn-info add-special-feature" ng-click="addSpecialFeature()">
+                    <span class="glyphicon glyphicon-plus"></span>
+                </button>
+            </td>
+        </div>
+
+    </table>
+</div>
+
+</div>
+</div>
+
+
+
+

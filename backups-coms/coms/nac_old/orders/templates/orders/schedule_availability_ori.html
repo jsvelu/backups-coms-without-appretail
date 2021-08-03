@@ -1,0 +1,53 @@
+{% extends "admin/base_site.html" %}
+{% load alliance_bundle %}
+{% load staticfiles %}
+{% load script_json %}
+
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+    <link rel="stylesheet" type="text/css" href="{% static "orders/css/schedule_availability.css" %}" />
+{% endblock %}
+
+{#{% block extrascript %}#}
+{#    {{ block.super }}#}
+{#    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}#}
+{#    <script type="text/javascript" src="{% static "orders/js/reassign.js" %}"></script>#}
+{#    <script type="text/javascript">#}
+{#        var dealership_members = {{ dealership_members|script_json }};#}
+{#    </script>#}
+{#{% endblock %}#}
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+{% block breadcrumbs %}
+    Schedule Availability
+{% endblock %}
+
+{% block page_heading %}Schedule Availability{% endblock %}
+
+{% block page_sub_heading %}
+    SUB HEADING
+{% endblock %}
+
+{% block page_heading_extra %}
+{% endblock %}
+
+{% block content %}
+    <div id="schedule_availability" class="top-margin-40">
+        <table>
+            <tr>
+                <th>Month</th>
+                <th>Open for orders?</th>
+            </tr>
+            {% for schedule_month in schedule_months %}
+            <tr class="{% if schedule_month.open %}open{% else %}closed{% endif %}">
+                <td>{{ schedule_month.month|date:'F Y' }}</td>
+                <td>{% if schedule_month.open %}Open{% else %}Closed{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

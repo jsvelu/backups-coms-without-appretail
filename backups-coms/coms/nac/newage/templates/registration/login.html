@@ -1,0 +1,25 @@
+{% extends 'admin/base.html' %}
+{% load floppyforms %}
+
+{% block title %}Login - {{ block.super }}{% endblock title %}
+{% block page_heading %}Login{% endblock page_heading %}
+{% block page_subheading_wrapper %}{% endblock page_subheading_wrapper %}
+
+{% block content %}
+
+    <div class="login">
+        <form action="{% url 'newage:login' %}" method="post" id="login-form">
+            {% csrf_token %}
+            {% form form %}
+            <div class="form-actions">
+                <input type="submit" name="submit" value="Log In" class="btn btn-primary" id="submit-id-submit"/>
+                <input type="hidden" name="next" value="{{ next }}">
+{#                <a href='{% url 'newage:password_reset' %}' class="btn-text pull-right">Forgot your password?</a>#}
+            </div>
+        </form>
+        <hr/>
+
+{#        <p class="text-center">No login? <a href="{% url 'newage:new' %}" class="signup btn-text">Sign up Now</a></p>#}
+    </div>
+
+{% endblock content %}

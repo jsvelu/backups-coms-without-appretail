@@ -1,0 +1,49 @@
+<div class="popup-build-notes">
+    <form
+        class="build-notes-form"
+        novalidate
+        name="buildNotesForm"
+        ng-submit="buildNotes.submitNote(order, notesChecklist)"
+        >
+        <div class="row">
+            <div class="col-xs-12">
+                <h4>{{ notesChecklist.name }} Notes</h4>
+            </div>
+        </div>
+        <div class="scroll">
+            <div class="row" ng-repeat="note in order.checklistNotes[notesChecklist.checklistId] track by note.noteId">
+                <div class="col-xs-12">
+                    <div class="note">
+                        <div>{{ note.text }}</div>
+                        <div>
+                            <span ng-if="order.checklistNotes[notesChecklist.checklistId].length > 1">{{ $index+1 }}/{{ order.checklistNotes[notesChecklist.checklistId].length }}:</span>
+                            <b>{{ note.recordedBy }}</b>
+                            on {{ note.recordedOn|date:'shortDate' }} {{ note.recordedOn|date:'shortTime' }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <h4>Add New {{ notesChecklist.name }} Note</h4>
+                    <textarea class="field-build-note-text" ng-model="buildNotes.newBuildNoteText"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="btn-group pull-right">
+                    <button type="submit"
+                        class="btn btn-sm btn-info submit"
+                        ng-if="buildNotes.newBuildNoteText.trim() != ''"
+                        >Add</button>
+                    <button type="button"
+                        class="btn btn-sm btn-danger"
+                        ng-click="buildNotes.clearPopup()"
+                        ng-bind="buildNotes.newBuildNoteText.trim() ? 'Cancel' : 'Close'"
+                        ></button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </form>
+</div>

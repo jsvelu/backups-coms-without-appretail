@@ -1,0 +1,9 @@
+.vTextField {
+    min-width: 100px;
+    max-width: 150px;
+}
+
+.form-control-inline {
+    min-width: 250px;
+    max-width: 300px;
+}

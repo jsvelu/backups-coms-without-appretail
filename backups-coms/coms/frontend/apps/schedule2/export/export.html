@@ -1,0 +1,301 @@
+<div id="export">
+    <top-bar>
+        <h2 class="top-bar__title">Pop-Top/Campers Exports</h2>
+    </top-bar>
+
+    <messages></messages>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Parameters</th>
+                <th>Export</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>Export Series Details as CSV</td>
+                <td>
+                    <p>With Avereage Tare weight and Ball weight</p>
+                </td>
+                <td>
+                    <a class="btn btn-default" target="_blank"
+                            href="/export/schedule/series-avg-csv">
+                        Export
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td>Export Schedule as CSV</td>
+                <td>
+                    <div class="col-sm-6">
+                        <label>Date From: </label>
+                        <input id='exportScheduleCSV_dateFrom_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV_dateFrom' hidden ng-model="exportScheduleCSV.dateFrom" no-dirty-check ng-change="validateDates(exportScheduleCSV)" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label> Date To: </label>
+                        <input id='exportScheduleCSV_dateTo_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV_dateTo' hidden ng-model="exportScheduleCSV.dateTo" no-dirty-check ng-change="validateDates(exportScheduleCSV)" />
+                    </div>
+                    <div class="text-danger" ng-if="exportScheduleCSV.invalidDates">
+                        The start date cannot be greater than the end date.
+                    </div>
+                </td>
+                <td>
+                    <a ng-if="!exportScheduleCSV.invalidDates" class="btn btn-default" target="_blank"
+                            href="/export/schedule/schedule-csv/2/{{ exportScheduleCSV.dateFrom | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}/{{ exportScheduleCSV.dateTo | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}">
+                        Export
+                    </a>
+                    <button ng-if="exportScheduleCSV.invalidDates" class="btn btn-default" disabled="disabled">Export</button>
+                </td>
+            </tr>
+
+            <tr ng-repeat="exp in contractorExports.list">
+                <td>{{ exp.name }}</td>
+                <td rowspan="{{ contractorExports.list.length }}" ng-if="$first">
+                    <div class="col-sm-6">
+                        <label>Date From: </label>
+                        <input id='contractorExports_dateFrom_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='contractorExports_dateFrom' hidden ng-model="contractorExports.dateFrom" no-dirty-check ng-change="validateDates(contractorExports)" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label> Date To: </label>
+                        <input id='contractorExports_dateTo_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='contractorExports_dateTo' hidden ng-model="contractorExports.dateTo" no-dirty-check ng-change="validateDates(contractorExports)" />
+                    </div>
+                    <div class="text-danger" ng-if="contractorExports.invalidDates">
+                        The start date cannot be greater than the end date.
+                    </div>
+                </td>
+                <td>
+                    <a ng-if="!contractorExports.invalidDates" class="btn btn-default" target="_blank"
+                            href="/export/schedule/contractor/2/{{ exp.id }}/{{ contractorExports.dateFrom | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}/{{ contractorExports.dateTo | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}">
+                        Export</a>
+                    <button ng-if="contractorExports.invalidDates" class="btn btn-default" disabled="disabled">Export</button>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    
+    <!-- <top-bar>
+        <h2 class="top-bar__title">Production Details Exports</h2>
+    </top-bar>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Parameters</th>
+                <th>Export</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Export Production Dashboard as CSV</td>
+                <td>
+                    <div class="col-sm-6">
+                        <label>Date From: </label>
+                        <input id='exportScheduleCSV1_dateFrom_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV1_dateFrom' hidden ng-model="exportScheduleCSV1.dateFrom" no-dirty-check ng-change="validateDates(exportScheduleCSV1)" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label> Date To: </label>
+                        <input id='exportScheduleCSV1_dateTo_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV1_dateTo' hidden ng-model="exportScheduleCSV1.dateTo" no-dirty-check ng-change="validateDates(exportScheduleCSV1)" />
+                    </div>
+                    <div class="text-danger" ng-if="exportScheduleCSV1.invalidDates">
+                        The start date cannot be greater than the end date.
+                    </div>
+                </td>
+                <td>
+                    <a ng-if="!exportScheduleCSV1.invalidDates" class="btn btn-default" target="_blank"
+                            href="/export/schedule/productiondashboard-csv/all/{{ exportScheduleCSV1.dateFrom | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}/{{ exportScheduleCSV1.dateTo | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}">
+                        Export
+                    </a>
+                    <button ng-if="exportScheduleCSV1.invalidDates" class="btn btn-default" disabled="disabled">Export</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Export Production Dashboard's Awaiting QC as CSV</td>
+                <td>
+                    <div class="col-sm-6">
+                        <label>Date From: </label>
+                        <input id='exportScheduleCSV2_dateFrom_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV2_dateFrom' hidden ng-model="exportScheduleCSV2.dateFrom" no-dirty-check ng-change="validateDates(exportScheduleCSV2)" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label> Date To: </label>
+                        <input id='exportScheduleCSV2_dateTo_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV2_dateTo' hidden ng-model="exportScheduleCSV2.dateTo" no-dirty-check ng-change="validateDates(exportScheduleCSV2)" />
+                    </div>
+                    <div class="text-danger" ng-if="exportScheduleCSV2.invalidDates">
+                        The start date cannot be greater than the end date.
+                    </div>
+                </td>
+                <td>
+                    <a ng-if="!exportScheduleCSV2.invalidDates" class="btn btn-default" target="_blank"
+                            href="/export/schedule/productiondashboard-csv/awaiting_qc/{{ exportScheduleCSV2.dateFrom | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}/{{ exportScheduleCSV2.dateTo | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}">
+                        Export
+                    </a>
+                    <button ng-if="exportScheduleCSV2.invalidDates" class="btn btn-default" disabled="disabled">Export</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Export Production Dashboard's Awaiting Water Test as CSV</td>
+                <td>
+                    <div class="col-sm-6">
+                        <label>Date From: </label>
+                        <input id='exportScheduleCSV3_dateFrom_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV3_dateFrom' hidden ng-model="exportScheduleCSV3.dateFrom" no-dirty-check ng-change="validateDates(exportScheduleCSV3)" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label> Date To: </label>
+                        <input id='exportScheduleCSV3_dateTo_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV3_dateTo' hidden ng-model="exportScheduleCSV3.dateTo" no-dirty-check ng-change="validateDates(exportScheduleCSV3)" />
+                    </div>
+                    <div class="text-danger" ng-if="exportScheduleCSV3.invalidDates">
+                        The start date cannot be greater than the end date.
+                    </div>
+                </td>
+                <td>
+                    <a ng-if="!exportScheduleCSV3.invalidDates" class="btn btn-default" target="_blank"
+                            href="/export/schedule/productiondashboard-csv/awaiting_water_test/{{ exportScheduleCSV3.dateFrom | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}/{{ exportScheduleCSV3.dateTo | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}">
+                        Export
+                    </a>
+                    <button ng-if="exportScheduleCSV3.invalidDates" class="btn btn-default" disabled="disabled">Export</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Export Production Dashboard's Pending for Dispatch as CSV</td>
+                <td>
+                    <div class="col-sm-6">
+                        <label>Date From: </label>
+                        <input id='exportScheduleCSV5_dateFrom_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV5_dateFrom' hidden ng-model="exportScheduleCSV5.dateFrom" no-dirty-check ng-change="validateDates(exportScheduleCSV5)" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label> Date To: </label>
+                        <input id='exportScheduleCSV5_dateTo_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV5_dateTo' hidden ng-model="exportScheduleCSV5.dateTo" no-dirty-check ng-change="validateDates(exportScheduleCSV5)" />
+                    </div>
+                    <div class="text-danger" ng-if="exportScheduleCSV4.invalidDates">
+                        The start date cannot be greater than the end date.
+                    </div>
+                </td>
+                <td>
+                    <a ng-if="!exportScheduleCSV5.invalidDates" class="btn btn-default" target="_blank"
+                            href="/export/schedule/productiondashboard-csv/pending_for_dispatch/{{ exportScheduleCSV5.dateFrom | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}/{{ exportScheduleCSV5.dateTo | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}">
+                        Export
+                    </a>
+                    <button ng-if="exportScheduleCSV5invalidDates" class="btn btn-default" disabled="disabled">Export</button>
+                </td>
+            </tr>
+            <tr>
+                <td>Export Production Dashboard's Dispatched as CSV</td>
+                <td>
+                    <div class="col-sm-6">
+                        <label>Date From: </label>
+                        <input id='exportScheduleCSV4_dateFrom_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV4_dateFrom' hidden ng-model="exportScheduleCSV4.dateFrom" no-dirty-check ng-change="validateDates(exportScheduleCSV4)" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label> Date To: </label>
+                        <input id='exportScheduleCSV4_dateTo_shown' type="text" class="form-control" placeholder="loading..." />
+                        <input id='exportScheduleCSV4_dateTo' hidden ng-model="exportScheduleCSV4.dateTo" no-dirty-check ng-change="validateDates(exportScheduleCSV4)" />
+                    </div>
+                    <div class="text-danger" ng-if="exportScheduleCSV4.invalidDates">
+                        The start date cannot be greater than the end date.
+                    </div>
+                </td>
+                <td>
+                    <a ng-if="!exportScheduleCSV4.invalidDates" class="btn btn-default" target="_blank"
+                            href="/export/schedule/productiondashboard-csv/dispatched/{{ exportScheduleCSV4.dateFrom | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}/{{ exportScheduleCSV4.dateTo | date: AppSettings.FORMAT_DATE_MONTH_ISO_JS }}">
+                        Export
+                    </a>
+                    <button ng-if="exportScheduleCSV4invalidDates" class="btn btn-default" disabled="disabled">Export</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <br>
+
+    <top-bar>
+        <h2 class="top-bar__title">Production Details Export all or based on Dealership</h2>
+    </top-bar>
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Parameters</th>
+                <th>Export</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Export Production Dashboard</td>
+            
+                <td rowspan="5">    
+                    <center> 
+                        <label for="dealership"> Dealership List: </label>
+                        <select id ="dealer">
+                            <option value="">--- Select Dealership ---</option>
+                            <option ng-repeat="dealer in dealers" value="{{ dealer.id }}">{{ dealer.name }}</option>
+                        </select>
+                    </center>
+                </td>
+                    
+                <td>
+                    <a ng-if="!exportScheduleCSV6.invalidDates" class="btn btn-default" target="_blank" href="" onclick="this.href='/export/schedule/productiondashboard_dealership-csv/all/'+document.getElementById('dealer').value">
+                        Export
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Export Production Dashboard's Awaiting QC
+                </td>
+                <td>
+                    <a ng-if="!exportScheduleCSV6.invalidDates" class="btn btn-default" target="_blank" href="" onclick="this.href='/export/schedule/productiondashboard_dealership-csv/awaiting_qc/'+document.getElementById('dealer').value">
+                        Export
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Export Production Dashboard's Awaiting Water Test
+                </td>
+                <td>
+                    <a ng-if="!exportScheduleCSV6.invalidDates" class="btn btn-default" target="_blank" href="" onclick="this.href='/export/schedule/productiondashboard_dealership-csv/awaiting_water_test/'+document.getElementById('dealer').value">
+                        Export
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Export Production Dashboard's Pending for Dispatch
+                </td>
+                <td>
+                    <a ng-if="!exportScheduleCSV6.invalidDates" class="btn btn-default" target="_blank" href="" onclick="this.href='/export/schedule/productiondashboard_dealership-csv/pending_for_dispatch/'+document.getElementById('dealer').value">
+                        Export
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Export Production Dashboard's Dispatched
+                </td>
+                <td>
+                    <a ng-if="!exportScheduleCSV6.invalidDates" class="btn btn-default" target="_blank" href="" onclick="this.href='/export/schedule/productiondashboard_dealership-csv/dispatched/'+document.getElementById('dealer').value">
+                        Export
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table> -->
+</div>

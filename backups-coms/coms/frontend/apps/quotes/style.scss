@@ -1,0 +1,59 @@
+
+div.dataTables_wrapper {
+  margin-top: -30px;
+}
+
+table.dataTable > thead > tr {
+  background-color: #252626;
+  color: white;
+
+  > th {
+    font-weight: normal;
+    padding: 15px 15px !important;
+  }
+
+  th:first-child {
+    border-top-left-radius: 15px;
+  }
+
+  th:last-child {
+    border-top-right-radius: 15px;
+  }
+}
+
+button.btn-default {
+  color: #E10022;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+button.btn-default:hover,
+button.btn-default:focus,
+button.btn-default:active {
+  background-color: white;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  color: #E10022 !important;
+  background: none !important;
+  border-radius: 3px;
+  padding: 4px 10px;
+}
+
+button#new-quote {
+  margin-right: 20px;
+  border-color: #E22431;
+  padding: 10px 15px;
+}
+
+ul.dropdown-menu {
+  width: 100%;
+
+  >.active>a, >.active>a:focus, >.active>a:hover {
+    background-color: lightgrey;
+    color: black;
+  }
+}

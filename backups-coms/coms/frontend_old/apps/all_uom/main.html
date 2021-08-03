@@ -1,0 +1,18 @@
+<top-bar>
+    <h2>All Units of Measure</h2>
+
+    <form class="form col-sm-6 searchbox" ng-submit="search()" autocomplete="off">
+        <lookup result="search.text" placeholder="Search by Name" on-select="search"
+                type="uom_lookup" autocomplete="off"></lookup>
+    </form>
+    <button class="btn btn-primary pull-right header-right-button"><i class="glyphicon glyphicon-plus"></i> Create a New
+        Unit of Measure
+    </button>
+</top-bar>
+
+<div class="container">
+    <div class="row">
+        <ajax-data-table data-table="table_object" data-config="ajax_config"
+                         data-options="table_config"></ajax-data-table>
+    </div>
+</div>

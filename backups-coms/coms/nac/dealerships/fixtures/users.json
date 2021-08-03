@@ -1,0 +1,132 @@
+[
+{
+  "fields": {
+    "address": null,
+    "deleted": null,
+    "egm_implementation_date": null,
+    "logo": "",
+    "name": "Test / Training Dealer 1",
+    "phone1": null,
+    "phone2": null
+  },
+  "model": "dealerships.dealership",
+  "pk": 1
+},
+{
+  "fields": {
+    "address": null,
+    "deleted": null,
+    "egm_implementation_date": null,
+    "logo": "",
+    "name": "Test / Training Dealer 2",
+    "phone1": null,
+    "phone2": null
+  },
+  "model": "dealerships.dealership",
+  "pk": 2
+},
+{
+  "fields": {
+    "groups": [
+      [
+        "Dealer Sales Rep"
+      ]
+    ],
+    "user_permissions": []
+  },
+  "model": "dealerships.dealershipuser",
+  "pk": [
+    "dealer2principal"
+  ]
+},
+{
+  "fields": {
+    "groups": [
+      [
+        "Dealer Sales Rep"
+      ]
+    ],
+    "user_permissions": []
+  },
+  "model": "dealerships.dealershipuser",
+  "pk": [
+    "dealer2rep"
+  ]
+},
+{
+  "fields": {
+    "groups": [
+      [
+        "Dealer Sales Rep"
+      ]
+    ],
+    "user_permissions": []
+  },
+  "model": "dealerships.dealershipuser",
+  "pk": [
+    "dealerprincipal"
+  ]
+},
+{
+  "fields": {
+    "groups": [
+      [
+        "Dealer Sales Rep"
+      ]
+    ],
+    "user_permissions": []
+  },
+  "model": "dealerships.dealershipuser",
+  "pk": [
+    "dealerrep"
+  ]
+},
+{
+  "fields": {
+    "dealership": 1,
+    "dealership_user": [
+      "dealerrep"
+    ],
+    "deleted": null,
+    "is_principal": false
+  },
+  "model": "dealerships.dealershipuserdealership",
+  "pk": 1
+},
+{
+  "fields": {
+    "dealership": 1,
+    "dealership_user": [
+      "dealerprincipal"
+    ],
+    "deleted": null,
+    "is_principal": true
+  },
+  "model": "dealerships.dealershipuserdealership",
+  "pk": 2
+},
+{
+  "fields": {
+    "dealership": 2,
+    "dealership_user": [
+      "dealer2rep"
+    ],
+    "deleted": null,
+    "is_principal": false
+  },
+  "model": "dealerships.dealershipuserdealership",
+  "pk": 3
+},
+{
+  "fields": {
+    "dealership": 2,
+    "dealership_user": [
+      "dealer2principal"
+    ],
+    "deleted": null,
+    "is_principal": true
+  },
+  "model": "dealerships.dealershipuserdealership",
+  "pk": 4
+}
+]

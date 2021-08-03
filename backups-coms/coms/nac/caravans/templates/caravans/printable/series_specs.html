@@ -1,0 +1,41 @@
+{% extends 'newage/printable/base_print.html' %}
+
+{% block css %}
+    {% include "caravans/printable/series_specs.css" %}
+{% endblock css %}
+
+{% block container %}
+   <h1> <center style="font-family:Verdana;color:red;">  {{ series.name }} ({{ series.code }}) Series Specification</h1></center>
+
+    <table cellspacing="0" cellpadding="0">
+    <tr>
+        {% for _, category in categories.items %}
+            <td class="category">{{ category.title }}</td>
+        {% endfor %}
+    </tr>
+
+    <tr valign="top">
+        {% for _, category in categories.items %}
+            <td>
+                <table class="category" cellspacing="0" cellpadding="0">
+                    {% if category.standard %}
+                        <tr class="type-header"><td>Standard</td></tr>
+
+                        {% for item in category.standard %}
+                            <tr><td>{{ item }}</td></tr>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if category.selection %}
+                        <tr class="type-header"><td>Selections</td></tr>
+
+                        {% for item in category.selection %}
+                            <tr><td>{{ item }}</td></tr>
+                        {% endfor %}
+                    {% endif %}
+                </table>
+            </td>
+        {% endfor %}
+    </tr>
+    </table>
+{% endblock container %}

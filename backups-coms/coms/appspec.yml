@@ -1,0 +1,30 @@
+version: 0.0
+os: linux
+files:
+  - source: configs/nginx.conf
+    destination: /etc/nginx/sites-enabled
+  - source: configs/gunicorn.service
+    destination: /etc/systemd/system
+  - source: /
+    destination: /home/ubuntu/app
+hooks:
+  ApplicationStop:
+    - location: scripts/application_stop.sh
+      timeout: 10
+      runas: root
+  BeforeInstall:
+    - location: scripts/before_install.sh
+      timeout: 10
+      runas: root
+  AfterInstall:
+    - location: scripts/after_install.sh
+      timeout: 60
+      runas: root
+  ApplicationStart:
+    - location: scripts/application_start.sh
+      timeout: 60
+      runas: root
+  ValidateService:
+    - location: scripts/validate_service.sh
+      timeout: 10
+      runas: root

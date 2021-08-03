@@ -1,0 +1,13 @@
+#!/bin/bash -e
+set -o pipefail
+
+source "$(dirname "${BASH_SOURCE[0]}")/common.inc"
+
+IFS=$'\n'
+files=( $( git diff --cached --name-only --diff-filter=ACM "$base_dir" | ( egrep '\.py$' || true ) ) )
+unset IFS
+
+if [ "${#files[@]}" -gt 0 ] ; then
+	"$repo_dir/bin/lint.sh" "${files[@]}"
+fi
+

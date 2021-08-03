@@ -1,0 +1,32 @@
+{% extends "admin/app_index.html" %}
+{% load alliance_bundle %}
+{% load staticfiles %}
+
+{% block breadcrumbs_container %}{% endblock %}
+{% block page_heading_container %}{% endblock %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-datatables' 'css' %}
+    {% alliance_bundle 'shared-spa' 'css' %}
+    {% alliance_bundle app 'css' %}
+{% endblock %}
+
+{% block angular_content %}
+    <div id="ngApp" ng-app="NewAge"><div ui-view></div></div>
+{% endblock %}
+
+{% block content %}{% endblock %}
+
+{% comment %}
+    On angular app pages, hide the header stuff so we can do custom things there
+{% endcomment %}
+
+{% block object-tools %}{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-datatables' 'js' %}
+    {% alliance_bundle 'shared-spa' 'js' %}
+    {% alliance_bundle app 'js' %}
+{% endblock %}

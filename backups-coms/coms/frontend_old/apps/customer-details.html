@@ -1,0 +1,538 @@
+<div ng-if="message" class="alert {{ message.type }}">
+    <div ng-repeat="text in message.message_list">{{ text }}</div>
+</div>
+
+<div class="row" ng-hide="order.isCustomerVisible()">
+    <div class="col-sm-11 col-sm-offset-1">
+        <div class="panel panel-warning">
+            <div class="panel-body">
+                    You do not have the required permissions to view or edit Customer information
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ng-hide="!order.isCustomerVisible()">
+    <div class="row">
+        <div class="col-sm-11 col-sm-offset-1">
+        <h3>Create a stock order</h3>
+
+        <form name="stock_form" class="form top-margin-30">
+            <fieldset>
+
+                <div class="form-group col-sm-6">
+                    <label class="form-label">DEALERSHIP</label>
+                    <select class="form-control"
+                            ng-model="order.dealership"
+                            ng-options="dealer.id as dealer.title for dealer in choices.dealerships"
+                            ng-disabled="!order.isEditable() && !permissions.reassign_stock_orders"
+                            required>
+                        <option value="">
+                            {{ order.isStageQuoteEditable() ? 'Select a dealership' : order.dealership_name }}
+                        </option>
+                    </select>
+                </div>
+
+             /*   <div class="form-group col-sm-6">
+                    <label class="form-label">DESIRED DELIVERY MONTH</label>
+                    <select class="form-control"
+                            ng-model="order.delivery_date"
+                            ng-options="date.value as date.title for date in choices.available_delivery_months">
+                        <option value="">
+                            {{ order.isStageQuoteEditable() ? 'Select a month' : order.delivery_date | date:AppSettings.FORMAT_DATE_MONTH_SHORT_JS }}
+                        </option>
+                    </select>
+                </div> */
+
+                <div class="form-group col-sm-4">
+                    <button type="submit" class="btn btn-primary" ng-click="proceedDealerOrder(stock_form)">
+                        <span ng-if="!order.id">Create Dealership Order</span>
+                        <span ng-if="order.id && order.order_type=='Stock'">Save and Proceed</span>
+                        <span ng-if="order.id && order.order_type!='Stock'">Convert to Dealership Order</span>
+                    </button>
+                </div>
+            </fieldset>
+        </form>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <div class="dashed-divider-horizontal">
+                <span>OR</span>
+                <hr>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <h3>Create a quote/order for a customer</h3>
+
+            <form name="customer_form" novalidate class="form top-margin-30">
+                <fieldset>
+                    <div class="row">
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">DEALERSHIP</label>
+                            <select class="form-control"
+                                    name="dealership"
+                                    ng-model="order.dealership"
+                                    ng-options="dealer.id as dealer.title for dealer in choices.dealerships" required>
+                                <option value="">
+                                    {{ order.isEditable() ? 'Select a dealership' : order.dealership_name }}
+                                </option>
+                            </select>
+                            <div ng-messages="customer_form.dealership.$error" ng-if="customer_form.dealership.$dirty || customer_form.$submitted">
+                                <p ng-message="required">This field is required.</p>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">SHOW</label>
+                            <select class="form-control"
+                                    ng-model="order.show_id"
+                                    ng-disabled="order.show_id && order.is_expired"
+                                    ng-options="show.id as show.title for show in choices.shows">
+                                <option value="">
+                                    Select a Show
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Customer details -->
+
+                    <div class="row top-margin-40">
+                        <div class="col-sm-6"><h4>Customer Details</h4></div>
+                    </div>
+
+                    <div class="row" ng-if="order.isEditable() || order.is_order_converted">
+                        <div class="col-sm-6" ng-if="!order.isEditable()"></div>
+                        <div class="col-sm-6" ng-if="order.isEditable()">
+                            <label class="form-label">LOOKUP EXISTING CUSTOMER</label>
+                            <lookup result="search.customer" min-length="3" min-wait="100"
+                                    ng-model="order.customer"
+                                    on-select="select_customer" type="customer_lookup" name="customer"
+                                    autocomplete="off"></lookup>
+                        </div>
+                        <div class="form-group col-sm-6" ng-if="order.is_order_converted">
+                            <label class="form-label">
+                                SALES DATE - STOCK ORDER CONVERSION</label>
+                            <input type="text" class="form-control" ng-model="order.order_converted" name="order_converted" placeholder="dd/mm/yyyy" ng-required="order.is_order_converted"/>
+                             <div ng-messages="customer_form.order_converted.$error">
+                             <p ng-message="required">This field is required.</p>  
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class="row top-margin-20">
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">
+                                FIRST NAME</label>
+                            <input type="text" class="form-control" ng-model="order.customer.first_name" name="first_name" required ng-disabled="!isCustomerEditable()" />
+                            <div ng-messages="customer_form.first_name.$error" ng-if="customer_form.first_name.$dirty || customer_form.$submitted">
+                                <p ng-message="required">This field is required.</p>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">
+                                LAST NAME</label>
+                            <input type="text" class="form-control" ng-model="order.customer.last_name" name="last_name" required ng-disabled="!isCustomerEditable()" />
+                            <div ng-messages="customer_form.last_name.$error" ng-if="customer_form.last_name.$dirty || customer_form.$submitted">
+                                <p ng-message="required">This field is required.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row top-margin-20">
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">
+                                EMAIL</label>
+                            <input type="text" class="form-control" ng-model="order.customer.email" name="email"
+                                   ng-required="!(order.customer.email.length || order.customer.phone1.length)"
+                                   ng-disabled="!isCustomerEditable()" />
+                            <div ng-messages="customer_form.email.$error" ng-if="customer_form.email.$dirty || customer_form.$submitted">
+                                <p ng-message="required">Either the phone number or the email address is required.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">OPT IN FOR MAILING LIST
+                                <input type="checkbox" class="form-control form-control-small"
+                                       ng-model="order.customer.mailing_list" name="mailling_list"
+                                       ng-disabled="!isCustomerEditable()" />
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="row top-margin-20">
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">
+                                PHONE NUMBER</label>
+                            <input type="text" class="form-control" ng-model="order.customer.phone1" name="phone_number"
+                                   ng-required="!(order.customer.email.length || order.customer.phone1.length)"
+                                   ng-disabled="!isCustomerEditable()" />
+                            <div ng-messages="customer_form.phone_number.$error" ng-if="customer_form.phone_number.$dirty || customer_form.$submitted">
+                                <p ng-message="required">Either the phone number or the email address is required.</p>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">PARTNER'S NAME</label>
+                            <input type="text" class="form-control" ng-model="order.customer.partner_name" name="partner_name" ng-disabled="!isCustomerEditable()"/>
+                        </div>
+
+                    </div>
+
+                    <div class="row top-margin-20">
+                       /* <div class="form-group col-sm-6">
+                            <label class="form-label">DESIRED DELIVERY MONTH</label>
+                            <select class="form-control"
+                                    ng-model="order.delivery_date"
+                                    ng-options="date.value as date.title for date in choices.available_delivery_months">
+                                <option value="">
+                                    {{ order.isStageQuoteEditable() ? 'Select a month' : order.delivery_date | date:AppSettings.FORMAT_DATE_MONTH_SHORT_JS }}
+                                </option>
+                            </select>
+                            <div ng-messages="customer_form.delivery_date.$error" ng-if="customer_form.delivery_date.$dirty || customer_form.$submitted">
+                                <p ng-message="date">There is a problem with the date.</p>
+                            </div> */
+                        </div>
+
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">TOW VEHICLE</label>
+                            <input type="text" class="form-control" ng-model="order.customer.tow_vehicle" name="tow_vehicle" required ng-disabled="!isCustomerEditable()" />
+                            <div ng-messages="customer_form.tow_vehicle.$error" ng-if="customer_form.tow_vehicle.$dirty || customer_form.$submitted">
+                                <p ng-message="required">This field is required.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row top-margin-20">
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">
+                                WHERE DID YOU HEAR FROM US?</label>
+                            <select class="form-control"
+                                    ng-model="order.customer.source_of_awareness"
+                                    name="referral"
+                                    ng-options="source_of_awareness.id as source_of_awareness.title for source_of_awareness in choices.source_of_awareness" required
+                                    ng-disabled="!isCustomerEditable()">
+                                <option value="">Select an option</option>
+                            </select>
+                            <div ng-messages="customer_form.referral.$error" ng-if="customer_form.referral.$dirty || customer_form.$submitted">
+                                <p ng-message="required">This field is required.</p>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">
+                                METHOD OF CONTACT?</label>
+                            <select class="form-control"
+                                    ng-model="order.customer.acquisition_source"
+                                    name="referral"
+                                    ng-options="acquisition_source.id as acquisition_source.title for acquisition_source in choices.acquisition_source" required
+                                    ng-disabled="!isCustomerEditable()">
+                                <option value="">Select an option</option>
+                            </select>
+                            <div ng-messages="customer_form.referral.$error" ng-if="customer_form.referral.$dirty || customer_form.$submitted">
+                                <p ng-message="required">This field is required.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div ng-if="!isCustomerEditable()" class="row">
+                        <div class="col-sm-offset-6 col-sm-3">
+                            <button type="button" class="btn btn-primary" ng-click="clearCustomer()">Create new customer</button>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-primary" ng-click="editCustomerFields()">Edit customer details</button>
+                        </div>
+                    </div>
+
+
+                    <!-- Address -->
+
+
+                    <div class="row top-margin-40">
+                        <div class="col-sm-6"><h4>Address</h4></div>
+                    </div>
+
+                    <div class="row top-margin-20">
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">REGISTERED OWNER</label>
+                            <input type="text" class="form-control" ng-model="order.customer.physical_address.name"
+                                   name="registered_owner" required
+                                   ng-disabled="!isCustomerEditable()"/>
+                            <div ng-messages="customer_form.registered_owner.$error" ng-if="customer_form.registered_owner.$dirty || customer_form.$submitted">
+                                <p ng-message="required">This field is required.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row top-margin-20">
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">STREET ADDRESS</label>
+                            <input type="text" class="form-control" ng-model="order.customer.physical_address.address" name="street" required
+                                   ng-disabled="!isCustomerEditable()"/>
+                            <div ng-messages="customer_form.street.$error" ng-if="customer_form.street.$dirty || customer_form.$submitted">
+                                <p ng-message="required">This field is required.</p>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-6" ng-if="order.id || !order.customer.id || editCurrentCustomer">
+                            <label class="form-label">LOOKUP CITY OR SUBURB</label>
+                            <lookup result="search.physical_suburb" min-length="3" min-wait="100"
+                                    ng-model="order.customer.physical_address.suburb.name"
+                                    on-select="select_physical_suburb" type="suburb_lookup" name="physical_address_suburb"
+                                    autocomplete="off"></lookup>
+                        </div>
+                    </div>
+
+                    <div class="row top-margin-20">
+                        <div class="form-group col-sm-6">
+                            <label class="form-label">CITY</label>
+                            <input type="text" class="form-control" ng-model="order.customer.physical_address.suburb.name" name="suburb" required
+                                   ng-disabled="!isCustomerEditable()"/>
+                            <div ng-messages="customer_form.suburb.$error" ng-if="customer_form.suburb.$dirty || customer_form.$submitted">
+                                <p ng-message="required">This field is required.</p>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-4">
+                            <label class="form-label">STATE</label>
+                            <select class="form-control" ng-options="s.code as s.title for s in choices.states"
+                                    ng-model="order.customer.physical_address.suburb.post_code.state.code" name="state" required
+                                    ng-disabled="!isCustomerEditable()">
+                                <option value="">Select State</option>
+                            </select>
+                            <div ng-messages="customer_form.state.$error" ng-if="customer_form.state.$dirty || customer_form.$submitted">
+                                <p ng-message="required">This field is required.</p>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-2">
+                            <label class="form-label">POSTCODE</label>
+                            <input type="text" class="form-control" ng-model="order.customer.physical_address.suburb.post_code.number" name="post_code" required ng-pattern="/^\d{4}$/"
+                                   ng-disabled="!isCustomerEditable()"/>
+                            <div ng-messages="customer_form.post_code.$error" ng-if="customer_form.post_code.$dirty || customer_form.$submitted">
+                                <p ng-message="required">This field is required.</p>
+                                <p ng-message="pattern">Postcode must be 4 digits.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row top-margin-40">
+
+                        <uib-accordion class="red">
+
+                            <!-- Delivery -->
+
+                            <uib-accordion-group>
+                                <uib-accordion-heading>
+                                    <div>Add Delivery details (if different)</div>
+                                </uib-accordion-heading>
+
+                                <div class="row top-margin-20">
+                                    <div class="form-group col-sm-6">
+                                        <label class="form-label">NAME</label>
+                                        <input type="text" class="form-control"
+                                               ng-model="order.customer.delivery_address.name"
+                                               ng-disabled="!isCustomerEditable()"/>
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label class="form-label">PHONE</label>
+                                        <input type="text" class="form-control"
+                                               ng-model="order.customer.phone_delivery"
+                                               ng-disabled="!isCustomerEditable()"/>
+                                    </div>
+                                </div>
+                                <div class="row top-margin-20">
+                                    <div class="form-group col-sm-6">
+                                        <label class="form-label">STREET ADDRESS</label>
+                                        <input type="text" class="form-control"
+                                               ng-model="order.customer.delivery_address.address"
+                                               name="delivery_street" ng-required="order.customer.delivery_address.name.length"
+                                               ng-disabled="!isCustomerEditable()"/>
+
+                                        <div ng-messages="customer_form.delivery_street.$error" ng-if="customer_form.delivery_street.$dirty || customer_form.$submitted">
+                                            <p ng-message="required">This field is required.</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-6" ng-if="order.id || !order.customer.id || editCurrentCustomer">
+                                        <label class="form-label">LOOKUP CITY OR SUBURB</label>
+                                        <lookup result="search.delivery_suburb" min-length="3" min-wait="100"
+                                                ng-model="order.customer.delivery_address.suburb.name"
+                                                on-select="select_delivery_suburb" type="suburb_lookup"
+                                                name="delivery_address_suburb" autocomplete="off"></lookup>
+                                    </div>
+                                </div>
+
+                                <div class="row top-margin-20">
+                                    <div class="form-group col-sm-6">
+                                        <label class="form-label">CITY</label>
+                                        <input type="text" class="form-control"
+                                               ng-model="order.customer.delivery_address.suburb.name"
+                                               name="delivery_suburb" ng-required="order.customer.delivery_address.name.length"
+                                               ng-disabled="!isCustomerEditable()"/>
+
+                                        <div ng-messages="customer_form.delivery_suburb.$error" ng-if="customer_form.delivery_suburb.$dirty || customer_form.$submitted">
+                                            <p ng-message="required">This field is required.</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-4">
+                                        <label class="form-label">STATE</label>
+                                        <select class="form-control" ng-options="s.code as s.title for s in choices.states"
+                                                ng-model="order.customer.delivery_address.suburb.post_code.state.code"
+                                                name="delivery_state" ng-required="order.customer.delivery_address.name.length"
+                                                ng-disabled="!isCustomerEditable()">
+                                            <option value="">Select State</option>
+                                        </select>
+
+
+                                        <div ng-messages="customer_form.delivery_state.$error" ng-if="customer_form.delivery_state.$dirty || customer_form.$submitted">
+                                            <p ng-message="required">This field is required.</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label class="form-label">POSTCODE</label>
+                                        <input type="text" class="form-control"
+                                               ng-model="order.customer.delivery_address.suburb.post_code.number"
+                                               name="delivery_post_code" ng-required="order.customer.delivery_address.name.length" ng-pattern="/^\d{4}$/"
+                                               ng-disabled="!isCustomerEditable()"/>
+
+                                        <div ng-messages="customer_form.delivery_post_code.$error" ng-if="customer_form.delivery_post_code.$dirty || customer_form.$submitted">
+                                            <p ng-message="required">This field is required.</p>
+                                            <p ng-message="pattern">Postcode must be 4 digits.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </uib-accordion-group>
+
+
+                            <!-- Invoice -->
+
+                            <uib-accordion-group>
+                                <uib-accordion-heading>
+                                    <div>Add Invoice details (if different)</div>
+                                </uib-accordion-heading>
+
+                                <div class="row top-margin-20">
+                                    <div class="form-group col-sm-6">
+                                        <label class="form-label">NAME</label>
+                                        <input type="text" class="form-control"
+                                               ng-model="order.customer.postal_address.name"
+                                               ng-disabled="!isCustomerEditable()"/>
+                                    </div>
+                                    <div class="form-group col-sm-6">
+                                        <label class="form-label">PHONE</label>
+                                        <input type="text" class="form-control"
+                                               ng-model="order.customer.phone_invoice"
+                                               ng-disabled="!isCustomerEditable()"/>
+                                    </div>
+                                </div>
+                                <div class="row top-margin-20">
+                                    <div class="form-group col-sm-6">
+                                        <label class="form-label">STREET ADDRESS</label>
+                                        <input type="text" class="form-control"
+                                               ng-model="order.customer.postal_address.address"
+                                               name="invoice_street" ng-required="order.customer.postal_address.name.length"
+                                               ng-disabled="!isCustomerEditable()"/>
+
+                                        <div ng-messages="customer_form.invoice_street.$error" ng-if="customer_form.invoice_street.$dirty || customer_form.$submitted">
+                                            <p ng-message="required">This field is required.</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-6" ng-if="order.id || !order.customer.id || editCurrentCustomer">
+                                        <label class="form-label">LOOKUP CITY OR SUBURB</label>
+                                        <lookup result="search.invoice_suburb"
+                                                on-select="select_invoice_suburb" type="suburb_lookup"
+                                                ng-model="order.customer.postal_address.suburb.name"
+                                                name="invoice_address_suburb" autocomplete="off"></lookup>
+                                    </div>
+                                </div>
+
+                                <div class="row top-margin-20">
+                                    <div class="form-group col-sm-6">
+                                        <label class="form-label">CITY</label>
+                                        <input type="text" class="form-control"
+                                               ng-model="order.customer.postal_address.suburb.name"
+                                               name="invoice_suburb" ng-required="order.customer.postal_address.name.length"
+                                               ng-disabled="!isCustomerEditable()"/>
+
+                                        <div ng-messages="customer_form.invoice_suburb.$error" ng-if="customer_form.invoice_suburb.$dirty || customer_form.$submitted">
+                                            <p ng-message="required">This field is required.</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-4">
+                                        <label class="form-label">STATE</label>
+                                        <select class="form-control" ng-options="s.code as s.title for s in choices.states"
+                                                ng-model="order.customer.postal_address.suburb.post_code.state.code"
+                                                name="invoice_state" ng-required="order.customer.postal_address.name.length"
+                                                ng-disabled="!isCustomerEditable()">
+                                            <option value="">Select State</option>
+                                        </select>
+
+                                        <div ng-messages="customer_form.invoice_state.$error" ng-if="customer_form.invoice_state.$dirty || customer_form.$submitted">
+                                            <p ng-message="required">This field is required.</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-sm-2">
+                                        <label class="form-label">POSTCODE</label>
+                                        <input type="text" class="form-control"
+                                               ng-model="order.customer.postal_address.suburb.post_code.number"
+                                               name="invoice_post_code" ng-required="order.customer.postal_address.name.length" ng-pattern="/^\d{4}$/"
+                                               ng-disabled="!isCustomerEditable()"/>
+
+                                        <div ng-messages="customer_form.invoice_post_code.$error" ng-if="customer_form.invoice_post_code.$dirty || customer_form.$submitted">
+                                            <p ng-message="required">This field is required.</p>
+                                            <p ng-message="pattern">Postcode must be 4 digits.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </uib-accordion-group>
+                        </uib-accordion>
+
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary"
+                                ng-click="proceedCustomerOrder(customer_form)">
+                            <span ng-if="!order.id">Create Customer Order</span>
+                            <span ng-if="order.id && order.order_type=='Customer'">Save and Proceed</span>
+                            <span ng-if="order.id && order.order_type!='Customer'">Convert to Customer Order</span>
+                        </button>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Not used as of 10/08/2016
+<div class="modal fade" id="lead-lookup">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Lookup a Lead</h4>
+            </div>
+            <div class="modal-body">
+                <form name="lead_lookup_form">
+                    <div class="form-group">
+                        <label class="control-label">Lookup by First Name or Last Name</label>
+                        <lookup result="search.lead_lookup" min-length="3" min-wait="100"
+                                type="lead_lookup" name="physical_address_suburb"
+                                autocomplete="off"></lookup>
+                    </div>
+                </form>
+
+                <div class="alert alert-warning" ng-if="clone.message">{{ clone.message }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" ng-click="on_lead_lookup_select(lead_lookup_form)">Select</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div-->

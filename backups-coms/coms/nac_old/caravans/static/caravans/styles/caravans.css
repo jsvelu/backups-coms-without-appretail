@@ -1,0 +1,9 @@
+.model-thumbnail,
+.sku-thumbnail {
+    max-width: 125px;
+    max-height: 125px
+}
+
+body.caravans-browse-models table.panel-body td {
+    padding: 5px;
+}

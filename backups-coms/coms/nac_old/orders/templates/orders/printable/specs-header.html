@@ -1,0 +1,25 @@
+{# Note this has to be included as a full HTML document so the PDF header functionality will work #}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <style type="text/css">
+        {% include "orders/printable/yuiapp_printSpec.css" %}
+    </style>
+</head>
+<body>
+    <div class="sub_header" style="text-align:center;">
+        <div class="left">
+            <strong>{{ order.get_chassis_description }}</strong><br/><br/>
+        </div>
+
+        <div class="right">
+            <strong>{{ order.get_size_description }}</strong><br/><br/>
+        </div>
+
+        <div class="red">
+            <strong>CUSTOMER: {{ order.customer.name }}</strong>
+        </div>
+        <div style="text-align:center;"><strong>SPECIFICATIONS {{ order.get_series_description }}</strong></div>
+    </div>
+</body>
+</html>

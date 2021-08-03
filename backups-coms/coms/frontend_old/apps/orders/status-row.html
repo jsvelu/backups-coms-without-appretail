@@ -1,0 +1,7 @@
+<div class="row task-row" ng-if="permission">
+    <div class="col-sm-2">{{ title }}</div>
+    <div ng-if="stage" class="col-sm-2 stage-badge {{ statusClass(stage) }}">{{ stage.status }}<i ng-if="stage.status=='Complete'" class="glyphicon glyphicon-ok"></i><i ng-if="stage.status=='Rejected'" class="glyphicon glyphicon-remove"></i></div>
+    <div ng-if="!stage" class="col-sm-2"><i>Not yet required</i></div>
+    <div class="col-sm-6"><div ng-transclude></div></div>
+    <div class="col-sm-2"><span ng-if="stage.submitted_on">{{ stage.submitted_on | date : AppSettings.FORMAT_DATE_JS }}</span><br><span ng-if="stage.submitted_by">{{ stage.submitted_by }}</span></div>
+</div>

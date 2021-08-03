@@ -1,0 +1,245 @@
+<top-bar>
+    <h2 class="top-bar__title">Manage Models</h2>
+</top-bar>
+
+<div class="container-fluid">
+
+    <div class="row top-margin-40">
+        <div class="col-sm-12">
+            <uib-tabset justified="false">
+                <uib-tab ng-repeat="model in data.models"
+                         heading="{{model.name}}"
+                         select="on_model_select(model)">
+                </uib-tab>
+                <button ng-if="data.selected_model.series.length" class="btn btn-primary" ng-click="on_open_clone_series()">Clone Series</button>
+            </uib-tabset>
+
+        </div>
+    </div>
+
+    <div class="row top-margin-20">
+        <div class="col-sm-12">
+            <bar-spinner ng-if="loading.models"></bar-spinner>
+            <div class="alert alert-warning" ng-if="!loading.models && !data.selected_model.series.length">
+                There are no series associated with model: {{ data.selected_model.name }}
+            </div>
+        </div>
+    </div>
+
+    <div class="row top-margin-20 series-visibility" ng-show="data.selected_model.series.length">
+        <div class="col-sm-1">
+            <a class="pull-left btn btn-primary" target="_blank" href="/admin/caravans/skucategory/add">Add New Subcategory</a>
+        </div>
+        <div class="col-sm-11">
+            <div class="series-visibility" ng-repeat="series in data.selected_model.series">
+                {{ series.code }}
+                <a ng-click="toggleVisibility(series)">{{ series.hidden ? 'Show' : 'Hide'  }}</a>
+                <div><a target="_blank" href="/caravans/specs_full/{{ series.id }}">Export Specs</a></div>
+                <div><a target="_blank" href="/admin/caravans/series/{{ series.id }}">Edit Series</a></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" ng-show="data.selected_model.series.length">
+        <div class="col-sm-12">
+            <uib-accordion>
+                <uib-accordion-group class="category" ng-repeat="category in screen_ordered(data.categories)">
+                    <uib-accordion-heading>
+                        <div>{{ category.title }}</div>
+                    </uib-accordion-heading>
+
+                    <uib-accordion>
+
+                        <uib-accordion-group class="sub-category" ng-repeat="group in alpha_ordered(category.groups)" is-open="group.isOpened">
+                            <uib-accordion-heading>
+                                <div>{{ group.title }}</div>
+                            </uib-accordion-heading>
+
+                            <a target="_blank" href="/admin/caravans/skucategory/{{ group.id }}">Edit department: {{ group.title }}</a>
+                            <a class="pull-right" target="_blank" href="/admin/caravans/sku/add/?sku_category={{ group.id }}">Add item to {{ group.title }}</a>
+
+                            <div class="span11" style="overflow: auto">
+                                <div class="row-fluid ">
+                                    <div>
+                                        <div class="panel-body">
+
+                                            <bar-spinner ng-if="loading.group_items[group.id]"></bar-spinner>
+
+                                            <table ng-show="group.items.length" class="table model-outer-item-list">
+                                                <tr>
+                                                    <th class="model-item-td-std"></th>
+                                                    <th class="model-item-td-std"></th>
+                                                    <th class="model-item-td-wide"></th>
+                                                    <th class="model-item-td-std"></th>
+                                                    <th ng-repeat="series in visibleSeries(first_key(group.items).series)" ng-class-odd="'series-bk-odd'" ng-class-even="'series-bk-even'" colspan="2"
+                                                        class="text-center model-item-td-vwide-outer wrap">
+                                                        <div><a target="_blank" href="{{ series.series_link }}">{{ series.series_name }} ({{ series.series_code }})</a></div>
+
+                                                        <div class="header-select">
+                                                            <a ng-if="!group.isSeriesSelectorVisible[series.id]" href="#" ng-click="group.isSeriesSelectorVisible[series.id] = true;">Change for Series</a>
+                                                            <select ng-if="group.isSeriesSelectorVisible[series.id]"
+                                                                    class="form-control"
+                                                                    ng-model="series.departmentAvailability"
+                                                                    ng-options="t.id as t.title for t in data.availability_types | filter:{ title: '!Standard' }"
+                                                                    ng-change="update_all_series_sku(series, group)">
+                                                                <option value="">Select availability</option>
+                                                            </select>
+                                                            <i ng-if="group.isSeriesSelectorVisible[series.id]"
+                                                               class="glyphicon glyphicon-remove" role="button" ng-click="group.isSeriesSelectorVisible[series.id] = false;" />
+                                                        </div>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Photo</th>
+                                                    <th>Order Item Name</th>
+                                                    <th>Code</th>
+                                                    <th class="currency">RRP</th>
+                                                    <th ng-repeat-start="series in visibleSeries(first_key(group.items).series)" ng-class-odd="'series-bk-odd'" ng-class-even="'series-bk-even'">Type</th>
+                                                    <th ng-repeat-end ng-class-odd="'series-bk-odd'" ng-class-even="'series-bk-even'">Visible</th>
+                                                </tr>
+
+                                                <tr ng-repeat="item in group.items">
+                                                    <td><img ng-if="item.photo.length" class="item-thumbnail" ng-src="{{ item.photo }}" /></td>
+                                                    <td>
+                                                        <a target="_blank" href="/admin/caravans/sku/{{ item.id }}">
+                                                            {{ item.title }}
+                                                        </a>
+                                                        &nbsp;
+                                                        <a target="_blank" href="/admin/caravans/seriessku/?available=true&sku__id__exact={{ item.id }}">
+                                                            <span title="View series that include this item" class="glyphicon glyphicon-list"></span>
+                                                        </a>
+                                                        <span ng-if="item.title != item.public_description">
+                                                            <br>
+                                                            {{ item.public_description }}
+                                                        </span>
+                                                    </td>
+                                                    <td>{{ item.code }}</td>
+                                                    <td class="currency"><div>{{ item.rrp | currency }}</div></td>
+                                                    <td ng-repeat="series in visibleSeries(item.series)" ng-class-odd="'series-bk-odd'" ng-class-even="'series-bk-even'" colspan="2">
+                                                        <div class="as-cell">
+                                                            <select class="form-control"
+                                                                    ng-model="series.availability_type"
+                                                                    ng-options="t.id as t.title for t in data.availability_types"
+                                                                    ng-change="update_series_sku(series)">
+                                                            </select>
+                                                        </div>
+                                                        <div class="as-cell checkbox">
+                                                            <input type="checkbox"
+                                                                   ng-model="series.print_visible"
+                                                                   ng-change="update_series_sku(series)">
+                                                        </div>
+                                                        <div ng-if="false"><!--
+                                                            Commented out on 15/07/2016
+                                                            Can be removed if client validates that an overwrite of the contractor description is not required at the seriesSKU level
+                                                            Logic needs to be updated to ignore this value in schedule.views.export.ContractorExportView
+                                                            <input type="text"
+                                                                   placeholder="Contractor Description"
+                                                                   title="Contractor Description"
+                                                                   ng-model="series.contractor_description"
+                                                                   ng-change="update_series_sku(series)"
+                                                                   ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 1000, 'blur': 0 } }" />
+                                                        -->
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </uib-accordion-group>
+                    </uib-accordion>
+
+                </uib-accordion-group>
+            </uib-accordion>
+        </div>
+    </div>
+
+    <div class="alert alert-success" ng-if="data.update_successful_message">{{ data.update_successful_message }}</div>
+    <div class="alert alert-danger" ng-if="data.update_failed_message">{{ data.update_failed_message }}</div>
+
+    <div class="modal fade" id="clone-series">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Select series to clone</h4>
+                </div>
+                <div class="modal-body">
+                    <form name="clone_form">
+                        <div class="form-group">
+                            <label class="control-label">Current Model</label>
+                            <div class="form-value">
+                                <h4>{{ data.selected_model.name }}</h4>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Series to Clone</label>
+
+                            <div class="form-value" id="series-lookup">
+                                <select class="form-control"
+                                        name="cloneSeries"
+                                        ng-model="clone.series_id"
+                                        ng-options="s.id as (s.title + ' (' + s.code + ')') for s in data.selected_model.series"
+                                        required>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Model for the New Series</label>
+
+                            <div class="form-value">
+                                <select class="form-control"
+                                        name="cloneModel"
+                                        ng-model="clone.model_id"
+                                        ng-options="m.id as m.name for m in data.models"
+                                        required>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="form-value">
+                                <input placeholder="New Series Title"
+                                       name="cloneTitle"
+                                       ng-model="clone.series_title"
+                                       type="text" class="form-control"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-value">
+                                <input placeholder="New Series Prefix"
+                                       name="cloneCode"
+                                       ng-model="clone.series_code"
+                                       type="text" class="form-control"
+                                       required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Select Schedule Unit</label>
+
+                            <div class="form-value">
+                                <select class="form-control"
+                                        name="production_unit"
+                                        ng-model="clone.production_unit"
+                                        required>
+                                        <option value="1">Caravans</option>
+                                        <option value="2">Pop-Top/Campers</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="alert alert-warning" ng-if="clone.message">{{ clone.message }}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" ng-click="on_clone_series(clone_form)">Clone</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

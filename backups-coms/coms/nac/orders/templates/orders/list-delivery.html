@@ -1,0 +1,19 @@
+{% extends "newage/generic/list.html" %}
+{% load staticfiles %}
+
+{% block bodyclass %}orders-list{% endblock %}
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="{% url 'orders:list-delivery' %}">VIN Data Sheet</a>
+{% endblock %}
+
+{% block page_heading %}
+    VIN Data Sheet
+{% endblock %}
+
+{% block page_subheading %}
+    Manage Orders <a rel="noreferrer noopener" target="_blank" class='btn btn-primary pull-right' href="{% url 'orders:export-delivery' %}?{{ request.GET.urlencode }}">Export orders</a>
+{% endblock %}

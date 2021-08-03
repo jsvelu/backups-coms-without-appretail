@@ -1,0 +1,30 @@
+
+#schedule_availability table {
+	margin-top: 30px;
+}
+
+
+
+#schedule_availability table td, #schedule_availability table th {
+    border-color: #bbbbbb #999999;
+    border-image: none;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 0;
+    padding: 12px !important;
+}
+
+#schedule_availability table th {
+    background-color: #ADD8E6;
+    border-top-style: none;
+    color: black;
+    font-weight: bold;
+}
+
+#schedule_availability table .open {
+    background-color: #bbffbb;
+}
+
+#schedule_availability table .closed {
+    background-color: #ffbbbb;
+}

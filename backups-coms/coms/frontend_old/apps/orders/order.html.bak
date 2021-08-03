@@ -1,0 +1,122 @@
+<top-bar>
+    <h4>{{ current_dealership().title }}</h4>
+    <h2>
+        <span ng-if="!order.id">New </span>
+        {{ order.order_stage_details ? order.order_stage_details.label : ' Quote' }}
+        {{ order.id }}<span ng-if="order.chassis">, Chassis # {{ order.chassis }}</span>
+        {{ order.order_stage_details.code == 'CANCELLED' ? ' (Cancelled)' : '' }}
+    </h2>
+
+    <div class="pull-right">
+        <div class="row text-right">
+            <button ng-if="canOrderApprovalBeRequested()" class="btn btn-primary pull-right header-right-button" ng-click="requestOrderApproval()" ng-disabled="!info.items">Request to Place Order</button>
+
+            <button ng-if="canOrderBePlaced()" class="btn btn-primary pull-right header-right-button" ng-click="confirmPlaceOrder()" ng-disabled="!info.items">Place Order</button>
+            <button ng-if="canOrderApprovalBeRejected()" class="btn btn-primary pull-right header-right-button" ng-click="rejectOrderApproval()" ng-disabled="!info.items">Reject Order</button>
+            <button ng-if="canOrderBeCancelled()" class="btn btn-primary pull-right header-right-button" ng-click="confirmCancelOrder()" ng-disabled="!info.items">Cancel Order</button>
+
+            <button ng-if="canOrderBeFinalized()" class="btn btn-primary pull-right header-right-button" ng-click="finalizeOrder()" ng-disabled="!info.items">Lock Order</button>
+
+            <button ng-if="canOrderBeSaved()" class="btn btn-primary pull-right header-right-button" ng-click="saveOrder()" ng-disabled="!info.items">Save {{ order.order_stage_details.label }}</button>
+            <div class="spinner-container"><bar-spinner ng-if="loading.order"></bar-spinner></div>
+        </div>
+        <div class="row text-right top-margin-10">
+            <button ng-if="canCreateOrderForSameCustomer()" class="btn btn-primary pull-right header-right-button" ng-click="newOrderForCustomer()">Start a new Quote for this customer</button>
+        </div>
+    </div>
+
+    <div class="row top-bar-info">
+        <div class="col-sm-2" ng-if="current_dealership()">
+            <h5>Customer</h5>
+            <h4 ng-if="!order.customer">(STOCK)</h4>
+            <h4 ng-if="order.customer">{{ order.customer.first_name }} {{ order.customer.last_name }}</h4>
+        </div>
+        <div class="col-sm-2" ng-if="order.model && order.series">
+            <h5>Model</h5>
+            <h4>{{ order.series_code }}</h4>
+        </div>
+        <div class="col-sm-2" ng-if="order.model && order.series">
+            <h5>Retail Sale price</h5>
+            <h4 name="order_retailprice" ng-if="info.show_price">{{ calculatePrice().price | currency }}</h4>
+            <a href="" ng-click="info.show_price = !info.show_price">
+                <span ng-if="info.show_price">Hide </span>
+                <span ng-if="!info.show_price">Show </span>price
+            </a>
+        </div>
+        <div class="col-sm-2" ng-if="order.model && order.series">
+            <h5>Stage</h5>
+            <h4 name="order_stage">{{ order.order_stage_details.label }}{{ order.is_expired? " (Expired)" : "" }}{{ order.order_stage_details.code == 'CANCELLED' ? ' (Cancelled)' : '' }}</h4>
+        </div>
+
+    </div>
+    <div class="row top-bar-info">
+        <div class="col-sm-4" ng-if="order.model && order.series">
+            <h5>Production Month</h5>
+            <h4>{{ order.production_month?order.production_month:"N/A" }}</h4>
+        </div>
+        <div class="col-sm-4" ng-if="order.model && order.series" ng-hide="true">
+            <h5>Production Date</h5>
+            <h4>{{ order.production_start_date?order.production_start_date:"N/A" }}</h4>
+        </div>
+    </div>
+
+    <div class="row top-bar-info alert alert-danger" ng-if="order.salesforce_sync_error">
+        <div class="col-sm-6">
+            There was an issue on the last sync with Salesforce. Please try again.
+        </div>
+        <div class="col-sm-2">
+            <button ng-click="updateSalesforce()">Update Salesforce</button>
+        </div>
+    </div>
+</top-bar>
+
+<div>
+    <tabs data="tabData" type="tabs" />
+    <a id="message-anchor"></a>
+    <ui-view></ui-view>
+</div>
+
+<div id="cancel_order" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cancelling order</h3>
+            </div>
+            <div class="modal-body">
+                <textarea rows="10" cols="65" placeholder="Please enter the reason for cancellation..."
+                          maxlength="2000"
+                          class="form-control"
+                          ng-model="cancelReason"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancelOrder()">Cancel Order</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="place_order" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Confirm Order Placement</h4>
+            </div>
+            <div class="modal-body">
+                <div>
+                    <p>
+                        By selecting “<strong>Place Order</strong>” you acknowledge that this order becomes irrevocable for a stock unit or will attract $1000 cancellation fee if it is a customer order.
+                    </p>
+                    <p>
+                        If any customer order has passed the lockdown date then that order also becomes irrevocable.
+                    </p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Decline</button>
+                <button type="button" class="btn btn-primary" ng-click="placeOrder()" data-dismiss="modal">Place Order</button>
+            </div>
+        </div>
+    </div>
+</div>

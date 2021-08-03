@@ -1,0 +1,23 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>{% block title %}Caravan Operations and Ordering Portal{% endblock title %}</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        {# This file is rendered by wkhtmltopdf, so no outside links. #}
+        {% include 'newage/base_jquery.html' with DEBUG_WEBPACK=DEBUG_WEBPACK APP_SETTINGS=APP_SETTINGS TEST_SETTINGS=TEST_SETTINGS is_html=is_html %}
+
+        <style type="text/css">
+            {%  block css %}{% endblock css %}
+        </style>
+    </head>
+
+    <body class="{% block body_class %}{% endblock body_class %}">
+        {% block header %}{% endblock header %}
+
+        <div id="container">
+            {% block container %}{% endblock container %}
+        </div>
+
+        {% include 'newage/base_jquery_ready.html' %}
+    </body>
+</html>

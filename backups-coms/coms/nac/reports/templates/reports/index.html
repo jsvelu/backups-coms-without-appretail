@@ -1,0 +1,299 @@
+{% extends "admin/base_site.html" %}
+{% load alliance_bundle %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+    <link rel="stylesheet" type="text/css" href="{% static "reports/css/index.css" %}" />
+{% endblock %}
+
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+    <script type="text/javascript">
+        var BASE_RUNSHEET_URL = '{% url 'reports:runsheet' show_id='' %}';
+        var BASE_SERIES_PRICELIST_URL = '{% url 'reports:series_pricelist' model_id=''%}';
+        var BASE_INVOICE_URL = '/reports/invoice_csv/';
+        var BASE_SALES_URL = '/reports/sales/';
+        var BASE_READY_URL = '/reports/ready_view/';
+        var BASE_READY_EXPORT_URL = '/reports/ready_export/';
+        var BASE_DISPATCH_URL = '/reports/dispatch_view/';
+        var BASE_DISPATCH_EXPORT_URL = '/reports/dispatch_export/';
+        window.dateFormat = '{{ APP_SETTINGS.FORMAT_DATE_DATEPICKER_DASH_FMT_JS }}';
+    </script>
+    <script type="text/javascript" src="{% static "reports/js/index.js" %}"></script>
+{% endblock %}
+
+{% block bodyclass %}reports-index{% endblock %}
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    Reports
+{% endblock %}
+
+{% block page_heading %}Reports{% endblock %}
+{% block page_subheading_wrapper %}{% endblock %}
+
+{% block content %}
+
+    <div id="report-index">
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Parameters</th>
+                    <th>Export</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {%  if can_export_runsheet %}
+                <tr>
+                    <td>Runsheet</td>
+                    <td>
+                        <label for="show">
+                            Show:
+                        </label>
+                        <select id="show">
+                            <option value="">--- Select Show ---</option>
+                            {% for show in shows %}
+                                <option value="{{ show.id }}">{{ show.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <a id="runsheet-link" class="btn btn-default" target="_blank">Export</a>
+                        <button id="runsheet-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                    </td>
+                </tr>
+                {%  endif %}
+                     {%  if can_view_series_pricelist_all %}
+                <tr>
+                    <td>Model Series PriceList</td>
+                    <td>
+                        <label for="model">
+                            Model:
+                        </label>
+                        <select id="model">
+                            <option value="">--- Select Model ---</option>                                       
+                            <option value="0">All</option> 
+
+                            {% for model in models %}
+                           
+
+                                <option value="{{ model.id }}">{{ model.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <a id="series_pricelist-link" class="btn btn-default" target="_blank">Export</a>
+                        <button id="series_pricelist-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                    </td>
+                </tr>
+                {%  endif %}
+                
+                {%  if can_export_sales_user or can_export_sales_any %}
+                <tr>
+                    <td>Sales</td>
+                    <td>
+                        <label for="dealership">
+                            Dealership:
+                        </label>
+                        <select id="dealership">
+                            <option value="">--- Select Dealership ---</option>
+                            {% for dealership in dealerships %}
+                                <option value="{{ dealership.id }}">{{ dealership.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <hr/>
+
+                        <label for="order_date">
+                            Order Date:
+                        </label>
+                        <div id="order_date">
+                            <span>
+                                <label>
+                                    From :
+                                    <input type="text" id="sales-date-from" name="sales-date-from" />
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </label>
+                            </span>
+                            <span>
+                                <label>
+                                    To :
+                                    <input type="text" id="sales-date-to" name="sales-date-to" />
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </label>
+                            </span>
+                        </div>
+                    </td>
+
+                    <td>
+                        <a id="sales-link" class="btn btn-default" target="_blank">Export</a>
+                        <button id="sales-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                    </td>
+                </tr>
+                {%  endif %}
+                {% if can_export_invoice %}
+
+                <tr>
+                    <td> Invoice</td>
+                    <td>
+                        <div class="row">
+                            <div id="option_change" class="col-md-10">
+                                <label for="placed_date" >
+                                  <input type="radio" name="order_filter" id="production_date" value="production_date"> Production Date
+                                </label>
+                                <label for="placed_date" >
+                                  <input type="radio" name="order_filter" id="order_placed_date" value="order_placed_date"> Order Placed Date
+                                </label>
+                            </div>
+                        </div>
+                        <div  class="row">
+                            <div id="placed_date" class="col-md-8">
+                                <span>
+                                    <label>
+                                        From :
+                                        <input type="text" id="date-from" name="date-from" />
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </label>
+                                </span>
+                                <span>
+                                    <label>
+                                        To :
+                                        <input type="text" id="date-to" name="date-to" />
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </label>
+                                </span>
+                                
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <a id="invoice-link" class="btn btn-default" target="_blank">Export</a>
+                        <button id="invoice-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                    </td>
+                </tr>
+                {% endif %}
+                {% if can_export_colorsheet %}
+                <tr>
+                    <td>Orders requiring selections</td>
+                    <td></td>
+                    <td>
+                        <a id="colorselection-link" class="btn btn-default" target="_blank" href="{% url 'reports:color' %}">Export</a>
+                    </td>
+                </tr>
+                {%  endif %}
+
+                {% if current_user == "suresh@newagecaravans.com.au" %}
+                <tr>
+                    <td>Ready For Dispatch</td>
+                    <td>
+                        <div id="ready_date">
+                            <span>
+                                <label>
+                                    From :
+                                    <input type="text" id="dispatch-date-from" name="dispatch-date-from" />
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </label>
+                            </span>
+                            <span>
+                                <label>
+                                    To :
+                                    <input type="text" id="dispatch-date-to" name="dispatch-date-to" />
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </label>
+                            </span>
+                        </div>
+                     </td>
+                    <td>
+                         
+                        <a id="ready-link" class="btn btn-default">Email </a>
+                       
+                        <a id="ready-export-link" class="btn btn-default">Export</a>
+                    </td>
+                         
+                     
+                     
+                </tr>
+                <tr>
+                    <td>Actual Dispatch</td>
+                    <td>
+                        <div id="dispatch_date">
+                            <span>
+                                <label>
+                                    From :
+                        <input type="text" id="actual-dispatch-date-from" name="actual-dispatch-date-from" />
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </label>
+                            </span>
+                            <span>
+                                <label>
+                                    To :
+                                    <input type="text" id="actual-dispatch-date-to" name="actual-dispatch-date-to" />
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </label>
+                            </span>
+                        </div>
+                     </td>
+                    <td>
+                      <a id="dispatch-link" class="btn btn-default">Email</a>
+                        <a id="dispatch-export-link" class="btn btn-default">Export</a>
+                    </td>
+                </tr>
+                {% endif %}
+                
+                {%if can_upload_vin_number %}
+                <tr>
+                    <td>
+                        VIN Data Upload
+                    </td>
+                    <td>
+                        <form action="vin_upload/" method="POST" enctype="multipart/form-data" >
+                <label for="file1"> Upload a file</label>
+        <input type="file" id="csv_file" name="csv_file">
+        <small>Only accepts CSV files. First Column is Chassis No and Second Column is VIN Number</small>
+                    </td>
+                    <td>
+                         <button type="submit">Upload</button>
+                    </td>
+                </form>
+            </tr>
+            {% endif %}
+
+            {%if can_upload_series_pricelist %}
+            <tr>
+                    <td>
+                        Series Price Upload
+                    </td>
+                    <td>
+                        <form action="series_price_upload/" method="POST" enctype="multipart/form-data" >
+                <label for="file1"> Upload a file</label>
+        <input type="file" id="csv_file" name="csv_file">
+        <small>Only accepts CSV files. First Column is Series Code, Second Column is Wholesale Price, Third Column is Retail Price</small>
+                    </td>
+                    <td>
+                         <button type="submit">Upload</button>
+                    </td>
+                </form>
+            </tr>
+            <tr>
+                <td >  Series Price Audit  </td> <td colspan="2"> 
+                    <a href="{% url 'reports:view_series_price_audit' %}?view_type=view_audit "> Click to View  </a></td>
+            </tr>
+            {% endif %}
+            </tbody>
+        </table>
+         
+
+
+    </div>
+
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

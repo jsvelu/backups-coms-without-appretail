@@ -1,0 +1,60 @@
+
+span.required {
+    color: red;
+}
+
+span.record-count {
+    margin-right: 20px;
+}
+
+div.panel-primary {
+    border: none;
+}
+
+div.collapse-div {
+    border: 1px solid lightgrey;
+}
+
+button.btn-newage, a.btn-newage {
+    color: white;
+    background-color: red;
+}
+
+div.top-margin-10 {
+    margin-top: 10px;
+}
+
+a.record-link {
+    color: cornflowerblue;
+}
+
+div.crm-tabs {
+    margin-top: 2px;
+    padding-left: 20px;
+}
+
+.img-thumbnail-manager {
+    max-height: 124px !important;
+    margin-bottom: 0px;
+    cursor: pointer;
+    line-height:110px !important;
+}
+
+.img-thumbnail-manager img {
+    max-height:112px;
+    min-width:150px;
+    max-width:150px;
+}
+
+.photo-section-heading:before {
+    /* symbol for "opening" panels */
+    font-family: 'Glyphicons Halflings';
+    content: "\e114";
+    float: left;
+    color: grey;
+    padding-right: 4px;
+}
+
+.photo-section-heading.collapsed:before {
+    content: "\e080";
+}

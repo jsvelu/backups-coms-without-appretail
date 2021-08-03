@@ -1,0 +1,22 @@
+{% extends "crm/crm.html" %}
+{% load staticfiles %}
+{% load floppyforms %}
+
+{% block crm_breadcrumbs %}{{ block.super }} > <a href="{% url 'crm:add_lead' %}">Add Lead</a>{% endblock %}
+
+{% block crm_content %}
+    <div class="container-fluid">
+
+        <form method="post" action="{% url 'crm:add_lead' %}" novalidate>
+            {% csrf_token %}
+            {% form form using "floppyforms/layouts/bootstrap.html" %}
+
+            <button type="submit" class="btn btn-newage pull-right" id="btnSave">
+                <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Save
+            </button>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

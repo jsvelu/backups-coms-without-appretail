@@ -1,0 +1,125 @@
+{% extends "admin/base_site.html" %}
+{% load humanize %}
+{% load staticfiles %}
+
+{% block bodyclass %}caravans-skuimport{% endblock %}
+{% block breadcrumb_icon %}<img src="{% static 'newage/icons/bills-of-materials.png' %}">{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'home' %}">Manage SKU's</a>{% endblock %}
+{% block page_heading %}SKU Import{% endblock %}
+{% block page_subheading_wrapper %}{% endblock page_subheading_wrapper %}
+
+{% block content %}
+
+    <h3 class="top-margin-40">SKU Spreadhseet Upload</h3>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ upload_form.non_field_errors }}</p>
+        <p>{{ upload_form.docfile.label_tag }}</p>
+        <p>
+            {{ upload_form.docfile.errors }}
+            {{ upload_form.docfile }}
+        </p>
+        <p><button type="submit" value="Upload" name="action" class="btn btn-primary">Upload Spreadsheet</button></p>
+    </form>
+
+    {% if import_log %}
+    <h3 class="top-margin-40">Import Log</h3>
+    <div class="import-log">
+        {% for entry in import_log %}
+            {{ entry.line }}: {{ entry.message }}<br>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <h3 class="top-margin-40">
+        Import SKU's <span class="pull-right legend">Key: <div class="key-new"></div> = New SKU <div class="key-updated"></div> = Updated SKU</span>
+    </h3>
+    <table class="table">
+        <thead>
+        <tr>
+            <th colspan="7"></th>
+            <th colspan="3" style="text-align:center">New SKU</th>
+            <th></th>
+            <th colspan="3" style="text-align:center">Current SKU</th>
+        </tr>
+        <tr>
+            <th>Code</th>
+            <th>Supplier</th>
+            <th>Category</th>
+            <th>Department</th>
+            <th>Item</th>
+            <th>Visible</th>
+
+            <th>Qty</th>
+            <th>Unit</th>
+            <th class="currency">Unit $ (exc GST)</th>
+            <th class="currency">Wholesale $ (exc GST)</th>
+
+            <th><input id="toggle-checkboxes" type="checkbox"/></th>
+
+            <th>Qty</th>
+            <th class="currency">Wholesale $</th>
+            <th class="currency">Retail $</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for sku in skus %}
+            <tr class="{{ sku.status }}">
+                <td>{{ sku.code }}</td>
+                <td>{{ sku.order_source }}</td>
+                <td>{{ sku.category }}</td>
+                <td>{{ sku.department }}</td>
+                <td>{{ sku.description }}</td>
+                <td>{{ sku.visible }}</td>
+
+                <td>{{ sku.qty }}</td>
+                <td>{{ sku.unit }}</td>
+                <td class="currency">{{ sku.unit_cost_exc|floatformat:2|intcomma }}</td>
+                <td class="currency">{{ sku.wholesale_cost_exc|floatformat:2|intcomma }}</td>
+
+                <td>
+                    <input form="sku-update-form" name="update-{{ sku.row }},{{ sku.code }}" value="hi" type="checkbox"/>
+                </td>
+
+                <td>{{ sku.current.quantity }}</td>
+                <td class="currency">{{ sku.current.wholesale_price|floatformat:2|intcomma }}</td>
+                <td class="currency">{{ sku.current.retail_price|floatformat:2|intcomma }}</td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <form id="sku-update-form" method="post" action="{% url 'caravans:sku_import' filename %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <button type="submit" value="Update" name="action" class="btn btn-primary">Import/Update SKU's</button>
+
+        <hr>
+
+        <h3 class="top-margin-40">
+            Update SKU Images
+        </h3>
+
+        <div class="row top-margin-40">
+            <div class="col-sm-12">
+                <fieldset class="form-group">
+                    <label for="id_image_directory">Specify the directory that contains the images</label>
+                    <input type="file" multiple webkitdirectory class="form-control" name="image_directory" id="id_image_directory" />
+                </fieldset>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12" style="max-height: 200px;overflow-y: auto;">
+                <ul id="file_output"></ul>
+            </div>
+        </div>
+
+        <div class="row top-margin-20">
+            <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary" name="action" value="update_images">Update</button>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}

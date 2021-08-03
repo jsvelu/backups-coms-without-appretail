@@ -1,0 +1,14 @@
+{% extends "admin/base_site.html" %}
+{% load staticfiles %}
+{% block extrastyle %}
+    <link type="text/css" rel="stylesheet" href="{% static 'crm/styles/base.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="top-margin-10">
+    {% block help_content %}
+    {% endblock %}
+    </div>
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

@@ -1,0 +1,11 @@
+<span ng-class="s.buildPriority.class">
+    <ui-select ng-model="s.buildPriorityId" on-select="onSelect($item, $model)">
+        <ui-select-match>{{ $select.selected.name }}</ui-select-match>
+        <ui-select-choices
+                repeat="priority in refData.buildPriorities"
+                theme="select2"
+                >
+            <span>{{ ::priority.name }}</span>
+        </ui-select-choices>
+    </ui-select>
+</span>

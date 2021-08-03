@@ -1,0 +1,12 @@
+
+body.newage-home img.item-thumbnail {
+    width: 40px;
+}
+
+#todo-items th {
+    border-bottom: 1px solid lightgrey;
+}
+
+#todo-items tr.even {
+    background-color: #eeeeee;
+}

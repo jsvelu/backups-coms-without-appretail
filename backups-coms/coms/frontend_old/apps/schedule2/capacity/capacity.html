@@ -1,0 +1,48 @@
+<div id="capacity">
+    <top-bar>
+        <h2 class="top-bar__title">Pop-Top/Campers Production Capacity</h2>
+    </top-bar>
+
+    <messages></messages>
+
+    <div class="row header">
+        <label>Date range:</label>
+        <select ng-model="currentMonth"
+            ng-options="month.value as month.title for month in monthList" no-dirty-check></select>
+        <bar-spinner ng-if="initialDataLoading"></bar-spinner>
+    </div>
+
+    <div class="row content">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Capacity</th>
+                    <th>Type</th>
+                    <th ng-if="permissions.change_schedule_capacity"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="week in weekList" ng-class-odd="'odd'" ng-class-even="'even'">
+                    <td>{{ week.start_label }} - {{ week.end_label }}</td>
+                    <td><strong>{{ week.total_capacity }}</strong></td>
+                    <td>
+                        <ul>
+                            <li ng-repeat="day in week.days" ng-class="day.month_start ? 'month-start': ''">
+                                <label>{{ day.label }}</label>
+                                <input type="number" ng-model="day.capacity" ng-readonly="!permissions.change_schedule_capacity" />
+                                <div>{{ day.month_start }}</div>
+                            </li>
+                        </ul>
+                    </td>
+                    <td ng-if="permissions.change_schedule_capacity"><a ng-if="!$last" ng-click="duplicate(week)">Copy to following week</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="row footer">
+        <button ng-if="permissions.change_schedule_capacity" class="btn btn-primary btn-lg btn-danger" ng-click="save()">Save changes</button>
+        <bar-spinner ng-if="saveLoading"></bar-spinner>
+    </div>
+</div>

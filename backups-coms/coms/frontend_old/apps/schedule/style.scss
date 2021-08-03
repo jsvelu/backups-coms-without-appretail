@@ -1,0 +1,1238 @@
+@import "../shared/config";
+
+@import "bootstrap/variables";
+
+.schedule-wrap {
+  //overflow-x:scroll;
+  //margin-left:8em;
+  //overflow-y:visible;
+  padding-bottom:1px;
+  width: 1140px;
+}
+
+.schedule.table {
+
+  > tbody {
+   border: none;
+  }
+
+  .schedule-week-header {
+    > th {
+      background-color: #000;
+      border: solid #cecece;
+      border-width: 0 0 1px;
+      padding: 0;
+      height: 60px;
+
+      &.empty {
+        background-color: #333;
+      }
+
+      .accordion-toggle {
+        padding: 22px 15px;
+        line-height: 1;
+        position: absolute;
+        left: 15px;
+        width: 1140px;
+      }
+    }
+  }
+
+  .blank {
+    width: 120px;
+    min-width: 120px;
+    //display: block;
+    border:none;
+  }
+
+  .schedule-order {
+    > td:first-child {
+      //position:absolute;
+      //width:120px;
+      //left:15px;
+      //top:auto;
+      background-color: #fff;
+      min-height: 59px;
+      min-width: 120px;
+      z-index: 100;
+      box-shadow: 10px 3px 10px -10px rgba(0,0,0,0.6);
+
+      & + td {
+        box-shadow: inset 10px 0 25px -18px rgba(0, 0, 0, 0.8);
+      }
+    }
+
+    > th,
+    > td {
+      // This might cause issues
+      white-space: nowrap;
+      min-height: 59px;
+
+      border-left: 1px solid #d6d6d8;
+
+      &:first-child {
+        border-left: none;
+      }
+    }
+
+    .blank + td {
+      border-left: none;
+    }
+
+    &.error {
+      > td {
+        background-color: lighten($newage-red, 40%);
+      }
+    }
+  }
+
+  .header {
+    background-color: #fff;
+
+    > th {
+      font-weight: 700;
+      text-transform: uppercase;
+
+      &:not(:first-child) {
+        box-shadow: inset 10px 0 25px -18px rgba(0, 0, 0, 0.8);
+      }
+    }
+  }
+
+  .subheader {
+    background-color: #fff;
+
+    > th {
+      border-left: 1px solid #d6d6d8;
+      border-top: none;
+      min-height: 59px;
+      min-width: 110px;
+
+      &.narrow {
+        min-width: 60px;
+      }
+
+      &:first-child {
+        border-left: none;
+        //position:absolute;
+        //width:120px;
+        //left:15px;
+        //top:auto;
+        background-color: #fff;
+        min-height: 59px;
+        //box-shadow: 10px 3px 10px -10px rgba(0,0,0,0.6);
+
+        & + th {
+          box-shadow: inset 10px 0 25px -18px rgba(0, 0, 0, 0.8);
+        }
+      }
+
+      &.field-completion { width: 160px; min-width: 160px; }
+    }
+
+    .blank + th {
+      border-left: none;
+    }
+  }
+
+  .subtext {
+    color: #888;
+    font-style: italic;
+  }
+
+  .glyphicon {
+    color: $gray-dark;
+  }
+  .glyphicon-ok {
+    color: #383;
+  }
+  .glyphicon-ok.override {
+    color: #351;
+  }
+  .glyphicon-plus {
+    color: $gray-light;
+  }
+  a:hover .glyphicon {
+    color: $link-hover-color;
+  }
+
+  .error-capacity {
+    color: $form-invalid-color;
+    font-weight: bold;
+  }
+
+  .utilization {
+    display: inline-block;
+    float: right;
+
+    &.in-error {
+      color: $newage-red;
+    }
+  }
+
+  .toggle-show {
+    font-weight: 400;
+    color: $newage-blue;
+    display: inline-block;
+    margin-right: 5px;
+    text-transform: none;
+    font-size: 13px;
+  }
+
+  // If you don't do this, popovers have a max width
+  .popover {
+    max-width: inherit;
+  }
+
+  .field-build-date {
+    .calendar, .priority {
+      display: block;
+      padding: 1em;
+      min-width: 14em;
+      //min-height: 290px;
+    }
+    .calendar {
+      border-bottom: 1px solid #ccc;
+
+      table {
+        border-collapse: separate;
+        border-spacing: 2px;
+
+        margin-bottom: 1em;
+      }
+
+      table > thead > tr {
+        background-color: #fff;
+        color: #000;
+
+        &:first-child > th {
+          padding: 10px!important;
+        }
+
+        > th {
+          background-color: #ddd;
+          border-radius: 5px;
+        }
+      }
+
+      .btn-default {
+        border-color: #ddd;
+      }
+    }
+
+    .calendar-legend {
+      width: 1em;
+      height: 1em;
+      display: inline-block;
+      vertical-align: middle;
+
+      &.calendar-capacity-full {
+        background: #ffcccc;
+      }
+
+      &.calendar-capacity-none {
+        background: #f76;
+      }
+    }
+
+    button.active {
+      background-color: #000;
+      color: #fff;
+      border-color: #000;
+    }
+
+    // Note that the .active class is put on days that aren't active (!!)
+    // if the real active day isn't visible on screen. We can't even work
+    // around this as the custom-class attribute is evaluated once and
+    // not reevaluated when the day changes.
+    // https://github.com/angular-ui/bootstrap/issues/3879
+    .calendar-select-capacity-full {
+      &.calendar-legend,
+      button { background: #ffcccc; color: #f11; }
+      button.active { background: #f11; color: #ffcccc; }
+    }
+
+    .calendar-select-capacity-none {
+
+      button {
+        background: #f76;
+        border-color: darken(#f76, 20%);
+        color: #fff;
+
+        &[disabled] {
+          background: #efefef;
+          background: repeating-linear-gradient(
+                          -55deg,
+                          #ededed,
+                          #ededed, 2px,
+                          #f2f2f2 2px,
+                          #f2f2f2 5px
+          );
+          opacity: 1;
+          color: darken(#efefef, 20%);
+
+          .text-muted {
+            color: inherit;
+          }
+        }
+      }
+      button.active { background: #f76; border-color: darken(#f76, 20%); }
+    }
+
+  }
+
+  .popup-build-notes {
+    .scroll {
+      max-height: 20em;
+      overflow: scroll;
+    }
+
+    .note { border-bottom: 1px solid $gray-lighter; }
+
+    .field-build-note-text {
+      display: block;
+      // until https://github.com/angular-ui/bootstrap/issues/4762
+      // is solved, make sure this is not so wide that it will go off
+      // the screen
+      width: 24em;
+      height: 8em;
+      margin-bottom: 0.75em;
+    }
+    button {
+      margin-top: 0.75em;
+    }
+  }
+
+  .accordion-toggle {
+    display: block;
+
+    &,
+    &:hover {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 400;
+    }
+  }
+
+  .schedule-week {
+    font-weight: 800;
+  }
+
+  .tbl-section-start {
+    box-shadow: inset 10px 0 25px -18px rgba(0,0,0,0.8);
+
+
+    + th {
+      //box-shadow: inset 10px 0 25px -18px rgba(0,0,0,0.8);
+    }
+  }
+
+  td.tbl-section-start {
+    box-shadow: none;
+
+    + td {
+      box-shadow: inset 10px 0 25px -18px rgba(0,0,0,0.8);
+    }
+  }
+}
+
+//------------------------------------------------------------------------------------
+// Dashboard
+//------------------------------------------------------------------------------------
+
+.modal_title {
+  text-align: center;
+}
+
+.move_orders {
+  text-align: center;
+  align-content: center;
+}
+
+#dashboard {
+  margin: 0 -200px;
+  width: 1500px;
+
+  .messages {
+    text-align: center;
+
+    .alert {
+      display: inline-block;
+      margin: 20px auto 0;
+    }
+  }
+
+  .legend {
+    .highlight { color: white; }
+  }
+
+  div.header {
+    .spinner-container {
+      position: absolute;
+      right: -40px;
+      top: 5px;
+    }
+  }
+
+  div.content {
+    table {
+      margin-top: 30px;
+
+      thead, tbody {
+        tr {
+          width: 100%;
+
+          td, th {
+            border-color: #8D9DC5 #0a1739;
+            border-image: none;
+            border-style: solid;
+            border-width: 1px;
+            border-radius: 0;
+            text-align: center;
+            padding-left: 2px;
+            padding-right: 2px;
+
+            .input-comments {
+              width: 100%;
+            }
+
+            .glyphicon-ok-sign {
+              color: green;
+            }
+            .glyphicon-question-sign {
+              color: blue;
+            }
+            .glyphicon-remove-sign {
+              color: red;
+            }
+          }
+
+          td.month-header {
+            background-color: #2e4172;
+            color: white;
+            font-size: 1.2em;
+            padding-left: 20px;
+            text-align: left;
+
+            .capacity, .status-summary {
+              font-size: 0.9em;
+              margin-left: 50px;
+              > span {
+                margin-right: 15px;
+              }
+            }
+
+            .status-summary > span {
+              color: black;
+              padding-left: 2px;
+              padding-right: 2px;
+            }
+
+          }
+
+          td {
+            &.drag-handle {
+              cursor: move;
+            }
+          }
+
+          .not-available {
+            color: #888;
+            cursor: not-allowed;
+          }
+
+          .comments {
+            width: 25%;
+
+            bar-spinner {
+              margin-left: -80px;
+              margin-top: 2px;
+              position: absolute;
+            }
+          }
+
+          .spinner-container {
+            background-color: white;
+            border: none;
+            line-height: 28px;
+            margin-left: 1px;
+            position: absolute;
+
+            .spinner {
+              margin-left: 0;
+            }
+          }
+
+          .cancelled {
+            background-color: grey;
+          }
+
+          .customer_approved {
+            background-color: green;
+          }
+
+          .pending_customer {
+            background-color: yellow;
+          }
+
+          .pending_draft {
+            background-color: orange;
+          }
+          .senior_designer_verfied {
+            background-color: #00C8F9;
+          }
+          .plans_completed{
+            background-color: green;
+          }
+
+          .not_finalized {
+            background-color: red;
+          }
+
+          .purchase_order_raised {
+            background-color: white;
+          }
+
+          .summary_plans_completed {
+            background-color: white;
+          }
+         
+
+        }
+        tr.odd {
+          background-color: #dfe8ff;
+        }
+
+        tr.even {
+          background-color: #ffffff;
+        }
+
+        .sortable-placeholder {
+          line-height: 28px;
+        }
+
+        .extra-placeholder {
+          height: 20px;
+
+          td {
+            border: none;
+          }
+        }
+      }
+
+      thead {
+        tr {
+          th {
+            background-color: #8d9dc5;
+            border-top-style: none;
+            color: black;
+            font-weight: bold;
+            /* Modified */
+            position: sticky;
+            top: 0px; 
+            z-index: 1px;
+          }
+        }
+      }
+    }
+
+    .footer {
+      margin: 30px auto auto;
+      width: 800px;
+
+      button {
+        display: block;
+        margin: 20px auto;
+      }
+    }
+  }
+}
+
+
+//------------------------------------------------------------------------------------
+// Capacity
+//------------------------------------------------------------------------------------
+
+#capacity {
+  .messages {
+    text-align: center;
+
+    .alert {
+      display: inline-block;
+      margin: 20px auto 0;
+    }
+  }
+
+  .content {
+    margin: 20px 0;
+    .ng-dirty {
+      border: 2px solid orange;
+    }
+
+    td {
+      border: 1px solid lightgray;
+      text-align: center;
+
+      ul {
+        margin-bottom: 0;
+
+        li {
+          display: inline-block;
+          list-style: outside none none;
+          padding: 10px 0;
+          vertical-align: top;
+          width: 14.28%;
+
+
+          label {
+            width: 100%;
+          }
+
+          input {
+            padding: 5px 0 5px 8px;
+            width: 60px;
+          }
+        }
+
+        .month-start {
+          background-color: darkgrey;
+        }
+      }
+    }
+  }
+
+  .row.footer {
+    text-align: center;
+  }
+}
+
+//------------------------------------------------------------------------------------
+// Schedule planner
+//------------------------------------------------------------------------------------
+
+#planner {
+  margin: 0 -200px;
+  width: 1500px;
+
+  .messages {
+    text-align: center;
+
+    .alert {
+      display: inline-block;
+      margin: 20px auto 0;
+    }
+  }
+
+  > table {
+    margin-top: 30px;
+
+    > thead , > tbody {
+      > tr {
+        > td, > th {
+          border-color: #dddddd #999999;
+          border-image: none;
+          border-style: solid;
+          border-width: 1px;
+          border-radius: 0;
+          padding: 12px !important;
+        }
+      }
+    }
+
+    > thead > tr > th {
+      background-color: #eeeeee;
+      border-top-style: none;
+      color: black;
+      font-weight: bold;
+    }
+  }
+
+  .footer {
+    margin: 30px auto auto;
+    width: 800px;
+
+    button {
+      display: block;
+      margin: 20px auto;
+    }
+  }
+}
+
+
+//------------------------------------------------------------------------------------
+// Export
+//------------------------------------------------------------------------------------
+
+#export {
+  .messages {
+    text-align: center;
+
+    .alert {
+      display: inline-block;
+      margin: 20px auto 0;
+    }
+  }
+
+  > table {
+    margin-top: 30px;
+
+    > thead , > tbody {
+      > tr {
+        > td, > th {
+          border-color: #dddddd #999999;
+          border-image: none;
+          border-style: solid;
+          border-width: 1px;
+          border-radius: 0;
+          padding: 12px !important;
+        }
+
+        > td:last-child {
+          text-align: center;
+        }
+      }
+    }
+
+    > thead > tr > th {
+      background-color: #eeeeee;
+      border-top-style: none;
+      color: black;
+      font-weight: bold;
+    }
+  }
+}
+
+//------------------------------------------------------------------------------------
+// General
+//------------------------------------------------------------------------------------
+
+div.date-group {
+  table > thead > tr:first-child th:first-child {
+    border-top-left-radius: 0px;
+  }
+
+  table > thead > tr:first-child th:last-child {
+    border-top-right-radius: 0px;
+  }
+
+  table {
+    width: 100%;
+  }
+
+  table > thead > tr {
+    background-color: white;
+    color: black;
+  }
+
+  table > thead > tr > th {
+    font-weight: normal;
+    padding: 0px 0px !important;
+  }
+}
+
+
+
+//------------------------------------------------------------------------------------
+// Transport Dashboard
+//------------------------------------------------------------------------------------
+
+.modal_title {
+  text-align: center;
+}
+
+.move_orders {
+  text-align: center;
+  align-content: center;
+}
+
+#transport_dashboard {
+  margin: 0 0px;
+  width: 1500px;
+
+  .messages {
+    text-align: center;
+
+    .alert {
+      display: inline-block;
+      margin: 20px auto 0;
+    }
+  }
+
+  .legend {
+    .highlight { color: white; }
+  }
+
+  div.header {
+    .spinner-container {
+      position: absolute;
+      right: -40px;
+      top: 5px;
+    }
+  }
+
+  div.content {
+    table {
+      margin-top: 30px;
+      overflow-x:auto;
+
+      thead, tbody {
+        tr {
+          width: 1500px;
+
+          td, th {
+            border-color: #8D9DC5 #0a1739;
+            border-image: none;
+            border-style: solid;
+            border-width: 1px;
+            border-radius: 0;
+            text-align: center;
+            padding-left: 2px;
+            padding-right: 2px;
+
+            .input-comments {
+              width: 100%;
+            }
+
+            .glyphicon-ok-sign {
+              color: green;
+            }
+            .glyphicon-question-sign {
+              color: blue;
+            }
+            .glyphicon-remove-sign {
+              color: red;
+            }
+          }
+
+          td.month-header {
+            background-color: #2e4172;
+            color: white;
+            font-size: 1.2em;
+            padding-left: 20px;
+            text-align: left;
+
+            .capacity, .status-summary {
+              font-size: 0.9em;
+              margin-left: 50px;
+              > span {
+                margin-right: 15px;
+              }
+            }
+
+            .status-summary > span {
+              color: black;
+              padding-left: 2px;
+              padding-right: 2px;
+            }
+
+          }
+
+          td {
+            &.drag-handle {
+              cursor: move;
+            }
+          }
+
+          .not-available {
+            color: #888;
+            cursor: not-allowed;
+          }
+
+          .comments {
+            width: 25%;
+
+            bar-spinner {
+              margin-left: -80px;
+              margin-top: 2px;
+              position: absolute;
+            }
+          }
+
+          .spinner-container {
+            background-color: white;
+            border: none;
+            line-height: 28px;
+            margin-left: 1px;
+            position: absolute;
+
+            .spinner {
+              margin-left: 0;
+            }
+          }
+
+          .cancelled {
+            background-color: grey;
+          }
+
+          .customer_approved {
+            background-color: green;
+          }
+
+          .pending_customer {
+            background-color: yellow;
+          }
+
+          .pending_draft {
+            background-color: orange;
+          }
+
+          .not_finalized {
+            background-color: red;
+          }
+
+          .plans_completed {
+            background-color: inherit;
+          }
+
+          .summary_plans_completed {
+            background-color: white;
+          }
+        }
+        tr.odd {
+          background-color: #dfe8ff;
+        }
+
+        tr.even {
+          background-color: #ffffff;
+        }
+
+        .sortable-placeholder {
+          line-height: 28px;
+        }
+
+        .extra-placeholder {
+          height: 20px;
+
+          td {
+            border: none;
+          }
+        }
+      }
+
+      thead {
+        tr {
+          th {
+            background-color: #8d9dc5;
+            border-top-style: none;
+            color: black;
+            font-weight: bold;
+            /* Modified */
+            position: sticky;
+            top: 0px; 
+            z-index: 1px;
+          }
+        }
+      }
+    }
+
+    .footer {
+      margin: 30px auto auto;
+      width: 800px;
+
+      button {
+        display: block;
+        margin: 20px auto;
+      }
+    }
+  }
+}
+
+
+//------------------------------------------------------------------------------------
+// Status Dashboard
+//------------------------------------------------------------------------------------
+
+.modal_title {
+  text-align: center;
+}
+
+.move_orders {
+  text-align: center;
+  align-content: center;
+}
+
+#transport_dashboard_status {
+  margin: 0 0px;
+  width: 1500px;
+
+  .messages {
+    text-align: center;
+
+    .alert {
+      display: inline-block;
+      margin: 20px auto 0;
+    }
+  }
+
+  div.header {
+    .spinner-container {
+      position: absolute;
+      right: -40px;
+      top: 5px;
+    }
+  }
+
+  div.content {
+    table {
+      margin-top: 30px;
+      table-layout:fixed;
+      overflow-x:auto;
+      
+
+      thead, tbody {
+        tr {
+          width: 1500px;
+
+          td, th {
+            border-color: #8D9DC5 #0a1739;
+            border-image: none;
+            border-style: solid;
+            border-width: 1px;
+            border-radius: 0;
+            text-align: center;
+            padding-left: 2px;
+            padding-right: 2px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+          }
+
+          td {
+            border: none;
+          }
+        }
+      }
+
+      thead {
+        tr {
+          th {
+            background-color: #8d9dc5;
+            border-top-style: none;
+            color: black;
+            font-weight: bold;
+            /* Modified */
+            position: sticky;
+            top: 0px; 
+            z-index: 1px;
+          }
+        }
+      }
+    }
+
+    .footer {
+      margin: 30px auto auto;
+      width: 800px;
+
+      button {
+        display: block;
+        margin: 20px auto;
+      }
+    }
+  }
+}
+
+
+//------------------------------------------------------------------------------------
+// Delay Dashboard
+//------------------------------------------------------------------------------------
+
+.modal_title {
+  text-align: center;
+}
+
+.move_orders {
+  text-align: center;
+  align-content: center;
+}
+
+#delay_dashboard_status {
+  margin: 0 0px;
+  width: 1500px;
+
+  .messages {
+    text-align: center;
+
+    .alert {
+      display: inline-block;
+      margin: 20px auto 0;
+    }
+  }
+
+  .legend {
+    .highlight { color: white; }
+  }
+
+  div.header {
+    .spinner-container {
+      position: absolute;
+      right: -40px;
+      top: 5px;
+    }
+  }
+
+  div.content {
+    table {
+      margin-top: 30px;
+      overflow-x:auto;
+
+      thead, tbody {
+        tr {
+          width: 1500px;
+
+          td, th {
+            border-color: #8D9DC5 #0a1739;
+            border-image: none;
+            border-style: solid;
+            border-width: 1px;
+            border-radius: 0;
+            text-align: center;
+            padding-left: 2px;
+            padding-right: 2px;
+
+            .input-comments {
+              width: 100%;
+            }
+
+            .glyphicon-ok-sign {
+              color: green;
+            }
+            .glyphicon-question-sign {
+              color: blue;
+            }
+            .glyphicon-remove-sign {
+              color: red;
+            }
+          }
+
+          td.month-header {
+            background-color: #2e4172;
+            color: white;
+            font-size: 1.2em;
+            padding-left: 20px;
+            text-align: left;
+
+            .capacity, .status-summary {
+              font-size: 0.9em;
+              margin-left: 50px;
+              > span {
+                margin-right: 15px;
+              }
+            }
+
+            .status-summary > span {
+              color: black;
+              padding-left: 2px;
+              padding-right: 2px;
+            }
+
+          }
+
+          td {
+            &.drag-handle {
+              cursor: move;
+            }
+          }
+
+          .not-available {
+            color: #888;
+            cursor: not-allowed;
+          }
+
+          .comments {
+            width: 25%;
+
+            bar-spinner {
+              margin-left: -80px;
+              margin-top: 2px;
+              position: absolute;
+            }
+          }
+
+          .spinner-container {
+            background-color: white;
+            border: none;
+            line-height: 28px;
+            margin-left: 1px;
+            position: absolute;
+
+            .spinner {
+              margin-left: 0;
+            }
+          }
+
+          .cancelled {
+            background-color: grey;
+          }
+
+          .customer_approved {
+            background-color: green;
+          }
+
+          .pending_customer {
+            background-color: yellow;
+          }
+
+          .pending_draft {
+            background-color: orange;
+          }
+
+          .not_finalized {
+            background-color: red;
+          }
+
+          .plans_completed {
+            background-color: inherit;
+          }
+
+          .summary_plans_completed {
+            background-color: white;
+          }
+         
+        }
+        tr.odd {
+          background-color: #dfe8ff;
+        }
+
+        tr.even {
+          background-color: #ffffff;
+        }
+
+        .sortable-placeholder {
+          line-height: 28px;
+        }
+
+        .extra-placeholder {
+          height: 20px;
+
+          td {
+            border: none;
+          }
+        }
+      }
+
+      thead {
+        tr {
+          th {
+            background-color: #8d9dc5;
+            border-top-style: none;
+            color: black;
+            font-weight: bold;
+            /* Modified */
+            position: sticky;
+            top: 0px; 
+            z-index: 1px;
+          }
+        }
+      }
+    }
+
+    .footer {
+      margin: 30px auto auto;
+      width: 800px;
+
+      button {
+        display: block;
+        margin: 20px auto;
+      }
+    }
+  }
+}

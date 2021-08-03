@@ -1,0 +1,35 @@
+import logging
+
+from django.http import JsonResponse
+from rest_framework.decorators import APIView
+
+from customers.models import Customer
+
+
+class LeadsAPIView(APIView):
+
+    def __init__(self):
+        return
+
+    def post(self, request, *args, **kwargs):
+        # **** to test model_items through api interface ****
+        #return self.get_all_leads()
+
+        if request.data.get('type') == 'all_leads':
+            return self.get_all_leads()
+        else:
+            return self.get_all_leads()
+
+    def get_all_leads(self):
+        leads = Customer.objects.filter(lead_type=Customer.LEAD_TYPE_LEAD)
+
+        def build_lead(lead):
+            return {
+                'id': lead.pk,
+                'name': lead.first_name + ' ' + lead.last_name,
+                'post_code': lead.address.suburb.post_code.number,
+                'state': lead.address.suburb.post_code.state.code,
+                'created': str(lead.creation_time),
+            }
+
+        return JsonResponse({'list': [build_lead(l) for l in leads]})

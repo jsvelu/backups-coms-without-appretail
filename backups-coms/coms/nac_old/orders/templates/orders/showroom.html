@@ -1,0 +1,26 @@
+{% extends "admin/base_site.html" %}
+{% load staticfiles %}
+{% block extrastyle %}
+{% endblock %}
+
+{% block breadcrumbs_container %}{% endblock %}
+{% block page_heading_container %}{% endblock %}
+
+{% block content %}
+    <div class="container splash-wrap">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="splash">
+                    {% if splash %}
+                        <img src="{{ splash.url }}" alt="Splash">
+                    {% endif %}
+                    <div class="splash-actions">
+                        <a class="btn btn-lg btn-primary get-quote" href="/newage/orders/#/showroom/customer">Create Quote</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

@@ -1,0 +1,726 @@
+[
+{
+  "fields": {
+    "deleted": null,
+    "name": "Simplicity"
+  },
+  "model": "production.coiltype",
+  "pk": 1
+},
+{
+  "fields": {
+    "deleted": null,
+    "name": "Rocker Roller"
+  },
+  "model": "production.coiltype",
+  "pk": 2
+},
+{
+  "fields": {
+    "deleted": null,
+    "name": "Magic Spring"
+  },
+  "model": "production.coiltype",
+  "pk": 3
+},
+{
+  "fields": {
+    "order_number": 1,
+    "production_month": "2016-09-01"
+  },
+  "model": "production.buildorder",
+  "pk": 1
+},
+{
+  "fields": {
+    "order_number": 2,
+    "production_month": "2016-09-01"
+  },
+  "model": "production.buildorder",
+  "pk": 2
+},
+{
+  "fields": {
+    "order_number": 1,
+    "production_month": "2016-10-01"
+  },
+  "model": "production.buildorder",
+  "pk": 3
+},
+{
+  "fields": {
+    "order_number": 2,
+    "production_month": "2016-10-01"
+  },
+  "model": "production.buildorder",
+  "pk": 4
+},
+{
+  "fields": {
+    "order_number": 3,
+    "production_month": "2016-10-01"
+  },
+  "model": "production.buildorder",
+  "pk": 5
+},
+{
+  "fields": {
+    "build_date": null,
+    "build_date_original": null,
+    "build_order": null,
+    "build_priority": 3,
+    "chassis_ordered_by": null,
+    "chassis_ordered_on": null,
+    "coil_type": 1,
+    "coils_ordered_by": null,
+    "coils_ordered_on": null,
+    "deleted": null,
+    "drafter": null,
+    "drawing_by": null,
+    "drawing_on": null,
+    "drawing_to_prod_by": null,
+    "drawing_to_prod_on": null,
+    "frame_galvanized": null,
+    "qc_date_actual": null,
+    "qc_date_planned": null,
+    "vin_number": null,
+    "weight_atm": null,
+    "weight_chassis_gtm": null,
+    "weight_gas_comp": null,
+    "weight_payload": null,
+    "weight_tare": null,
+    "weight_tow_ball": null,
+    "weight_tyres": null
+  },
+  "model": "production.build",
+  "pk": 1
+},
+{
+  "fields": {
+    "build_date": "2016-01-08",
+    "build_date_original": "2016-01-08",
+    "build_order": null,
+    "build_priority": 1,
+    "chassis_ordered_by": null,
+    "chassis_ordered_on": null,
+    "coil_type": 1,
+    "coils_ordered_by": null,
+    "coils_ordered_on": null,
+    "deleted": null,
+    "drafter": null,
+    "drawing_by": null,
+    "drawing_on": null,
+    "drawing_to_prod_by": null,
+    "drawing_to_prod_on": null,
+    "frame_galvanized": null,
+    "qc_date_actual": null,
+    "qc_date_planned": null,
+    "vin_number": null,
+    "weight_atm": null,
+    "weight_chassis_gtm": null,
+    "weight_gas_comp": null,
+    "weight_payload": null,
+    "weight_tare": null,
+    "weight_tow_ball": null,
+    "weight_tyres": null
+  },
+  "model": "production.build",
+  "pk": 4
+},
+{
+  "fields": {
+    "build_date": "2016-01-11",
+    "build_date_original": "2016-01-11",
+    "build_order": null,
+    "build_priority": 2,
+    "chassis_ordered_by": null,
+    "chassis_ordered_on": null,
+    "coil_type": 2,
+    "coils_ordered_by": null,
+    "coils_ordered_on": null,
+    "deleted": null,
+    "drafter": null,
+    "drawing_by": null,
+    "drawing_on": null,
+    "drawing_to_prod_by": null,
+    "drawing_to_prod_on": null,
+    "frame_galvanized": null,
+    "qc_date_actual": null,
+    "qc_date_planned": null,
+    "vin_number": null,
+    "weight_atm": null,
+    "weight_chassis_gtm": null,
+    "weight_gas_comp": null,
+    "weight_payload": null,
+    "weight_tare": null,
+    "weight_tow_ball": null,
+    "weight_tyres": null
+  },
+  "model": "production.build",
+  "pk": 5
+},
+{
+  "fields": {
+    "build_date": "2016-01-12",
+    "build_date_original": "2016-01-21",
+    "build_order": null,
+    "build_priority": 3,
+    "chassis_ordered_by": null,
+    "chassis_ordered_on": null,
+    "coil_type": 3,
+    "coils_ordered_by": null,
+    "coils_ordered_on": null,
+    "deleted": null,
+    "drafter": null,
+    "drawing_by": null,
+    "drawing_on": null,
+    "drawing_to_prod_by": null,
+    "drawing_to_prod_on": null,
+    "frame_galvanized": null,
+    "qc_date_actual": null,
+    "qc_date_planned": null,
+    "vin_number": null,
+    "weight_atm": null,
+    "weight_chassis_gtm": null,
+    "weight_gas_comp": null,
+    "weight_payload": null,
+    "weight_tare": null,
+    "weight_tow_ball": null,
+    "weight_tyres": null
+  },
+  "model": "production.build",
+  "pk": 6
+},
+{
+  "fields": {
+    "build_date": null,
+    "build_date_original": null,
+    "build_order": 1,
+    "build_priority": 3,
+    "chassis_ordered_by": null,
+    "chassis_ordered_on": null,
+    "coil_type": 1,
+    "coils_ordered_by": null,
+    "coils_ordered_on": null,
+    "deleted": null,
+    "drafter": [
+      "drafter"
+    ],
+    "drawing_by": null,
+    "drawing_on": null,
+    "drawing_to_prod_by": null,
+    "drawing_to_prod_on": null,
+    "frame_galvanized": null,
+    "qc_date_actual": null,
+    "qc_date_planned": null,
+    "vin_number": null,
+    "weight_atm": null,
+    "weight_chassis_gtm": null,
+    "weight_gas_comp": null,
+    "weight_payload": null,
+    "weight_tare": null,
+    "weight_tow_ball": null,
+    "weight_tyres": null
+  },
+  "model": "production.build",
+  "pk": 87
+},
+{
+  "fields": {
+    "build_date": null,
+    "build_date_original": null,
+    "build_order": 2,
+    "build_priority": 3,
+    "chassis_ordered_by": null,
+    "chassis_ordered_on": null,
+    "coil_type": 1,
+    "coils_ordered_by": null,
+    "coils_ordered_on": null,
+    "deleted": null,
+    "drafter": null,
+    "drawing_by": null,
+    "drawing_on": null,
+    "drawing_to_prod_by": null,
+    "drawing_to_prod_on": null,
+    "frame_galvanized": null,
+    "qc_date_actual": null,
+    "qc_date_planned": null,
+    "vin_number": null,
+    "weight_atm": null,
+    "weight_chassis_gtm": null,
+    "weight_gas_comp": null,
+    "weight_payload": null,
+    "weight_tare": null,
+    "weight_tow_ball": null,
+    "weight_tyres": null
+  },
+  "model": "production.build",
+  "pk": 88
+},
+{
+  "fields": {
+    "build_date": null,
+    "build_date_original": null,
+    "build_order": 3,
+    "build_priority": 3,
+    "chassis_ordered_by": null,
+    "chassis_ordered_on": null,
+    "coil_type": 1,
+    "coils_ordered_by": null,
+    "coils_ordered_on": null,
+    "deleted": null,
+    "drafter": null,
+    "drawing_by": null,
+    "drawing_on": null,
+    "drawing_to_prod_by": null,
+    "drawing_to_prod_on": null,
+    "frame_galvanized": null,
+    "qc_date_actual": null,
+    "qc_date_planned": null,
+    "vin_number": null,
+    "weight_atm": null,
+    "weight_chassis_gtm": null,
+    "weight_gas_comp": null,
+    "weight_payload": null,
+    "weight_tare": null,
+    "weight_tow_ball": null,
+    "weight_tyres": null
+  },
+  "model": "production.build",
+  "pk": 90
+},
+{
+  "fields": {
+    "build_date": null,
+    "build_date_original": null,
+    "build_order": 4,
+    "build_priority": 3,
+    "chassis_ordered_by": null,
+    "chassis_ordered_on": null,
+    "coil_type": 1,
+    "coils_ordered_by": null,
+    "coils_ordered_on": null,
+    "deleted": null,
+    "drafter": null,
+    "drawing_by": null,
+    "drawing_on": null,
+    "drawing_to_prod_by": null,
+    "drawing_to_prod_on": null,
+    "frame_galvanized": null,
+    "qc_date_actual": null,
+    "qc_date_planned": null,
+    "vin_number": null,
+    "weight_atm": null,
+    "weight_chassis_gtm": null,
+    "weight_gas_comp": null,
+    "weight_payload": null,
+    "weight_tare": null,
+    "weight_tow_ball": null,
+    "weight_tyres": null
+  },
+  "model": "production.build",
+  "pk": 91
+},
+{
+  "fields": {
+    "build_date": null,
+    "build_date_original": null,
+    "build_order": 5,
+    "build_priority": 3,
+    "chassis_ordered_by": null,
+    "chassis_ordered_on": null,
+    "coil_type": 1,
+    "coils_ordered_by": null,
+    "coils_ordered_on": null,
+    "deleted": null,
+    "drafter": null,
+    "drawing_by": null,
+    "drawing_on": null,
+    "drawing_to_prod_by": null,
+    "drawing_to_prod_on": null,
+    "frame_galvanized": null,
+    "qc_date_actual": null,
+    "qc_date_planned": null,
+    "vin_number": null,
+    "weight_atm": null,
+    "weight_chassis_gtm": null,
+    "weight_gas_comp": null,
+    "weight_payload": null,
+    "weight_tare": null,
+    "weight_tow_ball": null,
+    "weight_tyres": null
+  },
+  "model": "production.build",
+  "pk": 92
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 100,
+    "name": "Chassis / Walls",
+    "section": 10
+  },
+  "model": "production.checklist",
+  "pk": 1
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 200,
+    "name": "Aluminium",
+    "section": 10
+  },
+  "model": "production.checklist",
+  "pk": 2
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 300,
+    "name": "Building",
+    "section": 10
+  },
+  "model": "production.checklist",
+  "pk": 3
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 400,
+    "name": "External Fitoff",
+    "section": 10
+  },
+  "model": "production.checklist",
+  "pk": 4
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 500,
+    "name": "Furniture",
+    "section": 10
+  },
+  "model": "production.checklist",
+  "pk": 5
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 600,
+    "name": "Prewire / Insulation",
+    "section": 10
+  },
+  "model": "production.checklist",
+  "pk": 6
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 700,
+    "name": "Electrical Fitoff",
+    "section": 10
+  },
+  "model": "production.checklist",
+  "pk": 7
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 800,
+    "name": "Internal Finishing",
+    "section": 10
+  },
+  "model": "production.checklist",
+  "pk": 8
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 100,
+    "name": "Front",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 12
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 200,
+    "name": "Driver Side",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 13
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 300,
+    "name": "Back Wall",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 14
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 400,
+    "name": "Kerb Side",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 15
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 500,
+    "name": "Under",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 16
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 600,
+    "name": "Ensuite",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 17
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 700,
+    "name": "Washing Machine",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 18
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 800,
+    "name": "Bunk Area",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 19
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 900,
+    "name": "Kitchen / Lounge",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 20
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 1000,
+    "name": "Bedroom",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 21
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 1100,
+    "name": "Electrical",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 22
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 1200,
+    "name": "Appliances",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 23
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 1300,
+    "name": "Final",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 24
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 1400,
+    "name": "Plumbing",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 25
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 1500,
+    "name": "Weights & Records",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 26
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 1600,
+    "name": "Testing Records",
+    "section": 20
+  },
+  "model": "production.checklist",
+  "pk": 27
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 100,
+    "name": "Floor Vinyl",
+    "section": 30
+  },
+  "model": "production.checklist",
+  "pk": 32
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 200,
+    "name": "Bench Tops",
+    "section": 30
+  },
+  "model": "production.checklist",
+  "pk": 33
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 300,
+    "name": "Awning",
+    "section": 30
+  },
+  "model": "production.checklist",
+  "pk": 34
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 400,
+    "name": "Internal Doors",
+    "section": 30
+  },
+  "model": "production.checklist",
+  "pk": 35
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 500,
+    "name": "External Doors",
+    "section": 30
+  },
+  "model": "production.checklist",
+  "pk": 36
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 600,
+    "name": "Fridge Type",
+    "section": 30
+  },
+  "model": "production.checklist",
+  "pk": 37
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 700,
+    "name": "Washing Machine",
+    "section": 30
+  },
+  "model": "production.checklist",
+  "pk": 38
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 800,
+    "name": "Upholstery",
+    "section": 30
+  },
+  "model": "production.checklist",
+  "pk": 39
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 900,
+    "name": "Mattress",
+    "section": 30
+  },
+  "model": "production.checklist",
+  "pk": 40
+},
+{
+  "fields": {
+    "deleted": null,
+    "display_order": 1000,
+    "name": "Misc.",
+    "section": 30
+  },
+  "model": "production.checklist",
+  "pk": 41
+},
+{
+  "fields": {
+    "checklist": 1,
+    "deleted": null,
+    "display_order": 1,
+    "name": "Wall has been painted"
+  },
+  "model": "production.step",
+  "pk": 1
+},
+{
+  "fields": {
+    "checklist": 12,
+    "deleted": null,
+    "display_order": 1,
+    "name": "Front lights have been checked"
+  },
+  "model": "production.step",
+  "pk": 2
+},
+{
+  "fields": {
+    "checklist": 1,
+    "deleted": null,
+    "display_order": 2,
+    "name": "The paint has dried"
+  },
+  "model": "production.step",
+  "pk": 3
+}
+]

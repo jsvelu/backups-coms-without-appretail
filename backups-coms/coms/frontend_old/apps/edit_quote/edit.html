@@ -1,0 +1,1128 @@
+<top-bar>
+    <h2>Edit Quote</h2>
+    <div class="row top-bar-info">
+        <div class="col-sm-2" ng-if="current_dealership()">
+            <h5>Dealership</h5>
+            <h4>{{ current_dealership().title }}</h4>
+        </div>
+        <div class="col-sm-6" ng-if="quote.model && quote.series">
+            <h4><small>Model: </small>
+            {{ get_model_name() }}</h4>
+            {{ get_series_name() }}
+        </div>
+    </div>
+</top-bar>
+
+<div class="container">
+    <div class="row" ng-if="customer_type=='Dealership'">
+        <div class="col-sm-12">
+
+            <form name="stock_form" class="form top-margin-30">
+                <div class="panel panel-primary" id="panels">
+                    <div class="panel-heading">Create a stock order</div>
+                    <div class="panel-body">
+                            <div class="col-sm-6">
+                                <label class="form-label">DEALERSHIP</label>
+                                <select class="form-control"
+                                        ng-model="quote.dealer_dealership"
+                                        ng-options="dealer.id as dealer.title for dealer in choices.dealerships"
+                                        required>
+                                    <option value="">Select a dealership</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="form-label">DESIRED DELIVERY DATE</label>
+                                <date-dropdowns></date-dropdowns>
+                            </div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <button type="submit" class="btn btn-primary form-control" ng-click="proceed(stock_form)">Create and proceed</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row" ng-if="customer_type=='Customer'">
+        <div class="col-sm-12">
+            <div>
+                <tabset justified="false">
+                    <tab heading="Customer Details">
+                        <form name="customer_form" novalidate class="form top-margin-30" autocomplete="off" form-autofill-fix ng-submit="update_customer_details(customer_form)">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">DEALERSHIP</label>
+                                            <select class="form-control"
+                                                    ng-model="quote.customer_dealership"
+                                                    ng-options="dealer.id as dealer.title for dealer in choices.dealerships">
+                                                <option value="">Select a dealership (optional)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- Customer details -->
+
+                                    <div class="row top-margin-40">
+                                        <div class="col-sm-6"><h4>Customer Details</h4></div>
+                                        <div class="col-sm-6">
+                                            <button class="btn btn-default pull-right">Retrieve customer from leads</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="row top-margin-30">
+                                        <div class="col-sm-6"><i>Fields marked with an asterisk are required</i></div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">
+                                                <red-star></red-star>
+                                                FIRST NAME</label>
+                                            <input type="text" class="form-control" ng-model="quote.customer.first_name" name="first_name" required/>
+                                            <required-field form="customer_form" name="customer_form.first_name" label="First Name"></required-field>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">
+                                                <red-star></red-star>
+                                                LAST NAME</label>
+                                            <input type="text" class="form-control" ng-model="quote.customer.last_name" name="last_name" required/>
+                                            <required-field form="customer_form" name="customer_form.last_name" label="Last Name"></required-field>
+                                        </div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">
+                                                <red-star></red-star>
+                                                EMAIL</label>
+                                            <input type="text" class="form-control" ng-model="quote.customer.email" name="email" required/>
+                                            <required-field form="customer_form" name="customer_form.email" label="Email Address"></required-field>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">PARTNER'S NAME</label>
+                                            <input type="text" class="form-control" ng-model="quote.customer.partner_name" name="partner_name" />
+                                        </div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">
+                                                <red-star></red-star>
+                                                PHONE NUMBER</label>
+                                            <input type="text" class="form-control" ng-model="quote.customer.phone_number" name="phone_number" required/>
+                                            <required-field form="customer_form" name="customer_form.phone_number" label="Phone Number"></required-field>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">DESIRED DELIVERY DATE</label>
+                                            <div class="date-dropdowns">
+                                                <select class="form-control"
+                                                        ng-model="quote.desired_dd_day"
+                                                        ng-options="day as day for day in days">
+                                                    <option value="">dd</option>
+                                                </select>
+                                                <select class="form-control"
+                                                        ng-model="quote.desired_dd_month"
+                                                        ng-options="month[0] as month[1] for month in months">
+                                                    <option value="">mm</option>
+                                                </select>
+                                                <select class="form-control"
+                                                        ng-model="quote.desired_dd_year"
+                                                        ng-options="year as year for year in years">
+                                                    <option value="">yyyy</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <!-- Address -->
+
+
+                                    <div class="row top-margin-40">
+                                        <div class="col-sm-6"><h4>Address</h4></div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">
+                                                <red-star></red-star>
+                                                REGISTERED OWNER</label>
+                                            <input type="text" ng-model="quote.physical_add.owner" name="physical_add_owner" class="form-control" required/>
+                                            <required-field form="customer_form" name="customer_form.physical_add_owner" label="Registered Owner"></required-field>
+                                        </div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">
+                                                <red-star></red-star>
+                                                STREET ADDRESS</label>
+                                            <input type="text" ng-model="quote.physical_add.street" name="physical_add_street" class="form-control" required/>
+                                            <required-field form="customer_form" name="customer_form.physical_add_street" label="Street Address"></required-field>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">
+                                                LOOKUP CITY OR SUBURB</label>
+                                            <lookup result="search.physical_suburb"
+                                                    on-select="select_physical_suburb" type="suburb_lookup" name="physical_add_suburb" autocomplete="off" required></lookup>
+                                        </div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">
+                                                <red-star></red-star>
+                                                CITY / SUBURB</label>
+                                            <input type="text"  ng-model="quote.physical_add.suburb" name="physical_add_suburb" class="form-control" required/>
+                                            <required-field form="customer_form" name="customer_form.physical_add_suburb" label="City / Suburb"></required-field>
+                                        </div>
+                                        <div class="form-group col-sm-4">
+                                            <label class="form-label">
+                                                <red-star></red-star>
+                                                POSTCODE</label>
+                                            <input type="text" ng-model="quote.physical_add.postcode" name="physical_add_postcode" class="form-control" required/>
+                                            <required-field form="customer_form" name="customer_form.physical_add_postcode" label="Postcode"></required-field>
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                        </div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">
+                                                <red-star></red-star>
+                                                STATE</label>
+                                            <select  class="form-control"
+                                                    ng-model="quote.physical_add.state" name="physical_add_state"
+                                                    ng-options="state.id as state.title for state in choices.states" required>
+                                                <option value="">Select a state</option>
+                                            </select>
+                                            <required-field form="customer_form" name="customer_form.physical_add_state" label="State"></required-field>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row top-margin-40">
+
+                                        <accordion class="red" close-others="false">
+
+                                            <!-- Delivery -->
+
+                                            <accordion-group>
+                                                <accordion-heading>
+                                                    <div>Delivery details (if different)</div>
+                                                </accordion-heading>
+
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">NAME</label>
+                                                        <input type="text" ng-model="quote.delivery_add.name" class="form-control"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">STREET ADDRESS</label>
+                                                        <input type="text" ng-model="quote.delivery_add.street" class="form-control"/>
+                                                    </div>
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">LOOKUP CITY OR SUBURB</label>
+                                                        <lookup result="search.delivery_suburb"
+                                                            on-select="select_delivery_suburb" type="suburb_lookup" autocomplete="off"></lookup>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">
+                                                            CITY / SUBURB</label>
+                                                        <input type="text"  ng-model="quote.delivery_add.suburb" name="delivery_add_suburb" class="form-control"/>
+                                                    </div>
+                                                    <div class="form-group col-sm-4">
+                                                        <label class="form-label">POSTCODE</label>
+                                                        <input type="text" ng-model="quote.delivery_add.postcode" class="form-control"/>
+                                                    </div>
+                                                    <div class="form-group col-sm-2">
+                                                    </div>
+                                                </div>
+
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">STATE</label>
+                                                        <select  class="form-control"
+                                                                ng-model="quote.delivery_add.state"
+                                                                ng-options="state.id as state.title for state in choices.states">
+                                                            <option value="">Select a state</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                            </accordion-group>
+
+
+                                            <!-- Invoice -->
+
+                                            <accordion-group>
+                                                <accordion-heading>
+                                                    <div>Invoice details (if different)</div>
+                                                </accordion-heading>
+
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">NAME</label>
+                                                        <input type="text" ng-model="quote.invoice_add.name" class="form-control"/>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">STREET ADDRESS</label>
+                                                        <input type="text" ng-model="quote.invoice_add.street" class="form-control"/>
+                                                    </div>
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">LOOKUP CITY OR SUBURB</label>
+                                                        <lookup result="search.invoice_suburb"
+                                                            on-select="select_invoice_suburb" type="suburb_lookup" autocomplete="off"></lookup>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">
+                                                            CITY / SUBURB</label>
+                                                        <input type="text"  ng-model="quote.invoice_add.suburb" name="invoice_add_suburb" class="form-control"/>
+                                                    </div>
+                                                    <div class="form-group col-sm-4">
+                                                        <label class="form-label">POSTCODE</label>
+                                                        <input type="text" ng-model="quote.invoice_add.postcode" class="form-control"/>
+                                                    </div>
+                                                    <div class="form-group col-sm-2"></div>
+                                                </div>
+
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">STATE</label>
+                                                        <select  class="form-control"
+                                                                ng-model="quote.invoice_add.state"
+                                                                ng-options="state.id as state.title for state in choices.states">
+                                                            <option value="">Select a state</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                            </accordion-group>
+                                        </accordion>
+
+                                    </div>
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-3">
+                                            <button type="submit" class="btn btn-primary form-control" data-ng-disabled="progress.active()">Update and proceed</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="alert alert-success" ng-if="quote.update_successful_message">{{ quote.update_successful_message }}</div>
+                                        <div class="alert alert-danger" ng-if="quote.update_failed_message">{{ quote.update_failed_message }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </tab>
+                    <tab heading="Caravan Details">
+                        <div class="panel panel-default">
+                            <div class="panel-body" style="padding-top:60px;">
+                                <tabset justified="false">
+                                    <tab id="sub_tab_model_series" heading="Model & Series">
+                                        <div class="radio">
+                                          <label>
+                                            <input type="radio" ng-model="caravan_selection" value="base">
+                                            Select from Base Model and Series
+                                          </label>
+                                        </div>
+                                        <div class="radio">
+                                          <label>
+                                            <input type="radio" ng-model="caravan_selection" value="previous">
+                                            Select a previous Customer / Stock Model
+                                          </label>
+                                        </div>
+                                        <div ng-if="caravan_selection=='base'">
+                                            <form name="model_series_form" novalidate class="form top-margin-30" autocomplete="off" form-autofill-fix ng-submit="assign_model_series(model_series_form)">
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">Model</label>
+                                                        <select  class="form-control"
+                                                                ng-model="quote.model" name="model"
+                                                                ng-options="model.id as model.title for model in choices.models" ng-change="on_model_select(quote.model)">
+                                                            <option value="">Select a model</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-6">
+                                                        <label class="form-label">Series</label>
+                                                        <select  class="form-control"
+                                                                ng-model="quote.series" name="series"
+                                                                ng-options="series.id as series.title for series in choices.series_list" ng-change="on_series_select()">
+                                                            <option value="">Select a series</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-3">
+                                                        <button type="submit" class="btn btn-primary form-control" ng-click="on_base_series_selection()" data-ng-disabled="progress.active()">Update and proceed</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="alert alert-success" ng-if="quote.update_successful_message">{{ quote.update_successful_message }}</div>
+                                                    <div class="alert alert-danger" ng-if="quote.update_failed_message">{{ quote.update_failed_message }}</div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div ng-if="caravan_selection=='previous'">
+                                            <form name="assign_qo_form" novalidate class="form top-margin-30" autocomplete="off" form-autofill-fix ng-submit="quote_from_previous(assign_qo_form)">
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-9">
+                                                        <lookup result="search.text" placeholder="Search by Customer Name or Chassis Number" on-select="search_quote_or_order"
+                                                            type="quote_or_order_lookup" autocomplete="off"></lookup>
+                                                    </div>
+                                                </div>
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-3">
+                                                        <button type="submit" class="btn btn-primary form-control" data-ng-disabled="progress.active()">Update and proceed</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="alert alert-success" ng-if="quote.update_successful_message">{{ quote.update_successful_message }}</div>
+                                                    <div class="alert alert-danger" ng-if="quote.update_failed_message">{{ quote.update_failed_message }}</div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </tab>
+                                    <tab id="sub_tab_weight_size" heading="Weight & Size">
+                                        <form name="assign_qo_form" novalidate class="form top-margin-30" autocomplete="off" form-autofill-fix ng-submit="quote_from_previous(assign_qo_form)">
+                                                <div class="row">
+                                                    <div class="form-group col-sm-12">
+                                                        <h3>Estimated Size</h3>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-sm-12">
+                                                        {{ data.series.length_feet }}&#39;&nbsp;{{ data.series.length_inches }}&#34;&nbsp;X&nbsp;{{ data.series.width_feet }}&#39;&nbsp;{{ data.series.width_inches }}&#34;
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-sm-12">
+                                                        <h3>Estimated Weight</h3>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-sm-12">
+                                                        Tare Weight: {{ data.series.tare_weight }} KG, Ball Weight: {{ data.series.ball_weight }} KG
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-sm-12 checkbox">
+                                                        <label>
+                                                          <input type="checkbox" ng-model="quote.weight_understood_as_estimate">
+                                                          I understand that the weight provided above is an estimate only and that the final weight will depend on the Customer's final specifications
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-sm-12">
+                                                        <h4>Specify weight limits for this caravan</h4>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="form-group col-sm-12">
+                                                        Some owners are limited by the towing capacity of their vehicle.
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <div class="col-sm-2">
+                                                        <div class="form-value">
+                                                            <input placeholder="Tare Weight (KG)"
+                                                                   ng-model="clone.tare_weight"
+                                                                   type="text" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-2">
+                                                        <div class="form-value">
+                                                            <input placeholder="Ball Weight (KG)"
+                                                                   ng-model="clone.ball_weight"
+                                                                   type="text" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row top-margin-20">
+                                                    <div class="form-group col-sm-3">
+                                                        <button type="submit" class="btn btn-primary form-control" data-ng-disabled="!quote.weight_understood_as_estimate">Update and proceed</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="alert alert-success" ng-if="quote.update_successful_message">{{ quote.update_successful_message }}</div>
+                                                    <div class="alert alert-danger" ng-if="quote.update_failed_message">{{ quote.update_failed_message }}</div>
+                                                </div>
+                                            </form>
+                                    </tab>
+                                    <tab id="sub_tab_features" heading="Features" active="active_sub_tab[2]">
+                                        <div class="form-group row">
+                                            <div class="col-sm-2">
+                                                <img class="large-thumbnail" ng-if="data.series.has_photos" ng-src="{{ data.series.first_photo }}" />
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <h4>{{ data.series.name }}</h4>
+                                                <div class="row" ng-if="data.series.has_photos">
+                                                    <div class="col-sm-12">
+                                                        <a href="" ng-click="onOpenSeriesPhotos()">View {{ data.series.photo_count }} images</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">&nbsp;</div>
+                                            <div class="col-sm-6">
+                                                <div class="row">
+                                                    <div class="col-sm-8">
+                                                        <h3 class="pull-right" ng-if="info.show_price"><small>Retail Sale Price:&nbsp;&nbsp;&nbsp;</small>
+                                                            {{ data.series_retail_price + quote.upgrade_retail_sum + quote.extra_retail_sum + quote.special_features_retail_sum | currency }}
+                                                        </h3>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <h3>
+                                                            <button type="button" class="btn btn-pending-selection btn-block" ng-click="toggleShowPrice()">{{ info.show_price_button }}</button>
+                                                        </h3>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-9">
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <button type="button" class="btn btn-pending-selection btn-block" ng-click="onShowFeaturedTotals()">Show Totals</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-sm-12"><h4>Upgrades and Optional Extras</h4></div>
+                                        </div>
+                                        <form name="features_form" novalidate class="form top-margin-30" autocomplete="off" form-autofill-fix ng-submit="specify_features(features_form)">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <accordion>
+                                                        <accordion-group class="category" ng-repeat="(catKey, category) in data.categories" ng-if="category.show_tab">
+                                                            <accordion-heading>
+                                                                <div>{{ category.title }}</div>
+                                                            </accordion-heading>
+
+                                                            <accordion>
+                                                                <accordion-group class="sub-category" ng-repeat="(grpkey, group) in category.groups" ng-if="group.show_tab">
+                                                                    <accordion-heading>
+                                                                        <div>{{ group.title }}</div>
+                                                                    </accordion-heading>
+
+                                                                    <div ng-repeat="(grp2key, group2) in group.groups">
+                                                                        <div  ng-if="group2.item_count" class="row">
+                                                                            <div class="form-group col-sm-8">
+                                                                                <!-- Split button -->
+                                                                                <div ng-if="group2.item_count > 1" class="btn-group" dropdown>
+                                                                                  <div id="{{ group2.id }}" class="btn btn-default" ng-class="{true:'dropdown-pending-selection', false:''}[group2.selected_item.title == '']">
+                                                                                      <div class="row sku-choice">
+                                                                                          <div class="col-sm-8" ng-if="group2.selected_item.title">
+                                                                                            {{ group2.selected_item.title }}
+                                                                                          </div>
+                                                                                          <div class="col-sm-8" ng-if="group2.selected_item.title == ''">
+                                                                                            Select {{ group2.title }}
+                                                                                          </div>
+                                                                                          <div class="col-sm-4" ng-if="group2.retail_price_differential">
+                                                                                              <span class="glyphicon glyphicon-tag"></span>
+                                                                                              <span>{{ group2.retail_price_differential | currency }}</span>
+                                                                                          </div>
+                                                                                      </div>
+                                                                                      <span class="sr-only">Toggle Dropdown</span>
+                                                                                  </div>
+
+                                                                                  <button type="button" class="btn btn-default"  ng-class="{true:'btn-pending-selection', false:''}[group2.selected_item.title == '']" dropdown-toggle>
+                                                                                    <span class="caret"></span>
+                                                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                                                  </button>
+                                                                                  <ul class="dropdown-menu sku-choice" role="menu" aria-labelledby="">
+                                                                                      <li ng-repeat="item in group2.items" ng-class-odd="'spb-item-bk-odd'" ng-class="{true:'selected-dropdown-item', false:''}[group2.selected_item.id==item.id]"
+                                                                                          ng-class-even="'spb-item-bk-even'" ng-click="OnSKUClick(group2, item)">
+
+                                                                                          <div class="row sku-choice">
+                                                                                              <div class="col-sm-3">
+                                                                                                  <img ng-if="item.photo.length" class="item-thumbnail" ng-src="{{ item.photo }}" />
+                                                                                              </div>
+                                                                                              <div class="col-sm-6">
+                                                                                                  <span>{{ item.title }}</span>
+                                                                                              </div>
+                                                                                              <div class="col-sm-3">
+                                                                                                  <span>{{ item.retail_price - group2.standard_item.retail_price | currency}}</span>
+                                                                                              </div>
+                                                                                          </div>
+                                                                                      </li>
+                                                                                  </ul>
+                                                                                </div>
+
+                                                                                <!-- flat div -->
+                                                                                <div ng-if="group2.item_count == 1">
+                                                                                  <div id="{{ group2.id }}" class="btn btn-default">
+                                                                                      <div class="row sku-non-choice">
+                                                                                          <div class="col-sm-8">
+                                                                                            {{ group2.selected_item.title }}
+                                                                                          </div>
+                                                                                          <div class="col-sm-4" ng-if="group2.retail_price_differential">
+                                                                                              <span class="glyphicon glyphicon-tag"></span>
+                                                                                              <span>{{ group2.retail_price_differential | currency }}</span>
+                                                                                          </div>
+                                                                                      </div>
+                                                                                  </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="row top-margin-20">
+                                                                        <div class="form-group col-sm-3">
+                                                                            <button type="submit" class="btn btn-primary form-control" ng-if="group.show_extra_button" ng-click="onAddExtra(group)">+ Add Optional Extras</button>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="row top-margin-20">
+                                                                        <div class="form-group col-sm-7">
+                                                                            <div  ng-if="group.sub_selected_extra_count">
+                                                                                <div class="panel panel-extra-and-special">
+                                                                                    <div class="panel-heading">
+                                                                                        <h3 class="panel-title">Extras for {{ group.title }}</h3>
+                                                                                    </div>
+                                                                                    <div class="panel-body">
+                                                                                        <div ng-repeat="(grp1key, group1) in group.groups">
+                                                                                            <div class="panel panel-default top-margin-20" ng-if="group1.selected_extra_count">
+                                                                                                <div class="panel-heading">
+                                                                                                    <h4 class="panel-title">{{ group1.title }}</h4>
+                                                                                                </div>
+                                                                                                <ul class="list-group">
+                                                                                                    <li class="list-group-item" ng-repeat="item in group1.extra_items" ng-if="item.is_selected">
+                                                                                                        <div class="row sku-choice">
+                                                                                                          <div class="col-sm-8">
+                                                                                                            {{ item.title }}
+                                                                                                          </div>
+                                                                                                          <div class="col-sm-4">
+                                                                                                            <span class="glyphicon glyphicon-tag"></span>
+                                                                                                            <span>{{ item.retail_price | currency }}</span>
+                                                                                                          </div>
+                                                                                                      </div>
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="row top-margin-20">
+                                                                        <div class="form-group col-sm-12">
+                                                                            <div class="panel panel-extra-and-special">
+                                                                                <div class="panel-heading">
+                                                                                    <h3 class="panel-title">Request special features</h3>
+                                                                                </div>
+                                                                                <div class="panel-body">
+                                                                                    <div>
+                                                                                        <div class="form-group row">
+                                                                                            <div class="col-sm-4">
+                                                                                                <div class="form-value">
+                                                                                                    <label class="large-form-label">Feature</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-4">
+                                                                                                <div class="form-value">
+                                                                                                    <label class="large-form-label">Department</label>
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-2">
+                                                                                                <div class="form-value">
+                                                                                                    <label class="large-form-label">Qty</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-2">
+                                                                                                <div class="form-value">
+                                                                                                    <label class="large-form-label">R$</label>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div ng-repeat="feature in group.additional_expenses">
+                                                                                        <div class="form-group row">
+                                                                                            <div class="col-sm-4">
+                                                                                                <div class="form-value">
+                                                                                                    <input placeholder="e.g. Chrome finish"
+                                                                                                           ng-model="feature.notes"
+                                                                                                           type="text" class="form-control">
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-4">
+                                                                                                <div class="form-value">
+                                                                                                    <select  class="form-control"
+                                                                                                            ng-model="feature.category_id" name="model"
+                                                                                                            ng-options="group.id as group.title for group in category.groups">
+                                                                                                        <option value="">Select</option>
+                                                                                                    </select>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-2">
+                                                                                                <div class="form-value">
+                                                                                                    <input ng-model="feature.quantity"
+                                                                                                           type="number" class="form-control">
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-2">
+                                                                                                <div class="form-value">
+                                                                                                    <input ng-model="feature.retail_charge" ng-disabled="should_feature_price_be_disabled(feature)" ng-change="on_special_feature_price_change(feature)"
+                                                                                                           type="text" class="form-control">
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-1">
+                                                                                            <div class="form-value">
+                                                                                                <button class="btn btn-default form-control" ng-click="add_special_row(group)">+</button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="row top-margin-20">
+                                                                        <div class="form-group col-sm-12">
+                                                                            <h4>Production Notes</h4>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row">
+                                                                        <div class="col-sm-12">
+                                                                            <div class="form-value">
+                                                                                <input placeholder="e.g. Build Team please note that extra wiring is needed"
+                                                                                       ng-model="group.production_notes"
+                                                                                       type="text" class="form-control">
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </accordion-group>
+                                                            </accordion>
+
+                                                            <div ng-repeat="(grp1key, group1) in category.groups">
+                                                                <div  ng-if="group1.item_count" class="row">
+                                                                    <div class="form-group col-sm-8">
+                                                                        <!-- Split button -->
+                                                                        <div ng-if="group1.item_count > 1" class="btn-group" dropdown>
+                                                                          <div id="{{ group1.id }}" class="btn btn-default" ng-class="{true:'dropdown-pending-selection', false:''}[group1.selected_item.title == '']">
+                                                                              <div class="row sku-choice">
+                                                                                  <div class="col-sm-8" ng-if="group1.selected_item.title">
+                                                                                    {{ group1.selected_item.title }}
+                                                                                  </div>
+                                                                                  <div class="col-sm-8" ng-if="group1.selected_item.title == ''">
+                                                                                    Select {{ group1.title }}
+                                                                                  </div>
+                                                                                  <div class="col-sm-4" ng-if="group1.retail_price_differential">
+                                                                                      <span class="glyphicon glyphicon-tag"></span>
+                                                                                      <span>{{ group1.retail_price_differential | currency }}</span>
+                                                                                  </div>
+                                                                              </div>
+                                                                              <span class="sr-only">Toggle Dropdown</span>
+                                                                          </div>
+
+                                                                          <button type="button" class="btn btn-default"  ng-class="{true:'btn-pending-selection', false:''}[group1.selected_item.title == '']" dropdown-toggle>
+                                                                            <span class="caret"></span>
+                                                                            <span class="sr-only">Toggle Dropdown</span>
+                                                                          </button>
+                                                                          <ul class="dropdown-menu sku-choice" role="menu" aria-labelledby="">
+                                                                              <li ng-repeat="item in group1.items" ng-class-odd="'spb-item-bk-odd'" ng-class="{true:'selected-dropdown-item', false:''}[group1.selected_item.id==item.id]"
+                                                                                  ng-class-even="'spb-item-bk-even'" ng-click="OnSKUClick(group1, item)">
+
+                                                                                  <div class="row sku-choice">
+                                                                                      <div class="col-sm-3">
+                                                                                          <img ng-if="item.photo.length" class="item-thumbnail" ng-src="{{ item.photo }}" />
+                                                                                      </div>
+                                                                                      <div class="col-sm-6">
+                                                                                          <span>{{ item.title }}</span>
+                                                                                      </div>
+                                                                                      <div class="col-sm-3">
+                                                                                          <span>{{ item.retail_price - group1.standard_item.retail_price | currency}}</span>
+                                                                                      </div>
+                                                                                  </div>
+                                                                              </li>
+                                                                          </ul>
+                                                                        </div>
+
+                                                                        <!-- flat div -->
+                                                                        <div ng-if="group1.item_count == 1">
+                                                                          <div id="{{ group1.id }}" class="btn btn-default">
+                                                                              <div class="row sku-non-choice">
+                                                                                  <div class="col-sm-8">
+                                                                                    {{ group1.selected_item.title }}
+                                                                                  </div>
+                                                                                  <div class="col-sm-4" ng-if="group1.retail_price_differential">
+                                                                                      <span class="glyphicon glyphicon-tag"></span>
+                                                                                      <span>{{ group1.retail_price_differential | currency }}</span>
+                                                                                  </div>
+                                                                              </div>
+                                                                          </div>
+                                                                        </div>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row top-margin-20">
+                                                                <div class="form-group col-sm-3">
+                                                                    <button type="submit" class="btn btn-primary form-control" ng-if="category.show_extra_button" ng-click="onAddExtra(category)">+ Add Optional Extras</button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row top-margin-20">
+                                                                <div class="form-group col-sm-7">
+                                                                    <div  ng-if="category.sub_selected_extra_count">
+                                                                        <div class="panel panel-extra-and-special">
+                                                                            <div class="panel-heading">
+                                                                                <h3 class="panel-title">Extras for {{ category.title }}</h3>
+                                                                            </div>
+                                                                            <div class="panel-body">
+                                                                                <div ng-repeat="(grp1key, group1) in category.groups">
+                                                                                    <div class="panel panel-default top-margin-20" ng-if="group1.selected_extra_count">
+                                                                                        <div class="panel-heading">
+                                                                                            <h4 class="panel-title">{{ group1.title }}</h4>
+                                                                                        </div>
+                                                                                        <ul class="list-group">
+                                                                                            <li class="list-group-item" ng-repeat="item in group1.extra_items" ng-if="item.is_selected">
+                                                                                                <div class="row sku-choice">
+                                                                                                  <div class="col-sm-8">
+                                                                                                    {{ item.title }}
+                                                                                                  </div>
+                                                                                                  <div class="col-sm-4">
+                                                                                                    <span class="glyphicon glyphicon-tag"></span>
+                                                                                                    <span>{{ item.retail_price | currency }}</span>
+                                                                                                  </div>
+                                                                                              </div>
+                                                                                            </li>
+                                                                                        </ul>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row top-margin-20">
+                                                                <div class="form-group col-sm-12">
+                                                                    <div class="panel panel-extra-and-special">
+                                                                        <div class="panel-heading">
+                                                                            <h3 class="panel-title">Request special features</h3>
+                                                                        </div>
+                                                                        <div class="panel-body">
+                                                                            <div>
+                                                                                <div class="form-group row">
+                                                                                    <div class="col-sm-4">
+                                                                                        <div class="form-value">
+                                                                                            <label class="large-form-label">Feature</label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-4">
+                                                                                        <div class="form-value">
+                                                                                            <label class="large-form-label">Department</label>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-2">
+                                                                                        <div class="form-value">
+                                                                                            <label class="large-form-label">Qty</label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-2">
+                                                                                        <div class="form-value">
+                                                                                            <label class="large-form-label">R$</label>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div ng-repeat="feature in category.additional_expenses">
+                                                                                <div class="form-group row">
+                                                                                    <div class="col-sm-4">
+                                                                                        <div class="form-value">
+                                                                                            <input placeholder="e.g. Chrome finish"
+                                                                                                   ng-model="feature.notes"
+                                                                                                   type="text" class="form-control">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-4">
+                                                                                        <div class="form-value">
+                                                                                            <select  class="form-control"
+                                                                                                    ng-model="feature.category_id" name="model"
+                                                                                                    ng-options="group.id as group.title for group in category.groups">
+                                                                                                <option value="">Select</option>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-2">
+                                                                                        <div class="form-value">
+                                                                                            <input ng-model="feature.quantity"
+                                                                                                   type="number" class="form-control">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-sm-2">
+                                                                                        <div class="form-value">
+                                                                                            <input ng-model="feature.retail_charge" ng-disabled="should_feature_price_be_disabled(feature)" ng-change="on_special_feature_price_change(feature)"
+                                                                                                           type="text" class="form-control">
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="row">
+                                                                                <div class="col-sm-1">
+                                                                                    <div class="form-value">
+                                                                                        <button class="btn btn-default form-control" ng-click="add_special_row(category)">+</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row top-margin-20">
+                                                                <div class="form-group col-sm-12">
+                                                                    <h4>Production Notes</h4>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-12">
+                                                                    <div class="form-value">
+                                                                        <input placeholder="e.g. Build Team please note that extra wiring is needed"
+                                                                               ng-model="category.production_notes"
+                                                                               type="text" class="form-control">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </accordion-group>
+                                                    </accordion>
+                                                </div>
+                                            </div>
+                                            <div class="row top-margin-20">
+                                                <div class="form-group col-sm-3">
+                                                    <button type="submit" class="btn btn-primary form-control">Update and proceed</button>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="alert alert-success" ng-if="quote.update_successful_message">{{ quote.update_successful_message }}</div>
+                                                <div class="alert alert-danger" ng-if="quote.update_failed_message">{{ quote.update_failed_message }}</div>
+                                            </div>
+                                        </form>
+                                    </tab>
+                                    <tab heading="Finishes / Colour">
+                                        Finishes / Colour
+                                    </tab>
+                                    <tab heading="Cost & Invoicing">
+                                        Cost & Invoicing
+                                    </tab>
+                                    <tab heading="Resources">
+                                        Resources
+                                    </tab>
+                                </tabset>
+                            </div>
+                        </div>
+                    </tab>
+                    <tab heading="Status / Documents / History">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                Documents
+                            </div>
+                        </div>
+                    </tab>
+                    <tab heading="Costing">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                Costing
+                            </div>
+                        </div>
+                    </tab>
+                </tabset>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="extra_modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Extras for {{ data.category_for_extra.title }}</h4>
+                </div>
+                <div class="modal-body">
+                    <div ng-repeat="(grp1key, group1) in data.category_for_extra.groups" ng-if="group1.extra_item_count" class="top-margin-20 panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ group1.title }}</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row sku-choice" ng-repeat="item in group1.extra_items">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-sm-1">
+                                            <input type="checkbox" model="item.is_selected" ng-checked="item.is_selected" ng-click="extra_checked(data.category_for_extra, group1, item)" aria-label="...">
+                                        </div>
+                                        <div class="col-sm-2">
+                                              <img ng-if="item.photo.length" class="item-thumbnail" ng-src="{{ item.photo }}" />
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <span>{{ item.title }}</span>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <span>{{ item.retail_price | currency }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" ng-click="onAddExtraSubmit()">Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="featured_totals_modal">
+        <div class="modal-dialog wide">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Totals</h4>
+                </div>
+                <div class="modal-body">
+                    <table class="table">
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th>Manufacturing Cost</th>
+                            <th>Manufacturing Margin</th>
+                            <th>Wholesale</th>
+                            <th>Reseller Margin</th>
+                            <th>Retail</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>Adjustments</h5>
+                                Please enter adjustments in these fields >
+                            </td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <input type="text" class="form-control" ng-model="quote.wholesale_adjustment" name="wholesale_adjustment" />
+                            </td>
+                            <td></td>
+                            <td>
+                                <input type="text" class="form-control" ng-model="quote.retail_sale_adjustment" name="retail_sale_adjustment" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Basic Caravan Prices
+                            </td>
+                            <td>{{ data.series_cost_price | currency }}</td>
+                            <td>{{ data.series_retail_price - data.series_cost_price | currency }}</td>
+                            <td>{{ data.series_wholesale_price | currency }}</td>
+                            <td>{{ data.series_retail_price - data.series_wholesale_price | currency }}</td>
+                            <td>{{ data.series_retail_price | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Subtotal of Upgrades
+                            </td>
+                            <td>{{ quote.upgrade_cost_sum | currency }}</td>
+                            <td>{{ quote.upgrade_retail_sum - quote.upgrade_cost_sum | currency }}</td>
+                            <td>{{ quote.upgrade_wholesale_sum | currency }}</td>
+                            <td>{{ quote.upgrade_retail_sum - quote.upgrade_wholesale_sum | currency }}</td>
+                            <td>{{ quote.upgrade_retail_sum | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Subtotal of Extras
+                            </td>
+                            <td>{{ quote.extra_cost_sum | currency }}</td>
+                            <td>{{ quote.extra_retail_sum - quote.extra_cost_sum | currency }}</td>
+                            <td>{{ quote.extra_wholesale_sum | currency }}</td>
+                            <td>{{ quote.extra_retail_sum - quote.extra_wholesale_sum | currency }}</td>
+                            <td>{{ quote.extra_retail_sum | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Subtotal of Special Items
+                            </td>
+                            <td>{{ 0 | currency }}</td>
+                            <td>{{ 0 | currency }}</td>
+                            <td>{{ 0 | currency }}</td>
+                            <td>{{ 0 | currency }}</td>
+                            <td>{{ 0 | currency }}</td>
+                        </tr>
+                        <tr ng-if="quote.has_special">
+                            <td>
+                                Special:
+                            </td>
+                            <td>{{ 0 | currency }}</td>
+                            <td>{{ 0 | currency }}</td>
+                            <td>{{ 0 | currency }}</td>
+                            <td>{{ 0 | currency }}</td>
+                            <td>{{ 0 | currency }}</td>
+                        </tr>
+                        <tr>
+                            <td class="bold">
+                                Grand Totals
+                            </td>
+                            <td>{{ data.series_cost_price + quote.upgrade_cost_sum + quote.extra_cost_sum | currency }}</td>
+                            <td>{{ (data.series_retail_price + quote.upgrade_retail_sum + quote.extra_retail_sum)
+                                    - (data.series_cost_price + quote.upgrade_cost_sum + quote.extra_cost_sum) | currency }}</td>
+                            <td>{{ data.series_wholesale_price + quote.upgrade_wholesale_sum + quote.extra_wholesale_sum | currency }}</td>
+                            <td>{{ (data.series_retail_price + quote.upgrade_retail_sum + quote.extra_retail_sum) -
+                                    (data.series_wholesale_price + quote.upgrade_wholesale_sum + quote.extra_wholesale_sum) | currency }}</td>
+                            <td>{{ data.series_retail_price + quote.upgrade_retail_sum + quote.extra_retail_sum | currency }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="photos" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content tall">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"><b>{{ get_model_name() }}:</b> {{ get_series_name() }}</h4>
+                </div>
+                <div class="modal-body tall">
+                    <ul class="image-carousel" ng-if="data.series.photo_count" rn-carousel rn-carousel-controls class="image">
+                        <li ng-repeat="photo_url in data.series.photo_urls">
+                            <img ng-src="{{ photo_url }}" class="img-responsive"/>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,10 @@
+<script type="text/javascript">
+    (function($) {
+        // The double document.ready is to guarantee that this runs last
+        $(document).ready(function () {
+            $(document).ready(function () {
+                window.jQueryReady = true;
+            });
+        });
+    }(jQuery));
+</script>

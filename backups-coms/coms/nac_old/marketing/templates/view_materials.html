@@ -1,0 +1,33 @@
+{% extends "admin/base_site.html" %}
+
+{% load staticfiles %}
+
+{% block breadcrumb_icon %}
+    <img class='leads-icon' src="{% static 'newage/icons/leads.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="{% url 'marketing:view_marketing_materials' %}">Marketing Materials</a>
+{% endblock %}
+
+{% block page_heading %}Marketing Materials{% endblock %}
+{% block page_subheading_wrapper %}{% endblock page_subheading_wrapper %}
+
+{% block content %}
+    <div class="top-margin-40">
+        <table class="table table-striped">
+            <tr>
+                <th>File</th>
+                <th>Uploaded</th>
+                <th></th>
+            </tr>
+            {% for mk_file in marketing_files %}
+                <tr>
+                    <td>{{ mk_file.path }}</td>
+                    <td>{{ mk_file.uploaded_on }}</td>
+                    <td><a href="{{ mk_file.url }}" target="_blank">View/Download</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

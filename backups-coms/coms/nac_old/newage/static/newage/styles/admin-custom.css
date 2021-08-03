@@ -1,0 +1,154 @@
+
+body {
+    padding-top: 0px !important;
+    font-family: 'Open Sans', sans-serif !important;
+}
+
+.sidebar {
+    width: 200px;
+    overflow: hidden;
+    transition: left .2s ease-out;
+    position: fixed;
+    left: -200px;
+    top: 51px;
+    bottom: 0px;
+    z-index: 9999;
+    border: none;
+    border-radius: 0px;
+    border-right: 1px solid lightgrey;
+}
+
+.sidebar.open {
+    box-shadow: 3px 0px 11px 0px rgba(113, 113, 113, 0.81);
+    background-color: white;
+    left: 0px;
+}
+
+.sidebar-inner {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.sidebar-inner div {
+    border-bottom: 1px solid lightgrey;
+}
+
+.sidebar-inner div.section {
+    position: relative;
+    background-color: white;
+}
+
+.sidebar-inner div.section > div,
+.sidebar-inner div.section > a {
+    padding-left: 70px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.sidebar-inner div.section > div.title {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.sidebar-inner div.section > .link {
+    display: block;
+    background-color: #EDEDED;
+    cursor: pointer;
+}
+
+.sidebar-inner div.section > .link:hover,
+.sidebar-inner div.section > .link.active {
+    background-color: #E0E0E0;
+    padding-right: 15px;
+}
+
+.sidebar-inner div.section > .link:hover::after,
+.sidebar-inner div.section > .link.active::after {
+    position: absolute;
+    right: 10px;
+    font-weight: 400;
+    content: ">";
+    color: mediumpurple;
+}
+
+.sidebar-inner div.section > div.title > img {
+    position: absolute;
+    left: 10px;
+    top: 4px;
+    border: 2px solid lightgrey;
+    border-radius: 30px;
+    padding: 3px;
+}
+
+.sidebar-inner div.section:hover > div.title > img,
+.sidebar-inner div.section > div.title.active > img {
+    border: 2px solid mediumpurple;
+}
+
+li span.this-page {
+    background-color: rgb(248,248,248);
+    font-weight: bold;
+}
+
+
+.list-group-item-squat {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
+.collapse-div {
+    border-radius: 4px;
+    padding:7px;
+    border:1px solid #317ABA;
+    bg-color: #e5e5e5;
+    color: #00001a;
+    font-weight: 700;
+}
+
+.collapse-div:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e114";
+    float: right;
+    color: grey;
+}
+
+.collapse-div.collapsed:after {
+    content: "\e080";
+}
+
+span.large-glyphicon {
+    font-size: 1.5em;
+}
+
+/*overrides default bootstrap tooltip*/
+.tooltip-on-top { }
+.tooltip-inner {
+    min-width: 80px;
+}
+
+.fixed-panel {
+      min-height: 350px;
+      max-height: 350px;
+      overflow-y: scroll;
+}
+
+/* Time picker is too wide by default config. Fix: */
+.ui-datepicker th {
+    text-align: center;
+    max-width: 36px;
+}
+
+.ui-datepicker td span,
+.ui-datepicker td a {
+    padding: 0.04em;
+    max-width: 36px;
+}
+
+#email_template_help div {
+    margin: 10px 20px;
+}
+
+#email_template_help table td {
+    border: 1px solid;
+    padding: 5px 10px;
+}

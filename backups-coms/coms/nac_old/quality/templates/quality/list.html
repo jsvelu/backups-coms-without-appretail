@@ -1,0 +1,42 @@
+{% extends "admin/base_site.html" %}
+{% load append_get %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+
+{% block bodyclass %}orders-list{% endblock %}
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="{% url 'orders:list' %}">Chassis Management</a> {% if single_order %}> <a href="">{{ single_order }}</a>{% endif %}
+{% endblock %}
+
+{% block page_heading %}Chassis Management{% endblock %}
+{% block page_heading_extra %}
+    <div class="row top-margin-20">
+        <div class="col-sm-6">
+            <div class="form-group has-feedback lookup">
+                <i class="glyphicon glyphicon-search form-control-feedback"></i>
+                <input autocomplete="off" type="text" class="typeahead form-control" data-provider="typeahead"
+                       placeholder="Search by Customer Name">
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block page_subheading_wrapper %}{% endblock page_subheading_wrapper %}
+
+{% block content %}
+    <div class=" top-margin-40">
+        {% render_table order_table %}
+        <div class="top-margin-10">
+            <span class="record-count">Total Records: {{ order_table.paginator.count }}</span>
+            {% for page_num in order_table.paginator.page_range %}
+                <a class="btn btn-default btn-small {% if page_num|slugify == request.GET.page %}active{% endif %}"
+                   href="{% append_get page=page_num %}">{{ page_num }}</a>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

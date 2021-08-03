@@ -1,0 +1,5 @@
+<tabs data="tabData" type="tabs" class="secondary" />
+<div ng-if="message" class="alert {{ message.type }}">
+    <div ng-repeat="text in message.message_list">{{ text }}</div>
+</div>
+<ui-view></ui-view>

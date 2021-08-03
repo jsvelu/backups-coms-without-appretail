@@ -1,0 +1,47 @@
+
+body.caravans-skuimport table tbody tr:hover {
+    background-color: #F0F0F0;
+}
+
+body.caravans-skuimport div.import-log {
+    padding: 5px;
+    margin: 20px 0px;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #F0F0F0;
+}
+
+body.caravans-skuimport tr.new td {
+    background-color: #DDFFDD;
+}
+
+body.caravans-skuimport tr.updated td {
+    background-color: #DDF2FF;
+}
+
+body.caravans-skuimport span.legend {
+    font-size: .8em;
+}
+
+body.caravans-skuimport div.key-new {
+    display: inline-block;
+    background-color: #DDFFDD;
+    height: 20px;
+    width: 20px;
+    vertical-align: bottom;
+    margin-left: 10px;
+}
+
+body.caravans-skuimport div.key-updated {
+    display: inline-block;
+    background-color: #DDF2FF;
+    height: 20px;
+    width: 20px;
+    vertical-align: bottom;
+    margin-left: 10px;
+}
+
+body.caravans-skuimport th.currency,
+body.caravans-skuimport td.currency {
+    text-align: right;
+}

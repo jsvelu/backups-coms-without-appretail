@@ -1,0 +1,83 @@
+{% extends "admin/base_site.html" %}
+{% load alliance_bundle %}
+{% load staticfiles %}
+{% load script_json %}
+
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+    <link rel="stylesheet" type="text/css" href="{% static "orders/css/reassign.css" %}" />
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+
+    <script type="text/javascript" src="{% static "orders/js/schedule_avail.js" %}"></script>
+    <script type="text/javascript">
+        var series_list = {{ series_list|script_json }};
+        var month_list={{ month_list|script_json }};
+
+    </script>
+{% endblock %}
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+{% block breadcrumbs %}
+    Schedule Availability
+{% endblock %}
+
+{% block page_heading %}Schedule Availability{% endblock %}
+
+{% block page_sub_heading %}
+    SUB HEADING
+{% endblock %}
+
+{% block page_heading_extra %}
+{% endblock %}
+
+{% block content %}
+    <div class="top-margin-40">
+        <div class="row">
+            <div class="col-sm-4 align-right">
+                Models :
+            </div>
+            <div class="col-sm-4 align-left">
+                <select id="model1" name="model1">
+                    <option value="">Select The  Model</option>
+                    {% for model in models %}
+                        <option value="{{ model.id }}">{{ model.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-sm-4 align-right">
+                Series :
+            </div>
+
+                        <div class="col-sm-6 align-left">
+                 
+                    <select id="series1" name="series1" disabled="disabled"></select>
+            </div>
+        
+        <div class="row">
+
+        <div id="schedule_availability" class="top-margin-40">
+            <center>
+        <table id="mytest" border="5">
+            <thead>
+                <th>Month</th>
+                <th>Open / Close </th>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        </center>
+
+    </div>
+{% endblock %}

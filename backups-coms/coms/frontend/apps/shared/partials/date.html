@@ -1,0 +1,22 @@
+<div class="clearfix">
+    <div class="date-dropdowns">
+        <select class="form-control"
+                ng-model="day"
+                ng-options="day as day for day in days"
+                ng-change="onDateChange()">
+            <option value="">dd</option>
+        </select>
+        <select class="form-control"
+                ng-model="month"
+                ng-options="month[0] as month[1] for month in months"
+                ng-change="onDateChange()">
+            <option value="">mm</option>
+        </select>
+        <select class="form-control"
+                ng-model="year"
+                ng-options="year as year for year in years"
+                ng-change="onDateChange()">
+            <option value="">yyyy</option>
+        </select>
+    </div>
+</div>

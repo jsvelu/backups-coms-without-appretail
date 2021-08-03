@@ -1,0 +1,25 @@
+<span>
+    <span ng-if="!checklistCompletion.isOverride && checklistCompletion.value >= 100">
+        <!-- Already at 100% so no override options needed -->
+        <span class="glyphicon glyphicon-ok"></span>
+    </span>
+
+    <span ng-if="checklistCompletion.isOverride || checklistCompletion.value < 100" uib-dropdown>
+        <a href uib-dropdown-toggle>
+            <span class="glyphicon glyphicon-ok" ng-if="checklistCompletion.value >= 100" ng-class="{ override: checklistCompletion.isOverride}"></span>
+            <span ng-if="checklistCompletion.value < 100">{{ checklistCompletion.value }}%</span>
+        </a>
+        <ul uib-dropdown-menu>
+            <li ng-if="!checklistCompletion.isOverride">
+                <a href ng-click="invokeSetCompletionOverride(100)">
+                    <span class="glyphicon glyphicon-ok" ng-if="checklistCompletion.value >= 100"></span> Mark as Complete
+                </a>
+            </li>
+            <li ng-if="checklistCompletion.isOverride">
+                <a href ng-click="invokeSetCompletionOverride(null)">
+                    <span class="glyphicon glyphicon-refresh"></span> Revert to {{ checklistCompletion.originalValue }}%
+                </a>
+            </li>
+        </ul>
+    </span>
+</span>

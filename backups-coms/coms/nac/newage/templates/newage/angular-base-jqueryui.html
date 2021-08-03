@@ -1,0 +1,12 @@
+{% extends "newage/angular-base.html" %}
+{% load alliance_bundle %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+{% endblock %}

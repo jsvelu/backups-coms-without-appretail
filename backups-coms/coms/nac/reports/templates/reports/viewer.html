@@ -1,0 +1,86 @@
+{% extends "admin/base_site.html" %}
+{% load floppyforms %}
+{% load alliance_bundle %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-highcharts' 'css' %}
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-highcharts' 'js' %}
+    <script type="text/javascript" src="{% static "reports/js/reports.js" %}"></script>
+{% endblock %}
+
+{% block bodyclass %}reports-viewer{% endblock %}
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="#">Reports</a>
+{% endblock %}
+
+{% block page_heading %}Reports{% endblock %}
+{% block page_subheading_wrapper %}{% endblock %}
+
+{% block content %}
+
+    {% if rdata %}
+        <script>
+            rdata = {{ rdata| safe }};
+        </script>
+    {% endif %}
+
+    <div class="container-fluid">
+
+        <form id="frm_main" method="get" action="{% url 'reports:viewer' %}">
+            {% csrf_token %}
+            {% form form using %}
+                {% formconfig row using "floppyforms/rows/bootstrap.html" %}
+                <div class="row top-margin-20">
+
+                    <div class="col-sm-4">
+                        {% formrow form.report_type %}
+                    </div>
+                    <div class="col-sm-4">
+                        {% formrow form.start_date %}
+                    </div>
+                    <div class="col-sm-4">
+                        {% formrow form.end_date %}
+                        <input hidden value="{{ report_type }}" id="hdn_op">
+                    </div>
+                </div>
+
+            {% endform %}
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-primary" id="btn_gen">Generate Report</button>
+                </div>
+            </div>
+
+            <div class="row top-margin-40">
+                <div class="col-sm-12" id="hcontainer0"></div>
+            </div>
+
+            <div class="row top-margin-40">
+                <div class="col-sm-12" id="hcontainer1"></div>
+            </div>
+
+            <div class="row top-margin-40">
+                <div class="col-sm-12" id="hcontainer2"></div>
+            </div>
+
+        </form>
+
+    </div>
+
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

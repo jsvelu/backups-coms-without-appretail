@@ -1,0 +1,194 @@
+[
+{
+  "fields": {
+    "home_page_banner_html": "<h1 style=\"text-align:center\"><strong>Welcome to New Age COMS</strong></h1>\r\n\r\n<p><strong>The Digital World of New Age Caravans</strong><img alt=\"\" src=\"/media/ckeditor/uploads/2016/02/05/newage1.png\" style=\"float:left; height:247px; margin-left:15px; margin-right:15px; width:400px\" /></p>\r\n\r\n<p>As one of Australia&rsquo;s leading caravan manufactures, New Age Caravans is excited to welcome you to our new cloud based management system C.O.M.S. (Customer Management, Ordering &amp; Manufacturing System).</p>\r\n\r\n<p>New Age Caravans have developed this custom technology to make your life easier&nbsp;</p>\r\n\r\n<p>We are also looking forward to catching up at the Melbourne Show&nbsp;24-29 FEBRUARY 2016 AT MELBOURNE SHOWGROUNDS</p>\r\n",
+    "schedule_lockdown_month": null,
+    "schedule_lockdown_number": 0,
+    "showroom_splash_html": null
+  },
+  "model": "newage.settings",
+  "pk": 1
+},
+{
+  "fields": {
+    "address": "42 Albert St.",
+    "address2": null,
+    "deleted": null,
+    "name": "Charles Dickens",
+    "suburb": [
+      "SYDNEY",
+      "1155"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 1
+},
+{
+  "fields": {
+    "address": "72 Oakwood Blvd",
+    "address2": null,
+    "deleted": null,
+    "name": "Bruce Sterling",
+    "suburb": [
+      "QUAKERS HILL",
+      "2763"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 2
+},
+{
+  "fields": {
+    "address": "22 Somewhere else",
+    "address2": null,
+    "deleted": null,
+    "name": "Damien Broderick",
+    "suburb": [
+      "VECTIS",
+      "3401"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 3
+},
+{
+  "fields": {
+    "address": "142 Baghdad Main Rd.",
+    "address2": null,
+    "deleted": null,
+    "name": "Al Ghazali",
+    "suburb": [
+      "YARRA",
+      "2580"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 4
+},
+{
+  "fields": {
+    "address": "11 Oxford Rd.",
+    "address2": null,
+    "deleted": null,
+    "name": "Shakespeare",
+    "suburb": [
+      "BERKSHIRE PARK",
+      "2765"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 5
+},
+{
+  "fields": {
+    "address": "Something Street",
+    "address2": null,
+    "deleted": null,
+    "name": "Registered Owner",
+    "suburb": [
+      "BRUNSWICK",
+      "3056"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 6
+},
+{
+  "fields": {
+    "address": "1 Maroondah Highway",
+    "address2": null,
+    "deleted": null,
+    "name": "Reg Smith",
+    "suburb": [
+      "RINGWOOD",
+      "3134"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 7
+},
+{
+  "fields": {
+    "address": "2 Maroondah Highway",
+    "address2": null,
+    "deleted": null,
+    "name": "Another Smith",
+    "suburb": [
+      "RINGWOOD",
+      "3134"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 8
+},
+{
+  "fields": {
+    "address": "42 Albert Street",
+    "address2": null,
+    "deleted": null,
+    "name": "Testcheck Testchecklast",
+    "suburb": [
+      "SYDNEY",
+      "1155"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 9
+},
+{
+  "fields": {
+    "address": "42 Albert Street",
+    "address2": null,
+    "deleted": null,
+    "name": "Check3 Checktestlast",
+    "suburb": [
+      "EAST MELBOURNE",
+      "3002"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 10
+},
+{
+  "fields": {
+    "address": "42 Albert St.",
+    "address2": null,
+    "deleted": null,
+    "name": "Check3 Checktestlast",
+    "suburb": [
+      "EAST MELBOURNE",
+      "3002"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 11
+},
+{
+  "fields": {
+    "address": "1 Maroondah Highway",
+    "address2": null,
+    "deleted": null,
+    "name": "Reg Testsmiththree",
+    "suburb": [
+      "RINGWOOD",
+      "3134"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 12
+},
+{
+  "fields": {
+    "address": "01 Testuser St",
+    "address2": null,
+    "deleted": null,
+    "name": "Test user name 01",
+    "suburb": [
+      "NUNAWADING",
+      "3131"
+    ]
+  },
+  "model": "newage.address",
+  "pk": 13
+}
+]

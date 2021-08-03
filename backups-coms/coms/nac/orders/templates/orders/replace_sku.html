@@ -1,0 +1,198 @@
+{% extends "admin/base_site.html" %}
+{% load alliance_bundle %}
+{% load staticfiles %}
+{% load script_json %}
+
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+    <link rel="stylesheet" type="text/css" href="{% static "orders/css/replace_sku.css" %}" />
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+    <script type="text/javascript" src="{% static "orders/js/replace_sku.js" %}"></script>
+    <script>
+        window.dateFormat = '{{ APP_SETTINGS.FORMAT_DATE_DATEPICKER_JS }}';
+    </script>
+{% endblock %}
+
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+{% block breadcrumbs %}
+    Replace SKU
+{% endblock %}
+
+{% block page_heading %}Replace SKU{% endblock %}
+
+{% block page_heading_extra %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div id="messages"></div>
+    </div>
+
+    <form id="replace-sku-form" class="top-margin-40">
+        <div class="row">
+            <div class="col-sm-4 align-right">
+                Model and series to update :
+            </div>
+            <div class="col-sm-8 align-left">
+                <select id="model" name="model">
+                    <option value="">Select Model</option>
+                    <option value="0">All Models</option>
+                    {% for model in models %}
+                        <option value="{{ model.id }}">{{ model.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-4 align-left">
+                <select id="series" name="series" disabled="disabled"></select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 align-right">
+                Production date range:
+            </div>
+            <div class="col-sm-8 align-left">
+                <!-- <div class="row">
+                    <div class="col-sm-12 align-left">
+                        <label>
+                            <input type="checkbox" id="without-production-dates" name="without-production-dates" data-required data-required-group> Select orders without production dates
+                        </label>
+                    </div>
+                </div> -->
+                <div class="row">
+                    <div class="col-sm-12 align-left">
+                        <label>
+                            <input type="checkbox" id="with-production-dates" name="with-production-dates" data-required data-required-group> Select orders with production dates
+                        </label>
+                    </div>
+                </div>
+                <div class="row" id="production-dates">
+                    <div class="col-sm-6 align-left">
+                        <label>
+                            From :
+                            <input type="text" id="date-from" name="date-from" />
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </label>
+                    </div>
+                    <div class="col-sm-6 align-left">
+                        <label>
+                            To :
+                            <input type="text" id="date-to" name="date-to" />
+                            <i class="glyphicon glyphicon-calendar"></i>
+                        </label>
+                    </div>
+                </div>
+                <!-- <div class="row">
+                    <div class="col-sm-12 align-left">
+                        <label>
+                            <input type="checkbox" id="with-schedule-months" name="with-schedule-months" data-required data-required-group> Select orders from Schedule Months
+                        </label>
+                    </div>
+                </div>
+                <div class="row" id="schedule-months">
+                    <div class="col-sm-6 align-left">
+                        <label>
+                            From :
+                            <input id='month-from-show' type="text" class="form-control" />
+                            <input id='month-from' hidden />
+                        </label>
+                    </div>
+                    <div class="col-sm-6 align-left">
+                        <label>
+                            To :
+                            <input id='month-to-show' type="text" class="form-control" />
+                            <input id='month-to' hidden />
+                        </label>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 align-right">
+                Item to change:
+            </div>
+            <div class="col-sm-8 align-left">
+                <select id="category" name="category">
+                    <option value="">Select Category</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-4 align-left">
+                <select id="department" name="department" disabled="disabled"></select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-8 col-sm-offset-4 align-left">
+                <select id="old_item" name="old_item" disabled="disabled" data-required></select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4 align-right">
+                New Item:
+            </div>
+            <div class="col-sm-8 align-left">
+                <select id="new_item" name="new_item" disabled="disabled" data-required></select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3 align-center">
+                <button type="submit" class="btn btn-primary btn-lg">
+                    Continue
+                </button>
+                <div class="progress"><div>Loading…</div></div>
+            </div>
+        </div>
+    </form>
+
+
+    <div id="preview">
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3 align-center">
+                <button id="changeCriteria" type="button" class="btn btn-primary btn-lg">
+                    Change criteria
+                </button>
+            </div>
+        </div>
+
+        <div class="row">
+            <h3>Please select the orders to update:</h3>
+        </div>
+
+        <table>
+            <tr>
+                <th>Order details</th>
+                <th>
+                    <label>Select All <input id="masterSelector" type="checkbox" /></label>
+                </th>
+            </tr>
+        </table>
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3 align-center">
+                <button id="update" type="button" class="btn btn-primary btn-lg">
+                    Update orders
+                </button>
+                <div class="progress"><div>Loading…</div></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

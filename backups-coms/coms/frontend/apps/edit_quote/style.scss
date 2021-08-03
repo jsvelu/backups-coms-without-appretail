@@ -1,0 +1,139 @@
+
+div.dataTables_wrapper {
+  margin-top: -30px;
+}
+
+table.dataTable > thead > tr {
+  background-color: #252626;
+  color: white;
+
+  > th {
+    font-weight: normal;
+    padding: 15px 15px !important;
+  }
+
+  th:first-child {
+    border-top-left-radius: 15px;
+  }
+
+  th:last-child {
+    border-top-right-radius: 15px;
+  }
+}
+
+button.btn-default {
+  /* color: #E10022; */
+  color: #000000;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+button.btn-pending-selection {
+  border-color: red;
+  border-width: 1px;
+  color: #E10022;
+  background-color: white;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+button.btn-default:hover,
+button.btn-default:focus,
+button.btn-default:active {
+  background-color: white;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  color: #E10022 !important;
+  background: none !important;
+  border-radius: 3px;
+  padding: 4px 10px;
+}
+
+button#new-quote {
+  margin-right: 20px;
+  border-color: #E22431;
+  padding: 10px 15px;
+}
+
+ul.dropdown-menu {
+  width: 100%;
+
+  >.active>a, >.active>a:focus, >.active>a:hover {
+    background-color: lightgrey;
+    color: black;
+  }
+}
+
+.spb-item-bk-odd {
+  background-color: #FFFFFF;
+  padding: 4px;
+}
+
+.spb-item-bk-even {
+  background-color: #F7F7F7;
+  padding: 4px;
+}
+
+.sku-choice {
+    min-width: 500px;
+}
+
+.sku-non-choice {
+    min-width: 525px;
+}
+
+.selected-dropdown-item {
+    background-color: #E4E2E6 !important;
+}
+
+div.modal-content.tall {
+  height:520px;
+}
+
+div.modal-body.tall {
+  height:75%;
+}
+
+.image-carousel {
+  width:100%;
+  height:100%;
+}
+
+.label.large-form-label {
+  color: #929292;
+  font-size: 1em;
+}
+
+.rn-carousel-control.rn-carousel-control-next {
+  color: white;
+  font-size: 30px;
+  background-color: rgba(0, 24, 77, 0.7);
+  padding: 15px;
+}
+
+.rn-carousel-control.rn-carousel-control-prev {
+  color: white;
+  font-size: 29px;
+  background-color: rgba(0, 24, 77, 0.7);
+  padding: 15px;
+}
+
+.dropdown-pending-selection
+{
+  border-color: red;
+  border-width: 1px;
+}
+
+.panel-extra-and-special {
+  border-color: #bbbbbb;
+}
+
+.panel-extra-and-special > .panel-heading {
+    color: #111111;
+    background-color: #cccccc;
+    border-color: #bbbbbb;
+}

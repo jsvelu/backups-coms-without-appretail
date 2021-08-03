@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+{% load staticfiles %}
+{% block extrastyle %}
+    <link type="text/css" rel="stylesheet" href="{% static 'crm/styles/base.css' %}">
+{% endblock %}
+
+{% block breadcrumb_icon %}
+    <img class='leads-icon' src="{% static 'newage/icons/leads.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="{% url 'warranty:listing' %}">Warranty</a>
+{% endblock %}
+
+{% block page_heading %}Warranty{% endblock %}
+{% block page_subheading %}{{ sub_heading }}{% endblock %}
+
+{% block content %}
+    <div class="top-margin-40">
+    {% block warranty_content %}
+    {% endblock %}
+    </div>
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

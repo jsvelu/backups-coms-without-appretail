@@ -1,0 +1,10 @@
+/usr/bin/xvfb-run
+/usr/bin/xvfb-run
+/coms2/app1/dev-server/lib/python3.8/site-packages/floppyforms/__init__.py:20: UserWarning: Unable to import floppyforms.gis, geometry widgets not available
+  warnings.warn(
+/usr/bin/xvfb-run
+/usr/bin/xvfb-run
+/coms2/app1/dev-server/lib/python3.8/site-packages/floppyforms/__init__.py:20: UserWarning: Unable to import floppyforms.gis, geometry widgets not available
+  warnings.warn(
+/coms2/app1/dev-server/lib/python3.8/site-packages/floppyforms/__init__.py:20: UserWarning: Unable to import floppyforms.gis, geometry widgets not available
+  warnings.warn(

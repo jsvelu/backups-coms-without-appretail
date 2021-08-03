@@ -1,0 +1,76 @@
+<form name="modelseries_form" class="form">
+    <div class="row top-margin-40">
+        <div class="col-sm-10 col-sm-offset-1">
+            <div class="row">
+                <div class="col-sm-6 divider dashed-divider-vertical">
+                    <h3>Select from base model and series</h3>
+
+                    <div class="form-group top-margin-20">
+                        <label class="form-label">MODEL</label>
+                        <select class="form-control" ng-disabled="!isModelEditable()"
+                                ng-model="order.modelSelection"
+                                ng-change="onModelChange()"
+                                ng-options="model.id as model.title for model in choices.models">
+                            <option value="">Select Model</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group top-margin-20">
+                        <label class="form-label">SERIES</label>
+                        <select class="form-control" ng-disabled="!isModelEditable()"
+                                ng-model="order.seriesSelection"
+                                ng-change="onSeriesChange()"
+                                ng-options="series.id as series.title for series in choices.series">
+                            <option value="">Select Series</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group top-margin-20">
+                        <label class="form-label">DESIRED DELIVERY MONTHS</label>
+                        <select class="form-control" 
+                                ng-model="order.delivery_date"
+                                ng-change="onDeliveryChange()"
+                                ng-options="date.value as date.title for date in choices.available_delivery_months">
+                                <option value=""> Select Date </option> 
+                    </select>
+                    </div>
+
+                    <div class="row top-margin-40">
+                        <div class="col-sm-12">
+                            <button class="btn btn-primary" ng-click="proceed()" ng-if="isModelEditable()">Continue with this Series</button>
+                        </div>
+                    </div>
+
+                    <span>OR</span>
+                </div>
+
+                <div class="col-sm-6 divider">
+                    <h3>Select a previous customer/stock model</h3>
+
+                    <div class="form-group top-margin-20">
+                        <label class="form-label">CUSTOMER NAME OR CHASSIS NUMBER</label>
+                        <lookup result="order_lookup_result" placeholder="Search by Customer Name or Chassis Number"
+                                on-select="onOrderLookupSelect" ng-disabled="!isModelEditable()"
+                                url="orders/search-orders" get-extra-data="orderLookupData" min-length="2"
+                                min-wait="100"></lookup>
+                    </div>
+
+                    <div class="row top-margin-40">
+                        <div class="col-sm-12">
+                            <button class="btn btn-primary" ng-click="assignSelectedOrderAndProceed()" ng-if="isModelEditable()">Continue with items from selected order</button>
+                        </div>
+                     
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div ng-if="modelseries_form.$submitted && (!order.validModel() || !order.validSeries())" class="row top-margin-20">
+        <div class="col-sm-12">
+            <div class="alert alert-warning">
+                Please select a model and series to proceed.
+            </div>
+        </div>
+    </div>
+</form>

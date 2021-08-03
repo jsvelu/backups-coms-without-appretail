@@ -1,0 +1,56 @@
+<div class="popup-build-date">
+    <form
+        class="change-build-date-form"
+        novalidate
+        name="changeBuildDateForm"
+        ng-submit="changeBuildDate.submitOrder(order)"
+        >
+        <div class="row calendar">
+            <div class="col-xs-12">
+                <uib-datepicker
+                    class="well well-sm"
+                    ng-model="changeBuildDate.buildDate"
+                    min-date="changeBuildDate.selectableBuildDateMin"
+                    max-date="changeBuildDate.selectableBuildDateMax"
+                    show-weeks="true"
+                    date-disabled="!changeBuildDate.isBuildDateAllowed(date)"
+                    custom-class="changeBuildDate.getBuildDateSelectionClass(date)"
+                    >
+                </uib-datepicker>
+                <div><span class="calendar-capacity-full calendar-legend">&nbsp;</span> Indicates day at capacity</div>
+                <div><span class="calendar-capacity-none calendar-legend">&nbsp;</span> Indicates closed/holiday</div>
+            </div>
+        </div>
+        <div class="row priority">
+            <div class="col-xs-12">
+                <h4>
+                    <span ng-if="changeBuildDateForm.$dirty">This build will be moved to {{ changeBuildDate.buildDate|date:'shortDate' }} (wk {{ changeBuildDate.buildDate|date:'w' }})</span>
+                </h4>
+                <div>
+                    <span ng-if="changeBuildDate.isBuildDateFull()">
+                        This will exceed the capacity of {{ changeBuildDate.buildDate|date:'shortDate' }}
+                        ({{ remainingCapacity(changeBuildDate.buildDate) }} caravans).
+                    </span>
+                </div>
+                <label>Build Priority
+                    <schedule-build-priority
+                        ng-model="changeBuildDate.buildPriorityId"
+                        ></schedule-build-priority>
+                </label>
+            </div>
+            <div class="col-xs-12">
+                    <div class="btn-group pull-right">
+                        <button type="submit"
+                            class="btn btn-sm btn-info submit"
+                            fixme-ng-if="changeBuildDateForm.$dirty"
+                            >Apply</button>
+                        <button type="button"
+                            class="btn btn-sm btn-danger"
+                            ng-click="changeBuildDate.cancelEdit()"
+                            >Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

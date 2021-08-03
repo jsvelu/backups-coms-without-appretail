@@ -1,0 +1,59 @@
+{% load floppyforms %}
+
+{% block row %}
+
+    {% for field in fields %}
+
+        {% if fieldloop.counter0|divisibleby:filter_columns %}
+            <div class="row {% if field.errors %} error{% endif %}">
+        {% endif %}
+                <div class="form-group col-xs-{% widthratio 12 filter_columns 1 %} {% if field.errors %} error{% endif %}">
+
+                {% block field_contents %}
+                    {% with classes=field.css_classes label=label|default:field.label help_text=help_text|default:field.help_text %}
+                        {% block label %}
+                            {% if field|id %}
+                                <label class="control-label" for="{{ field|id }}">
+                            {% endif %}
+                                    {{ label }}{% if field.field.required %} <span class="required">*</span>{% endif %}{% if label|last not in ".:!?" %}:{% endif %}
+                            {% if field|id %}
+                                </label>
+                            {% endif %}
+                        {% endblock %}
+
+                        {% block field %}
+                            <div class="controls {{ classes }} field-{{ field.name }}">
+                                {% block widget %}
+                                    {% formfield field %}
+                                {% endblock %}
+
+                                {% block errors %}
+                                    {% include "floppyforms/errors.html" with errors=field.errors %}
+                                {% endblock %}
+
+                                {% block help_text %}
+                                    {% if field.help_text %}
+                                        <p class="help-block">{{ field.help_text }}</p>
+                                    {% endif %}
+                                {% endblock %}
+
+                                {% block hidden_fields %}
+                                    {% for field in hidden_fields %}
+                                        {{ field.as_hidden }}
+                                    {% endfor %}
+                                {% endblock %}
+
+                            </div><!--- .controls -->
+                        {% endblock %}
+                    {% endwith %}
+                {% endblock field_contents %}
+
+                </div>
+
+        {% if fieldloop.counter|divisibleby:filter_columns or fieldloop.last %}
+            </div><!-- .row -->
+        {% endif %}
+
+    {% endfor %}
+
+{% endblock %}

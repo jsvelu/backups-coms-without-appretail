@@ -1,0 +1,100 @@
+<div class="row">
+    <div class="col-sm-6">
+        <button class="btn btn-primary" ng-click="expandAllCategories()">Expand All Categories</button>
+        <button class="btn btn-primary" ng-click="toggleVerified($event)">Hide Verified Items</button>
+    </div>
+    <div class="col-sm-6 pull-right">
+        <div class="pull-right">
+            <button class="btn btn-primary">Show Specs</button>
+            <button class="btn btn-primary">Print Checklist</button>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <uib-accordion close-others="false">
+            <uib-accordion-group class="production-group" ng-repeat="production in order.productionList" is-open="production.IsOpen">
+                <uib-accordion-heading>
+                    <div>{{ production.category }}
+                        <div class="pull-right"
+                             ng-class="production.verifiedCount ? 'heading-progress-bar' : 'heading-progress-label-only'">
+                            <span class="pull-left heading-progress-bar-left-label">{{ production.verifiedCount }} of {{ production.items.length }} verified</span>
+                            <uib-progressbar ng-if="production.verifiedCount > 0 && production.verifiedCount < production.items.length"
+                                             value="(100 * production.verifiedCount/production.items.length) | number:0"
+                                             type="in-progress">
+                            </uib-progressbar>
+                            <uib-progressbar ng-if="production.verifiedCount == production.items.length"
+                                             value="(100 * production.verifiedCount/production.items.length) | number:0"
+                                             type="success">
+                                <i class="glyphicon glyphicon-ok progress-bar-on-label"></i>
+                            </uib-progressbar>
+                        </div>
+                    </div>
+                </uib-accordion-heading>
+
+                <div class="span11" style="overflow: auto">
+                    <div class="row-fluid ">
+                        <div>
+                            <div class="panel-body">
+                                <table class="table">
+                                    <tr>
+                                        <th>Item</th>
+                                        <th colspan="3">Verification</th>
+                                        <th>Photos & Notes</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <th>Yes</th>
+                                        <th>No</th>
+                                        <th>NA</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+
+                                    <tr ng-repeat="item in production.items" ng-hide="isRowInvisible(production, item)"
+                                            ng-init="item.parent = production; item.previousVerification = item.verification">
+                                        <td>{{ item.item }}</td>
+                                        <td>
+                                            <input type="radio" value="yes" ng-model="item.verification"
+                                                   ng-checked="model" ng-change="incrementVerifiedCount(item.parent, item, 'yes')">
+                                        </td>
+                                        <td>
+                                            <input type="radio" value="no" ng-model="item.verification"
+                                                   ng-checked="model" ng-change="decrementVerifiedCount(item.parent, item, 'no')">
+                                        </td>
+                                        <td>
+                                            <input type="radio" value="na" ng-model="item.verification"
+                                                   ng-checked="model" ng-change="decrementVerifiedCount(item.parent, item, 'na')">
+                                        </td>
+                                        <td>
+                                            <table class="table">
+                                                <tr ng-repeat="note in item.notes">
+                                                    <td class="nested-qa-note">
+                                                        <span
+                                                            class="glyphicon glyphicon-camera"></span> &times; {{ note.photos.length }}
+                                                        &nbsp; "{{ note.note }}"
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                        <td><button class="btn btn-primary">Add Photos & Notes</button></td>
+                                    </tr>
+
+                                    <tr ng-if="displayVerifiedShowLink(production)">
+                                        <td colspan="5">
+                                            <span class="verified-count-footer-label">+ {{ production.verifiedCount}} Verified Items</span>
+                                            <a href class="verified-count-footer-show" ng-click="showVerified(production)">Show</a>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </uib-accordion-group>
+        </uib-accordion>
+    </div>
+</div>

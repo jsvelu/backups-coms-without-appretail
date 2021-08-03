@@ -1,0 +1,22 @@
+<top-bar>
+    <h2 class="top-bar__title">Manage Schedule</h2>
+    <div class="row top-bar-info">
+        <form ng-submit="updateFilters()" class="form-inline">
+            <div class="col-sm-8">
+                <label>Filter From:
+                    <input type="date" required ng-model="$parent.newDateFrom" />
+                </label>
+                <label>to:
+                    <input type="date" required ng-model="$parent.newDateTo" />
+                </label>
+            </div>
+            <div class="col-sm-4">
+                <input type="text" placeholder="Customer Name or Chassis No" ng-model="$parent.newSearch"
+                       class="filter-search-input">
+                <button class="btn btn-primary" ng-click="updateFilters()">Apply</button>
+            </div>
+        </form>
+    </div>
+</top-bar>
+
+<div ui-view></div>

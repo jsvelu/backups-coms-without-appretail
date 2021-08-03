@@ -1,0 +1,55 @@
+{% extends "admin/base_site.html" %}
+{% load alliance_bundle %}
+{% load staticfiles %}
+{% load script_json %}
+
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+{% endblock %}
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+{% block breadcrumbs %}
+    Salesforce Failed Orders
+{% endblock %}
+
+{% block page_heading %}Salesforce Failed Orders{% endblock %}
+
+{% block page_heading_extra %}
+{% endblock %}
+
+{% block content %}
+    <div id="salesforce_failed" class="top-margin-40">
+        <table>
+            <tr>
+                <th>Order ID</th>
+                <th>Order Date</th>
+                <th>Customer</th>
+                <th>Model</th>
+                <th>Timestamp</th>
+                <th>Payload</th>
+                <th>Response Code</th>
+                <th>Response Text</th>
+                <th>Response Time</th>
+            </tr>
+            {% for order in failures %}
+              <tr>
+                  <td><a href="{% url "orders:lookup" %}?order_id={{ order.id }}">{{ order.id }}</a></td>
+                  <td>{{ order.date }}</td>
+                  <td>{{ order.name }}</td>
+                  <td>{{ order.model }}</td>
+                  {% if order.error %}
+                    <td>{{ order.error.timestamp }}</td>
+                    <td><textarea readonly>{{ order.error.payload }}</textarea></td>
+                    <td>{{ order.error.response_code }}</td>
+                    <td><textarea readonly>{{ order.error.response }}</textarea></td>
+                    <td>{{ order.error.response_delay }}</td>
+                  {% endif %}
+              </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

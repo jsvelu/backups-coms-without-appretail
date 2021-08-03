@@ -1,0 +1,1311 @@
+<div class="status" xmlns="http://www.w3.org/1999/html">
+    <div class="status-spinner"><bar-spinner ng-if="loading" /></div>
+ 
+    <div ng-if="message" class="alert {{ message.type }}">
+         <div ng-repeat="text in message.message_list">{{ text }}</div> 
+    </div>
+ 
+    <div>
+        <div class="row">
+            <div class="col-sm-6">
+                <label>Dealer Sales Representative:</label> {{ order.dealer_sales_rep_name }}
+                <br />
+                <button class="btn btn-default" ng-if="canChangeSalesRep()" ng-click="onOpenUpdateSalesRep()" type="button">Change Sales Representative</button>
+            </div>
+            <div class="col-sm-6">
+                <label>Customer Manager:</label> {{ order.customer_manager_name }}
+                <br />
+                <button class="btn btn-default" ng-click="onOpenUpdateCustomerManager()" type="button">Change Customer Manager</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row header-top">
+        <div class="col-sm-2">Stage / Task</div>
+        <div class="col-sm-2">Status</div>
+        <div class="col-sm-6">Data and Documents</div>
+        <div class="col-sm-2">Submitted</div>
+    </div>
+
+    <div class="status-container">
+        <div class="row task-row sub-header" ng-if="status.permissions.any_quote">
+            <div class="col-sm-12">
+                <h4>
+                    <i class="glyphicon glyphicon-flag"
+                       ng-class="{'section-complete':sectionComplete(status.quote)}"></i>
+                    Quote
+                </h4>
+            </div>
+        </div>
+
+        <status-row title="Customer Details Captured" stage="status.quote.customer_details_captured" permission="status.permissions.view_status_customer_details_captured"></status-row>
+        <status-row title="Selections Completed" stage="status.quote.caravan_details_saved" permission="status.permissions.view_status_caravan_details_saved"></status-row>
+        <status-row title="Order Placement Requested" stage="status.quote.caravan_order_requested" permission="status.permissions.view_status_caravan_order_requested"></status-row>
+        <status-row title="Deposit Paid" stage="status.approval.deposit_paid" permission="status.permissions.view_status_deposit_paid">
+            <form ng-if="status.approval.deposit_paid"
+                  name="deposit_form"
+                  ng-submit="updateDeposit(deposit_form, status.approval.deposit_paid.data)">
+                <div class="form-group col-md-6">
+                    <label class="form-label">$ DEPOSIT AMOUNT</label>
+                    <input type="number" class="form-control" ng-model="status.approval.deposit_paid.data"
+                           name="deposit_amount" required ng-disabled="!status.approval.deposit_paid.permission"/>
+                </div>
+                <div class="col-md-6" ng-if="status.approval.deposit_paid.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Confirm Payment</button>
+                </div>
+            </form>
+        </status-row>
+        <status-row title="Order Placed" stage="status.quote.caravan_ordered" permission="status.permissions.view_status_caravan_ordered">
+            <span ng-if="status.quote.caravan_ordered.schedule_date">
+                The order is currently scheduled for {{ status.quote.caravan_ordered.schedule_date | date: AppSettings.FORMAT_DATE_MONTH_JS }}.
+            </span>
+        </status-row>
+        <status-row title="Special features reviewed" stage="status.approval.special_features_reviewed" permission="status.permissions.view_status_special_features_reviewed">
+            <div ng-if="status.approval.special_features_reviewed && status.approval.special_features_reviewed.status == 'Requires Action' && status.approval.special_features_reviewed.permission">
+                <a ui-sref="order.special_features">Review special features</a>
+            </div>
+        </status-row>
+
+        <status-row title="Order Locked" stage="status.quote.caravan_order_finalized_at" permission="status.permissions.view_status_caravan_finalized">
+            <div ng-if="status.quote.caravan_order_finalized_at.cancelled_at">
+                The order lock has been cancelled on {{ status.quote.caravan_order_finalized_at.cancelled_at | date: AppSettings.FORMAT_DATETIME_JS }} by {{ status.quote.caravan_order_finalized_at.cancelled_by }}.<br>
+                Reason: {{ status.quote.caravan_order_finalized_at.cancel_reason }}
+            </div>
+            <div ng-if="status.quote.caravan_order_finalized_at.status == 'Complete' && status.quote.caravan_order_finalized_at.permission">
+                <div class="form-group col-md-6 col-md-offset-3">
+                    <button type="button" ng-click="cancelFinalization()" class="btn btn-primary form-control">Cancel Order Lock</button>
+                    <span ng-if="status.quote.caravan_order_finalized_at.auto_finalization">
+                     This order has been auto locked.
+                    </span>
+                </div>
+            </div>
+        </status-row>
+
+        <div class="row task-row sub-header" ng-if="status.permissions.any_order_awaiting_approval">
+            <div class="col-sm-12">
+                <h4>
+                    <i class="glyphicon glyphicon-flag"
+                       ng-class="{'section-complete':status.approval.marked_as_approved.status === 'Complete'}"></i>
+                    Order Awaiting Approval
+                </h4>
+            </div>
+        </div>
+
+        <status-row title="Chassis Number Appointed" stage="status.approval.chassis_appointed" permission="status.permissions.view_status_chassis_number_appointed">
+            <form ng-if="status.approval.chassis_appointed" name="chassis_number_form"
+                  ng-submit="updateChassis()">
+                <div class="form-group col-md-6">
+                    <label class="form-label">CHASSIS NUMBER</label>
+                    <input type="text" class="form-control" ng-model="status.approval.chassis_appointed.data"
+                           name="chassis_number" required ng-disabled="!status.approval.chassis_appointed.permission && !status.approval.chassis_appointed.override_permission"
+                           ng-readonly="!editingChassis"
+                           focus-me="{{ editingChassis }}" />
+
+                </div>
+                <div class="form-group col-md-6" ng-if="status.approval.chassis_appointed.permission && !status.approval.chassis_appointed.data">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Assign Chassis Number</button>
+                </div>
+
+                <div class="col-sm-12"></div>
+
+                <div class="form-group col-md-6" ng-if="status.approval.chassis_appointed.override_permission">
+                    <button ng-if="!editingChassis" type="button" ng-click="enableChassisEdition()" class="btn btn-primary form-control">Manually Set Chassis Number</button>
+                    <button ng-if="editingChassis" type="button" ng-click="setChassis()" class="btn btn-primary form-control">Confirm</button>
+                </div>
+            </form>
+        </status-row>
+
+        <status-row title="Drafter Appointed" stage="status.approval.drafter_appointed" permission="status.permissions.view_status_drafter_appointed">
+            <form ng-if="status.approval.drafter_appointed" name="drafter_form"
+                  ng-submit="updateDrafter(drafter_form, status.approval.drafter_appointed.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">DRAFTER</label>
+                    <select type="date" class="form-control" ng-model="status.approval.drafter_appointed.data"
+                            ng-options="u[0] as u[1] for u in status.approval.drafter_appointed.choices"
+                            name="drafter" required ng-disabled="!status.approval.drafter_appointed.permission"></select>
+                </div>
+                <div class="col-md-4" ng-if="status.approval.drafter_appointed.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Appoint</button>
+                </div>
+            </form>
+        </status-row>
+
+        <status-row title="Customer Plans & Specs Produced" stage="status.approval.customer_plans_produced" permission="status.permissions.view_status_customer_plans_specs_produced">
+            <form name="customer_plans_form"
+                  ng-submit="updateDoc(customer_plans_form, status.approval.customer_plans_produced.file_upload, 'customer')">
+                <div class="form-group col-md-4" ng-if="status.approval.customer_plans_produced.permission">
+                    <label class="form-label">CUSTOMER PLANS</label>
+                    <label ng-if="status.approval.customer_plans_produced.file_upload.name">
+                        Selected: {{ status.approval.customer_plans_produced.file_upload.name }}
+                    </label>
+                    <button class="form-control btn btn-default" ngf-select
+                            ng-model="status.approval.customer_plans_produced.file_upload"
+                            name="customer_plan" required>
+                        Select Plan
+                    </button>
+                    <button type="submit" class="btn btn-primary form-control">Upload</button>
+                </div>
+                <div class="col-md-8" ng-if="status.approval.customer_plans_produced">
+                    <label class="form-label">UPLOADED</label>
+                    <div class="view-specifications" ng-if="permissions.print_for_autocad">
+                        <a href="javascript:void(0);" ng-click="onPrintAutocad()">View Specifications</a>
+                    </div>
+                    <div ng-repeat="plan in status.approval.customer_plans_produced.data">
+                        <b>{{ plan.file }}</b>
+                        <span><a target="_blank" href="{{ plan.url }}">View</a>&nbsp;<a  ng-if="status.approval.customer_plans_produced.permission" href="" ng-click="deleteDoc(plan.id, 'customer')">Delete</a></span>
+                    </div>
+                </div>
+            </form>
+        </status-row>
+
+        <!-- TODO: Client wants this removed but has indicated they may bring it back -->
+        <!--
+            <status-row class="hide" title="Customer plan approval" stage="status.approval.customer_plan_reviewed" permission="status.permissions.view_status_customer_plan_approval">
+                <div ng-if="status.approval.customer_plan_reviewed">
+                    <div ng-if="status.approval.customer_plan_reviewed.status == 'Requires Action' && status.approval.customer_plan_reviewed.permission">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="status.approval.customer_plan_reviewed.customer_plan_disclaimer_checked" />
+                                <i>I acknowledge that once the plan is approved, no changes can be made and production will be as per the current plan. NAC will not take responsibility for any loss due to any future change.</i>
+                            </label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" ng-model="status.approval.customer_plan_reviewed.weight_estimate_disclaimer_checked" />
+                                <i>I understand that the weights and dimensions provided are an estimate only and that the final weights and dimensions will depend on the customer's final specifications</i>
+                            </label>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <button type="button" ng-click="confirmRejectCustomerPlan()" class="btn btn-primary form-control">
+                                Reject Customer Plan
+                            </button>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <button type="button" ng-click="approveCustomerPlan()" class="btn btn-primary form-control btn-success"
+                                    ng-disabled="!status.approval.customer_plan_reviewed.customer_plan_disclaimer_checked || !status.approval.customer_plan_reviewed.weight_estimate_disclaimer_checked">
+                                Approve Customer Plan
+                            </button>
+                        </div>
+                    </div>
+
+                    <div ng-if="status.approval.customer_plan_reviewed.status == 'Rejected'">
+                        Reject reason: {{ status.approval.customer_plan_reviewed.reject_reason }}
+                    </div>
+                </div>
+            </status-row>
+        -->
+
+        <status-row title="Factory Plans Produced" stage="status.approval.factory_plans_produced" permission="status.permissions.view_status_factory_plans_produced">
+            <form name="factory_plans_form"
+                  ng-submit="updateDoc(factory_plans_form, status.approval.factory_plans_produced.file_upload, 'factory')">
+
+                <div class="form-group col-md-4" ng-if="status.approval.factory_plans_produced.permission">
+                    <label class="form-label">FACTORY PLANS</label>
+                    <label ng-if="status.approval.factory_plans_produced.file_upload.name">
+                        Selected: {{ status.approval.factory_plans_produced.file_upload.name }}
+                    </label>
+                    <button class="form-control btn btn-default" ngf-select
+                            ng-model="status.approval.factory_plans_produced.file_upload"
+                            name="factory_plan" required>
+                        Select Plan
+                    </button>
+                    <button type="submit" class="btn btn-primary form-control">Upload</button>
+                </div>
+                <div class="col-md-8" ng-if="status.approval.factory_plans_produced">
+                    <label class="form-label">UPLOADED</label>
+                    <div ng-repeat="plan in status.approval.factory_plans_produced.data">
+                        <b>{{ plan.file }}</b>
+                        <span ng-if="plan.file"><a target="_blank" href="{{ plan.url }}">View</a>&nbsp;<a ng-if="status.approval.factory_plans_produced.permission" href="" ng-click="deleteDoc(plan.id, 'factory')">Delete</a></span>
+                    </div>
+                </div>
+                <div class="col-md-8 col-md-offset-4" ng-if="status.approval.factory_plans_produced && (status.approval.factory_plans_produced.status != 'Complete' || !status.approval.factory_plans_produced.data[0].file)">
+                    <label>
+                        <input type="checkbox" ng-model="status.approval.factory_plans_produced.data[0].is_separated" ng-change="updateSeparateDoc(status.approval.factory_plans_produced.data[0], 'factory')"/>
+                        Plans attached separately
+                    </label>
+                </div>
+            </form>
+        </status-row>
+
+        <status-row title="Chassis Plans Produced" stage="status.approval.chassis_plans_produced" permission="status.permissions.view_status_chassis_plans_produced">
+            <form name="chassis_plans_form"
+                  ng-submit="updateDoc(chassis_plans_form, status.approval.chassis_plans_produced.file_upload, 'chassis')">
+                <div class="form-group col-md-4" ng-if="status.approval.chassis_plans_produced.permission">
+                    <label class="form-label">CHASSIS PLANS</label>
+                    <label ng-if="status.approval.chassis_plans_produced.file_upload.name">
+                        Selected: {{ status.approval.chassis_plans_produced.file_upload.name }}
+                    </label>
+                    <button class="form-control btn btn-default" ngf-select
+                            ng-model="status.approval.chassis_plans_produced.file_upload"
+                            name="chassis_plan" required>
+                        Select Plan
+                    </button>
+                    <button type="submit" class="btn btn-primary form-control">Upload</button>
+                </div>
+                <div class="col-md-8" ng-if="status.approval.chassis_plans_produced">
+                    <label class="form-label">UPLOADED</label>
+                    <div ng-repeat="plan in status.approval.chassis_plans_produced.data">
+                        <b>{{ plan.file }}</b>
+                        <span ng-if="plan.file"><a target="_blank" href="{{ plan.url }}">View</a>&nbsp;<a ng-if="status.approval.chassis_plans_produced.permission" href="" ng-click="deleteDoc(plan.id, 'chassis')">Delete</a></span>
+                        <p>
+                         
+                    </div>
+                </div>
+                <div class="col-md-8 col-md-offset-4" ng-if="status.approval.chassis_plans_produced && (status.approval.chassis_plans_produced.status != 'Complete' || !status.approval.chassis_plans_produced.data[0].file)">
+                    <label>
+                        <input type="checkbox" ng-model="status.approval.chassis_plans_produced.data[0].is_separated" ng-change="updateSeparateDoc(status.approval.chassis_plans_produced.data[0], 'chassis')"/>
+                        Plans attached separately
+                    </label>
+                   
+
+                </div>
+            </form>
+        </status-row>
+<!-- status.permissions.can_delete_certificates -->
+         <status-row title="Verified By Senior Designer" stage="status.approval.senior_designer_verfied_date" permission="status.permissions.view_status_senior_designer_verfied_date">
+           
+            <form ng-if="status.approval.senior_designer_verfied_date" name="senior_designer_verfied_date_form"
+                  ng-submit="updateSeniorDesigner(senior_designer_verfied_date_form,senior_designer_date_control)">
+                
+                <div class="form-group col-md-8">
+                    <label class="form-label">Senior Designer Verfied Date</label>
+                    
+              
+
+                <input type="date" class="form-control" ng-model="senior_designer_date_control"  ng-disabled="!status.permissions.can_update_senior_designer_verfied_date">
+
+                         
+                </div>
+
+
+                <div class="col-md-4" ng-if="status.permissions.can_update_senior_designer_verfied_date">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+
+            </form>
+        </status-row>
+
+        
+        <status-row title="Purchase Order Raised " stage="status.approval.purchase_order_raised_date" permission="status.permissions.view_status_purchase_order_raised_date">
+            
+            <form ng-if="status.approval.purchase_order_raised_date" name="purchase_order_raised_date_form"
+                  ng-submit="updatePurchaseOrderRaised(purchase_order_raised_date_form, purchase_order_date_control)">
+                
+                <div class="form-group col-md-8">
+                    <label class="form-label">Purchase Order Raised</label>
+                    
+
+            <input type="date" class="form-control" ng-model="purchase_order_date_control"  ng-disabled="!status.permissions.can_update_senior_designer_verfied_date">         
+
+                </div>
+                <div class="col-md-4" ng-if="status.permissions.can_update_purchase_order_raised_date">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row>
+       
+
+
+        <div class="row task-row sub-header" ng-if="status.permissions.any_delivery">
+            <div class="col-sm-12">
+                <h4>
+                    <i class="glyphicon glyphicon-flag"
+                       ng-class="{'section-complete':sectionComplete(status.delivery)}"></i>
+                    Production 
+                </h4>
+            </div>
+        </div>
+
+        <status-row title="VIN Number Assigned" stage="status.delivery.vin_number" permission="status.permissions.view_status_vin_number">
+            <form ng-if="status.delivery.vin_number" name="vin_number_form"
+                  ng-submit="updateVinNumber(vin_number_form, status.delivery.vin_number.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">VIN</label>
+                    <input type="text" class="form-control" ng-model="status.delivery.vin_number.data"
+                           name="vin_number" required ng-disabled="!status.delivery.vin_number.permission"
+                           ng-pattern="/^.{11}\d{6}$/" />
+                    <span class="error" ng-show="vin_number_form.vin_number.$error.pattern">VIN Number must be AAAAAAAAAAANNNNNN</span>
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.vin_number.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row>
+        <!-- New Code -->
+        <status-row title="Actual Production Date" stage="status.delivery.actual_production_date" permission=" status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.actual_production_date" name="actual_production_date_form"
+                  ng-submit="updateActualProductionDate(actual_production_date_form,production_date_control)">
+              
+                <div class="form-group col-md-8">
+                    <label class="form-label">Actual Production Date</label>
+                   
+                           
+                             <br>
+                     <input type="date" class="form-control" ng-model="production_date_control" >
+
+                </div>
+
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+                </form>
+                <form name="del_actual_production_date_form"  ng-submit="deleteActualProdDate(del_actual_production_date_form,status.delivery.actual_production_date.data)">
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+                </div>
+                </form>
+        </status-row>
+
+       <!--  <status-row title=" Production Comments " stage="status.delivery.actual_production_comments" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.actual_production_comments" name="actual_production_comments_form"
+                  ng-submit="updateActualProductionComments(actual_production_comments_form, status.delivery.actual_production_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">  Production Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.actual_production_comments.data"
+                           name="actual_production_comments" ng-disabled="!status.delivery.qc_date_actual.permission"    />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row> -->
+
+        <!-- Chassis Section -->
+         <status-row title="Chassis Section Date" stage="status.delivery.chassis_section" permission="status.permissions.view_status_qc_date_planned">
+            
+            <form ng-if="status.delivery.chassis_section" name="chassis_section"
+                  ng-submit="updateChassisSectionDate(chassis_section, chassis_date_control)">
+
+                  <!-- status.delivery.chassis_section.data)"> -->
+                
+                <div class="form-group col-md-8">
+                    <label class="form-label"> Chassis Section Date </label>
+                   
+
+                    <input type="date" class="form-control" ng-model="chassis_date_control" name="chassis_date_id" 
+                    id="chassis_date_id" >
+                    
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+
+            </form>
+
+                <form  name="del_chassis_section" ng-submit="deleteChassisSection(del_chassis_section,status.delivery.chassis_section.data)"  >
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+                </div>
+                </form>
+        </status-row>
+
+        <status-row title="Chassis Section Comments" stage="status.delivery.chassis_section_comments" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.chassis_section_comments" name="chassis_section_comments"
+                  ng-submit="updateChassisSectionComments(chassis_section_comments, status.delivery.chassis_section_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label"> Chassis Section Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.chassis_section_comments.data"
+                           name="chassis_section_comments" ng-disabled="!status.delivery.qc_date_actual.permission"    />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row>
+
+<!-- Building Section -->
+         <status-row title="Building Section Date" stage="status.delivery.building" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.building" name="building"
+                  ng-submit="updateBuildingDate(building, building_date_control)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Building Date</label>
+                     
+                    <input type="date" class="form-control" ng-model="building_date_control" name="build_date_id" 
+                    id="build_date_id" >
+
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+
+            <form name="del_building_section" ng-submit="deleteBuildingSection(del_building_section,status.delivery.building.data)">
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+                </div>
+            </form>
+                
+        </status-row>
+
+        <status-row title="Building Comments" stage="status.delivery.building_comments" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.building_comments" name="building_comments"
+                  ng-submit="updateBuildingComments(building_comments, status.delivery.building_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label"> Building Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.building_comments.data"
+                           name="building_comments" ng-disabled="!status.delivery.qc_date_actual.permission"    />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row>
+
+
+
+<!-- Pre-Wire Section -->
+         <status-row title="Pre-Wire Section Date" stage="status.delivery.prewire_section" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.prewire_section" name="prewire_section"
+                  ng-submit="updatePrewireDate(prewire_section, prewire_date_control)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Pre-Wire Date</label>
+                 
+                  <input type="date" class="form-control" ng-model="prewire_date_control" name="prewire_date_id" 
+                    id="prewire_date_id" >
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+
+              <form name="del_prewire_section" ng-submit="deletePrewireSection(del_prewire_section,status.delivery.prewire_section.data)">
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+                </div>
+                </form>
+        </status-row>
+
+        <status-row title="Prewire Comments" stage="status.delivery.prewire_comments" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.prewire_comments" name="prewire_comments"
+                  ng-submit="updatePrewireComments(prewire_comments, status.delivery.prewire_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label"> Prewire Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.prewire_comments.data"
+                           name="prewire_comments" ng-disabled="!status.delivery.qc_date_actual.permission"    />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row>
+
+<!-- Plumbing Date -->
+         <status-row title="Plumbing Section Date" stage="status.delivery.plumbing_date" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.plumbing_date" name="plumbing_date"
+                  ng-submit="updatePlumbingDate(plumbing_date, plumbing_date_control)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Plumbing Date</label>
+                    <input type="date" class="form-control" ng-model="plumbing_date_control" name="plumbing_date_id" id="plumbing_date_id" >
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+
+              <form name="del_plumbing_date" ng-submit="deletePlumbingDate(del_plumbing_date,status.delivery.plumbing_date.data)">
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+                </div>
+                </form>
+        </status-row>
+
+        <status-row title="Plumbing Comments" stage="status.delivery.plumbing_comments" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.plumbing_comments" name="plumbing_comments"
+                  ng-submit="updatePlumbingComments(plumbing_comments, status.delivery.plumbing_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label"> Plumbing Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.plumbing_comments.data"
+                           name="plumbing_comments" ng-disabled="!status.delivery.qc_date_actual.permission"    />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row>
+
+
+
+<!-- Aluminium Section -->
+         <status-row title="Aluminium / Fit Off" stage="status.delivery.aluminium" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.aluminium" name="aluminium"
+                  ng-submit="updateAluminiumDate(aluminium, aluminium_date_control)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Aluminium / Fit Off</label>
+                  
+                  <input type="date" class="form-control" ng-model="aluminium_date_control" name="aluminium_date_id" id="aluminium_date_id" >
+
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+            <form name="del_aluminium_section" ng-submit="deleteAluminiumSection(del_aluminium_section,status.delivery.aluminium.data)">
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+            </div>
+            </form>
+        </status-row>
+
+        <status-row title="Aluminium / Fit Off Comments" stage="status.delivery.aluminium_comments" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.aluminium_comments" name="aluminium_comments"
+                  ng-submit="updateAluminiumComments(aluminium_comments, status.delivery.aluminium_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label"> Aluminium Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.aluminium_comments.data"
+                           name="aluminium_comments" ng-disabled="!status.delivery.qc_date_actual.permission"    />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row>
+
+<!-- Finishing Section -->
+         <status-row title="Finishing Date" stage="status.delivery.finishing" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.finishing" name="finishing"
+                  ng-submit="updateFinishingDate(finishing, finishing_date_control)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Finishing Date</label>
+                  <input type="date" class="form-control" ng-model="finishing_date_control" name="finishing_date_id" id="finishing_date_id" >
+
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+            <form name="del_finishing" ng-submit="deleteFinishing(del_finishing,status.delivery.finishing.data)">
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+            </div>
+            </form>
+        </status-row>
+
+        <status-row title="Finishing Comments" stage="status.delivery.finishing_comments" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.finishing_comments" name="finishing_comments"
+                  ng-submit="updateFinishingComments(finishing_comments, status.delivery.finishing_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label"> Finishing Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.finishing_comments.data"
+                           name="finishing_comments" ng-disabled="!status.delivery.qc_date_actual.permission"    />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row>
+<!-- Detailing Section -->
+        <status-row title="Detailing Canopy Date" stage="status.delivery.detailing_date" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.detailing_date" name="detailing_date"
+                  ng-submit="updateDetailingDate(detailing_date,detailing_date_control)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Detailing Canopy Date</label>
+                   
+        <input type="date" class="form-control" ng-model="detailing_date_control" name="detailing_date_id" id="detailing_date_id" >
+
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+            <form name="del_detailing_date" ng-submit="deleteDetailingDate(del_detailing_date,status.delivery.detailing_date.data)">
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+            </div>
+            </form>
+        </status-row>
+
+        <status-row title="Detailing Canopy Comments" stage="status.delivery.detailing_comments" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.detailing_comments" name="detailing_comments"
+                  ng-submit="updateDetalingComments(detailing_comments, status.delivery.detailing_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label"> Detailing Canopy Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.detailing_comments.data"
+                           name="detailing_comments" ng-disabled="!status.delivery.qc_date_actual.permission"    />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row>
+
+<!-- Water Testing Section -->
+        <status-row title="Water Testing Date" stage="status.delivery.watertest_date" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.watertest_date" name="watertest_date"
+                  ng-submit="updateWatertestDate(watertest_date, watertest_date_control)">
+                <div class="form-group col-md-8">
+                <label class="form-label">Water Test Date</label>
+        
+        <input type="date" class="form-control" ng-model="watertest_date_control" name="watertest_date_id" id="watertest_date_id" >
+        
+        </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+            <form name="del_watertest_date" ng-submit="deleteWatertestDate(del_watertest_date,status.delivery.watertest_date.data)">
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+            </div>
+            </form>
+        </status-row>
+
+
+
+        <status-row title="Water Test Comments" stage="status.delivery.watertest_comments" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.watertest_comments" name="watertest_comments"
+                  ng-submit="updateWatertestComments(watertest_comments, status.delivery.watertest_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label"> Water Test Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.watertest_comments.data"
+                           name="watertest_comments" ng-disabled="!status.delivery.qc_date_actual.permission"    />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row>
+        
+<!-- Weights Section -->
+        <status-row title="Weights" stage="status.delivery.weights" permission="status.permissions.view_status_weights">
+            <div class="row" ng-if="status.delivery.weights.permission">
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4"><label>TARE:</label> {{ status.delivery.weights.data.weight_tare }}{{ status.delivery.weights.data.weight_tare == null ? '' : ' kg' }}</div>
+                        <div class="col-md-4"><label>ATM:</label> {{ status.delivery.weights.data.weight_atm }}{{ status.delivery.weights.data.weight_atm == null ? '' : ' kg' }}</div>
+                        <div class="col-md-4"><label>TOW BALL:</label> {{ status.delivery.weights.data.weight_tow_ball }}{{ status.delivery.weights.data.weight_tow_ball == null ? '' : ' kg' }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4"><label>WOB:</label> {{ status.delivery.weights.data.weight_tare - status.delivery.weights.data.weight_tow_ball }} kg</div>
+                        <div class="col-md-4"><label>GTM:</label> {{ status.delivery.weights.data.weight_atm - status.delivery.weights.data.weight_tow_ball }} kg</div>
+                        <div class="col-md-4"><label>TYRES:</label> {{ status.delivery.weights.data.weight_tyres }}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4"><label>CHASSIS GTM:</label> {{ status.delivery.weights.data.weight_chassis_gtm }}{{ status.delivery.weights.data.weight_chassis_gtm == null ? '' : ' kg' }}</div>
+                        <div class="col-md-4"><label>GAS COMP:</label> {{ status.delivery.weights.data.weight_gas_comp }}</div>
+                        <div class="col-md-4"><label>PAYLOAD:</label> {{ status.delivery.weights.data.weight_payload }}{{ status.delivery.weights.data.weight_payload == null ? '' : ' kg' }}</div>
+                    </div>
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.weights.permission">
+                    <button type="button" class="btn btn-primary form-control" ng-click="openWeightsModal()">Set Weights</button>
+                </div>
+            </div>
+        </status-row>
+        <!-- planned QC -->
+        <!--     <status-row title="Planned QC Date" stage="status.delivery.qc_date_planned" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.qc_date_planned" name="qc_date_planned_form"
+                  ng-submit="updatePlannedQcDate(qc_date_planned_form, status.delivery.qc_date_planned.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Planned QC Date</label>
+                    <input type="text" class="form-control" ng-model="status.delivery.qc_date_planned.data"
+                           name="qc_date_planned" ng-disabled="!status.delivery.qc_date_planned.permission"
+                           placeholder="dd/mm/yyyy" />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+        </status-row>
+        -->
+        <!-- The below QC section is removed as per client instruction and merged with Final QC -->
+        <!-- <status-row title="QC Date" stage="status.delivery.qc_date_actual" permission="status.permissions.view_status_qc_date_actual">
+            <form ng-if="status.delivery.qc_date_actual" name="qc_date_actual_form"
+                  ng-submit="updateActualQcDate(qc_date_actual_form, status.delivery.qc_date_actual.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">QC Date</label>
+                    <input type="text" class="form-control" ng-model="status.delivery.qc_date_actual.data"
+                           name="qc_date_actual" ng-disabled="!status.delivery.qc_date_actual.permission"
+                           placeholder="dd/mm/yyyy" />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_actual.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+            <form name="del_qc_date_actual" ng-submit="deleteActualQC(del_qc_date_actual,status.delivery.qc_date_actual.data)">
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+            </div>
+            </form>
+        </status-row>
+
+        <status-row title=" QC Comments " stage="status.delivery.qc_comments" permission="status.permissions.view_status_qc_date_actual">
+            <form ng-if="status.delivery.qc_comments" name="qc_comments_form"
+                  ng-submit="updateQCComments(qc_comments_form, status.delivery.qc_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">  QC Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.qc_comments.data"
+                           name="qc_comments" ng-disabled="!status.delivery.qc_date_actual.permission"
+                             />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_actual.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row> -->
+
+     <!--    <status-row title="Planned Water Test  Date" stage="status.delivery.planned_watertest_date" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.planned_watertest_date" name="planned_watertest_date_form"
+                  ng-submit="updatePlannedWatertestDate(planned_watertest_date_form, status.delivery.planned_watertest_date.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Planned Water Test Date</label>
+                    <input type="text" class="form-control" ng-model="status.delivery.planned_watertest_date.data"
+                           name="planned_watertest_date" ng-disabled="!status.delivery.qc_date_actual.permission"
+                           placeholder="dd/mm/yyyy" />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+        </status-row> -->
+    
+      <!--  <status-row title="Actual Water Test  Date" stage="status.delivery.actual_watertest_date" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.actual_watertest_date" name="actual_watertest_date_form"
+                  ng-submit="updateActualWatertestDate(actual_watertest_date_form, status.delivery.actual_watertest_date.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Actual Water Test Date</label>
+                    <input type="text" class="form-control" ng-model="status.delivery.actual_watertest_date.data"
+                           name="actual_watertest_date" ng-disabled="!status.delivery.qc_date_actual.permission"
+                           placeholder="dd/mm/yyyy" />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+        </status-row>
+
+        <status-row title=" Water Test Comments " stage="status.delivery.watertest_comments" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.watertest_comments" name="watertest_comments_form"
+                  ng-submit="updateWatertestComments(watertest_comments_form, status.delivery.watertest_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">  Water Testing Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.watertest_comments.data"
+                           name="watertest_comments" ng-disabled="!status.delivery.qc_date_actual.permission"
+                             />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_actual.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update </button>
+                </div>
+            </form>
+        </status-row>
+
+       -->
+
+         <status-row title="QC Date" stage="status.delivery.final_qc_date" permission="status.permissions.view_status_qc_date_actual">
+            <form ng-if="status.delivery.final_qc_date" name="final_qc_date_form"
+                  ng-submit="updateFinalQcDate(final_qc_date_form, final_qc_date_control)">
+                <div class="form-group col-md-8">
+                    <label class="form-label"> QC Date</label>
+                    
+        <input type="date" class="form-control" ng-model="final_qc_date_control" name="final_qc_date_id" id="final_qc_date_id" >
+
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_actual.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+            <form name="del_final_qc_date" ng-submit="deleteFinalQC(del_final_qc_date,status.delivery.final_qc_date.data)">
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+            </div>
+            </form>
+            
+        </status-row>
+
+        <status-row title=" QC Comments " stage="status.delivery.final_qc_comments" permission="status.permissions.view_status_qc_date_actual">
+            <form ng-if="status.delivery.final_qc_comments" name="final_qc_comments_form"
+                  ng-submit="updateFinalQcComments(final_qc_comments_form, status.delivery.final_qc_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">   QC Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.final_qc_comments.data"
+                           name="final_qc_comments" ng-disabled="!status.delivery.final_qc_comments.permission"
+                             />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.final_qc_comments.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update  </button>
+                </div>
+            </form>
+        </status-row>
+
+        
+        <status-row title="Off-Line Date" stage="status.delivery.dispatch_date_planned" permission=" status.permissions.view_status_dispatch_date_planned">
+            <form ng-if="status.delivery.dispatch_date_planned" name="dispatch_date_planned_form"
+                  ng-submit="updatePlannedDispatchDate(dispatch_date_planned_form, dispatch_date_planned_control)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Off-Line Date</label>
+                      <input type="date" class="form-control" ng-model="dispatch_date_planned_control" name="dispatch_date_planned_id" id="dispatch_date_planned_id" >
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.dispatch_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+        </status-row>
+
+        <status-row title="Collection Date" stage="status.delivery.collection_date" permission=" status.permissions.view_status_dispatch_date_planned">
+            <form ng-if="status.delivery.dispatch_date_planned" name="collection_date_planned_form"
+                  ng-submit="updateCollectionDate(collection_date_planned_form,collection_date_control)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Collection Date</label>
+        <input type="date" class="form-control" ng-model="collection_date_control" name="collection_date_id" id="collection_date_id" >
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.dispatch_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+        </status-row>
+
+        <status-row title="Collection Comments" stage="status.delivery.collection_comments" permission=" status.permissions.view_status_dispatch_date_planned">
+            <form ng-if="status.delivery.dispatch_date_planned" name="collection_comments_planned_form"
+                  ng-submit="updateCollectionComments(collection_comments_planned_form, status.delivery.collection_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Collection Date Comments</label>
+            <input type="text" class="form-control" ng-model="status.delivery.collection_comments.data"
+                           name="collection_comments" ng-disabled="!status.delivery.dispatch_date_planned.permission"
+                           placeholder="Enter Comments" />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.dispatch_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                </div>
+            </form>
+        </status-row>
+
+
+        <status-row title="Actual Dispatch Date" stage="status.delivery.dispatch_date_actual" permission=" status.permissions.view_status_dispatch_date_planned">
+            <form ng-if="status.delivery.dispatch_date_actual" name="dispatch_date_actual_form"
+                  ng-submit="updateActualDispatchDate(dispatch_date_actual_form, dispatch_date_actual_control)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Actual Dispatch Date</label>
+            <input type="date" class="form-control" ng-model="dispatch_date_actual_control" name="dispatch_date_actual_id" id="dispatch_date_actual_id" >
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.dispatch_date_actual.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+
+            
+            <form name="del_dispatch_date_actual" ng-submit="deleteActualDispatchDate(del_dispatch_date_actual,status.delivery.dispatch_date_actual.data)">
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Delete</button>
+            </div>
+            </form>
+        </status-row>
+
+        <status-row title=" Dispatch Comments " stage="status.delivery.dispatch_comments" permission="status.permissions.view_status_qc_date_planned">
+            <form ng-if="status.delivery.dispatch_comments" name="dispatch_comments_form"
+                  ng-submit="updateDispatchComments(dispatch_comments_form, status.delivery.dispatch_comments.data)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">  Dispatch Comments </label>
+                    <input type="text" class="form-control" ng-model="status.delivery.dispatch_comments.data"
+                           name="dispatch_comments" ng-disabled="!status.delivery.dispatch_date_actual.permission"
+                             />
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.qc_date_planned.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Update  </button>
+                </div>
+            </form>
+        </status-row>
+
+        <status-row title="Upload Driver Handover Form" stage="status.approval.handover_to_driver_form" permission="status.permissions.view_status_handover_to_driver_form">
+            <div class="row">
+                <form name="handover_to_driver_form"
+                      ng-submit="updateDoc(handover_to_driver_form, status.approval.handover_to_driver_form.file_upload, 'handover_to_driver_form')">
+                    <div class="form-group col-md-4" ng-if="status.approval.handover_to_driver_form.permission">
+                        <label class="form-label">Handover Form</label>
+                        <label ng-if="status.approval.handover_to_driver_form.file_upload.name">
+                            Selected: {{ status.approval.handover_to_driver_form.file_upload.name }}
+                        </label>
+                        <button class="form-control btn btn-default" ngf-select
+                                ng-model="status.approval.handover_to_driver_form.file_upload"
+                                name="handover_to_driver" required>
+                            Select Form
+                        </button>
+                        <button type="submit" class="btn btn-primary form-control">Upload</button>
+                    </div>
+                    <div class="col-md-8" ng-if="status.approval.handover_to_driver_form">
+                        <label class="form-label">UPLOADED</label>
+                        <div ng-repeat="doc in status.approval.handover_to_driver_form.data">
+                            <b>{{ doc.file }}</b>
+                            <span ng-if="doc.file"><a target="_blank" href="{{ doc.url }}">View</a>&nbsp;<a  ng-if="status.approval.handover_to_driver_form.permission" href="" ng-click="deleteDoc(doc.id, 'handover_to_driver_form')">Delete</a></span>
+                        </div>
+                    </div>
+                    <div class="col-md-8 col-md-offset-4" ng-if="status.approval.handover_to_driver_form && (status.approval.handover_to_driver_form.status != 'Complete' || !status.approval.handover_to_driver_form.data[0].file)">
+                        <label>
+                            <input type="checkbox" ng-model="status.approval.handover_to_driver_form.data[0].is_separated" ng-change="updateSeparateDoc(status.approval.handover_to_driver_form.data[0], 'handover_to_driver_form')"/>
+                            Handover form attached separately
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="row" ng-if="status.approval.handover_to_driver_form.status == 'Complete'">
+                <div class="col-md-6" ng-if="status.approval.handover_to_driver_form">
+                    <label>Recorded in Salesforce:</label>
+                </div>
+                <div class="col-md-6">
+                    {{ status.approval.handover_to_driver_form.extra_data.salesforce_handover_recorded_at | date :AppSettings.FORMAT_DATETIME_JS }}
+                </div>
+            </div>
+        </status-row>
+
+        <status-row title="Van Received at Dealership" stage="status.delivery.received_date_dealership" permission="status.permissions.view_status_received_date_dealership">
+            <form ng-if="status.delivery.received_date_dealership" name="received_date_dealership_form"
+                  ng-submit="updateDealershipReceivedDate(received_date_dealership_form, received_date_dealership_control)">
+                <div class="form-group col-md-8">
+                    <label class="form-label">Van Received at Dealership</label>
+          <input type="date" class="form-control" ng-model="received_date_dealership_control" name="received_date_dealership_id" id="received_date_dealership_id" >
+                </div>
+                <div class="col-md-4" ng-if="status.delivery.received_date_dealership.permission">
+                    <label class="form-label">&nbsp;</label>
+                    <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                </div>
+            </form>
+        </status-row>
+
+        <status-row title="Upload Driver Handover To Dealership Form" stage="status.approval.handover_to_dealership_form" permission="status.permissions.view_status_handover_to_dealership_form">
+            <form name="handover_to_dealership_form"
+                  ng-submit="updateDoc(handover_to_dealership_form, status.approval.handover_to_dealership_form.file_upload, 'handover_to_dealership_form')">
+                <div class="form-group col-md-4" ng-if="status.approval.handover_to_dealership_form.permission">
+                    <label class="form-label">Handover Form</label>
+                    <label ng-if="status.approval.handover_to_dealership_form.file_upload.name">
+                        Selected: {{ status.approval.handover_to_dealership_form.file_upload.name }}
+                    </label>
+                    <button class="form-control btn btn-default" ngf-select
+                            ng-model="status.approval.handover_to_dealership_form.file_upload"
+                            name="handover_to_dealership" required>
+                        Select Form
+                    </button>
+                    <button type="submit" class="btn btn-primary form-control">Upload</button>
+                </div>
+                <div class="col-md-8" ng-if="status.approval.handover_to_dealership_form">
+                    <label class="form-label">UPLOADED</label>
+                    <div ng-repeat="doc in status.approval.handover_to_dealership_form.data">
+                        <b>{{ doc.file }}</b>
+                        <span ng-if="doc.file"><a target="_blank" href="{{ doc.url }}">View</a>&nbsp;<a  ng-if="status.approval.handover_to_dealership_form.permission" href="" ng-click="deleteDoc(doc.id, 'handover_to_dealership_form')">Delete</a></span>
+                    </div>
+                </div>
+                <div class="col-md-8 col-md-offset-4" ng-if="status.approval.handover_to_dealership_form && (status.approval.handover_to_dealership_form.status != 'Complete' || !status.approval.handover_to_dealership_form.data[0].file)">
+                    <label>
+                        <input type="checkbox" ng-model="status.approval.handover_to_dealership_form.data[0].is_separated" ng-change="updateSeparateDoc(status.approval.handover_to_dealership_form.data[0], 'handover_to_dealership_form')"/>
+                        Handover form attached separately
+                    </label>
+                </div>
+            </form>
+        </status-row>
+
+        <status-row title="Customer Delivery Date" stage="status.delivery.delivery_date_customer" permission="status.permissions.view_status_delivery_date_customer">
+            <div class="row">
+                <form ng-if="status.delivery.delivery_date_customer" name="delivery_date_customer_form"
+                      ng-submit="updateCustomerDeliveryDate(delivery_date_customer_form, delivery_date_customer_control)">
+                    <div class="form-group col-md-8">
+                        <label class="form-label">Customer Delivery Date</label>
+
+           <input type="date" class="form-control" ng-model="delivery_date_customer_control" name="delivery_date_customer_id" id="delivery_date_customer_id"
+           ng-disabled="!status.delivery.delivery_date_customer.permission">
+                        
+                        <span ng-show = "delivery_date_customer_form.delivery_date_customer.$error.required">This field is required!</span>
+                        <span>{{errMessage}}</span>
+                    </div>
+                    <div class="col-md-4" ng-if="status.delivery.delivery_date_customer.permission" >
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary form-control">Set Date</button>
+                    </div>
+                </form>
+
+            </div>
+            <div class="row" ng-if="status.delivery.delivery_date_customer.status == 'Complete'">
+                <div class="col-md-6">
+                    <label>Recorded in Salesforce:</label>
+                </div>
+                <div class="col-md-6">
+                    {{ status.delivery.delivery_date_customer.data.salesforce_delivery_recorded_at | date :AppSettings.FORMAT_DATETIME_JS }}
+                </div>
+            </div>
+        </status-row>
+    </div>
+
+    <h3 class="top-margin-40">Order History</h3>
+
+    <div class="row top-margin-20" ng-if="status.history.permission">
+        <form name="order_history_note_form" ng-submit="updateHistory(order_history_note_form, history)">
+            <div class="form-group col-md-6">
+                <label class="form-label">Manually add notes and/or relevant files for this order</label>
+                <textarea class="form-control" ng-model="history.note" name="history_note"></textarea>
+            </div>
+            <div class="form-group col-md-4">
+                <label class="form-label"></label>
+                <label ng-if="history.file_upload">
+                    Selected: {{ history.file_upload.name }}
+                </label>
+                <button class="form-control btn btn-default" ngf-select
+                        ng-model="history.file_upload"
+                        name="contract">
+                    Select File
+                </button>
+            </div>
+            <div class="col-md-2"> <!-- ng-if="status.history.add.permission" -->
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary form-control">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="history-container">
+        <div class="row header-top top-margin-40">
+            <div class="col-sm-3">Date & Time</div>
+            <div class="col-sm-3">User</div>
+            <div class="col-sm-3">Action</div>
+            <div class="col-sm-3">Action Details</div>
+
+        </div>
+
+        <div class="row" ng-repeat="history in status_history" permission="status.permissions.view_status_qc_date_actual" >
+            <div class="col-sm-3">{{ history.update_on | date :AppSettings.FORMAT_DATETIME_JS}}</div>
+            <div class="col-sm-3">{{ history.update_by }}</div>
+            <div class="col-sm-3">{{ history.action}}</div>
+
+<!--            <div class="col-sm-2" ng-if="history.action =='Customer Changed'">-->
+<!--              {{order.order_converted}}-->
+<!--            </div>-->
+<!--            <div class="col-sm-2" ng-if="history.action !='Customer Changed'">-->
+<!--              &#45;&#45;-->
+<!--            </div>-->
+
+
+
+
+
+
+            <div class="col-sm-3"><div ng-repeat="note in history.notes" ng-bind-html="note">
+
+            </div>
+              <div ng-if="history.action =='Customer Changed'">
+                sales date :{{order.order_converted}}
+              </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+    <div id="update_customer_manager" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Change Customer Manager</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <label>Select new Customer Manager:</label>
+                        <select ng-options="u.id as u.title for u in customer_manager_list" ng-model="new_customer_manager_id"></select>
+                    </div>
+                    <button class="btn btn-primary" data-dismiss="modal" ng-click="updateCustomerManager()">Update</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="update_sales_rep" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Change Sales Representative</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <label>Select new Sales Representative:</label>
+                        <select ng-options="u.id as u.title for u in sales_rep_list" ng-model="new_sales_rep_id"></select>
+                    </div>
+                    <button class="btn btn-primary" data-dismiss="modal" ng-click="updateSalesRep()">Update</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="customer_plan_reject_reason" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Rejection reason</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea rows="10" cols="65" placeholder="Enter here the reason why the customer plan is being rejected..."
+                              class="form-control"
+                              ng-model="customer_plan_reject_reason"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="processRejectCustomerPlan()">Reject</button>
+                    &nbsp;
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="order_finalization_cancel_reason" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Cancellation reason</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea rows="10" cols="65" placeholder="Enter here the reason why the order finalisation is cancelled..."
+                              class="form-control"
+                              ng-model="order_finalization_cancel_reason"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="processCancelFinalization()" ng-disabled="!order_finalization_cancel_reason">Cancel Order Lock</button>
+                    &nbsp;
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="delivery_weights" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Weights</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <form name="save_weight_form" ng-submit="saveWeights()">
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                TARE:<br>
+                                <input class="form-control" type="number" name="weight_tare" ng-model="status.delivery.new_weights.data.weight_tare" ng-min="0" /> kg
+                                <br>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_tare.$error.min">Must be positive</span>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_tare.$error.number">Must be a number</span>
+                            </div>
+                            <div class="col-md-4">
+                                ATM:<br>
+                                <input class="form-control" type="number" name="weight_atm" ng-model="status.delivery.new_weights.data.weight_atm" ng-min="0" /> kg
+                                <br>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_atm.$error.min">Must be positive</span>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_atm.$error.number">Must be a number</span>
+                            </div>
+                            <div class="col-md-4">
+                                TOW BALL:<br>
+                                <input class="form-control" type="number" name="weight_tow_ball" ng-model="status.delivery.new_weights.data.weight_tow_ball" ng-min="0" /> kg
+                                <br>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_tow_ball.$error.min">Must be positive</span>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_tow_ball.$error.number">Must be a number</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">WOB:<br> {{ status.delivery.new_weights.data.weight_tare - status.delivery.new_weights.data.weight_tow_ball }}  kg</div>
+                            <div class="col-md-4">GTM:<br> {{ status.delivery.new_weights.data.weight_atm - status.delivery.new_weights.data.weight_tow_ball }} kg</div>
+                            <div class="col-md-4">
+                                TYRES:<br>
+                                <input class="form-control" type="text" name="weight_tyres" ng-model="status.delivery.new_weights.data.weight_tyres" ng-min="0" />
+                                <br>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_tyres.$error.min">Must be positive</span>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_tyres.$error.number">Must be a number</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                CHASSIS GTM:<br>
+                                <input class="form-control" type="number" name="weight_chassis_gtm" ng-model="status.delivery.new_weights.data.weight_chassis_gtm" ng-min="0" /> kg
+                                <br>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_chassis_gtm.$error.min">Must be positive</span>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_chassis_gtm.$error.number">Must be a number</span>
+                            </div>
+                            <div class="col-md-4">
+                                GAS COMP:<br>
+                                <input class="form-control" type="number" name="weight_gas_comp" ng-model="status.delivery.new_weights.data.weight_gas_comp" ng-pattern="/^\d{8}$/" />
+                                <br>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_gas_comp.$error.pattern">Must be 8 digits</span>
+                            </div>
+                            <div class="col-md-4">
+                                PAYLOAD:<br>
+                                <input class="form-control" type="number" name="weight_payload" ng-model="status.delivery.new_weights.data.weight_payload" ng-min="0" /> kg
+                                <br>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_payload.$error.min">Must be positive</span>
+                                <span class="alert-danger" ng-show="save_weight_form.weight_payload.$error.number">Must be a number</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-default" ng-disabled="!save_weight_form.$valid">Save Weights</button>
+                        &nbsp;
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

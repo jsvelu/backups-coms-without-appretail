@@ -1,0 +1,16 @@
+from django.apps import AppConfig
+import os
+import sys
+
+
+class NewageConfig(AppConfig):
+    name = 'newage'
+    verbose_name = "Newage"
+
+    def ready(self):
+        import newage.signals
+        import newage.checks
+        # from . import jobs
+
+        # if os.environ.get('RUN_MAIN', None) != 'true':
+        #     jobs.printit()

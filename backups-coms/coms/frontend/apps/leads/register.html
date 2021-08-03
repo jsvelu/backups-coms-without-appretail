@@ -1,0 +1,79 @@
+<div class="container-fluid">
+    <div class="row" style="min-height:112px;"></div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <tabset>
+                <tab>
+                    <tab-heading>All Leads</tab-heading>
+                    <div class="row" style="min-height:40px;"></div>
+                    <ajax-data-table data-table="data.all_leads" data-config="leads_table_config"></ajax-data-table>
+                </tab>
+
+                <tab>
+                    <tab-heading>Statistics</tab-heading>
+
+                    <div class="row">
+                        <form>
+                            <div class="form-group col-sm-6">
+                                <label class="control-label">From</label>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="date" class="form-control" datepicker-popup
+                                               is-open="datepicker.from.opened"
+                                               ng-required="false" close-text="Close" ng-model="data.from_date"/>
+                                          <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="datepicker.from.opened = true">
+                                                <i class="glyphicon glyphicon-calendar"></i></button>
+                                          </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-sm-6">
+                                <label class="control-label">To</label>
+
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="date" class="form-control" datepicker-popup
+                                               is-open="datepicker.to.opened"
+                                               ng-required="false" close-text="Close" ng-model="data.to_date"/>
+                                          <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="datepicker.to.opened = true">
+                                                <i class="glyphicon glyphicon-calendar"></i></button>
+                                          </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button ng-click="onFilterDates()" class="btn btn-default">Filter</button>
+                        </form>
+                        </div>
+
+                        <div class="row">
+                            <h3>Leads</h3>
+                            <div class="col-md-6">
+                                <ajax-data-table data-table="data.leads_stats" data-config="leads_stats_config" data-on-draw="onLeadsTableDraw"></ajax-data-table>
+                            </div>
+                            <div class="col-md-6">
+                                <div google-chart chart="charts.leadsByDealership"></div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <h3>Advertising</h3>
+                            <div class="col-md-6">
+                                <ajax-data-table data-table="data.advert_stats" data-config="advert_stats_config" data-on-draw="onAdvertTableDraw"></ajax-data-table>
+                            </div>
+                            <div class="col-md-6">
+                                <div google-chart chart="charts.advertising"></div>
+                            </div>
+                        </div>
+                    </div>
+                </tab>
+            </tabset>
+        </div>
+    </div>
+</div>

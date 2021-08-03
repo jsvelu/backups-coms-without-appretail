@@ -1,0 +1,20 @@
+<div class="container series-select">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Select a series</h2>
+
+            <div class="model-banner"><img ng-src="{{ current.model.logo }}" class="model-logo"/></div>
+
+            <div class="series-panel" ng-repeat="series in current.model.series|filter:isSeriesAvailableForDealership">
+                <div ng-if="series.photos.length">
+                    <img ng-src="{{ series.photos[0].url }}" class="series-image"/>
+                </div>
+                <h4><span class="series-code">{{ series.code }}</span> {{ series.name }}</h4>
+                <div class='row'>
+                    <button class='col-sm-6' ng-click="onViewSeriesPhotoClick(series)">View Series photos</button>
+                    <button class='col-sm-6' ng-click="onStartQuoteClick(series)">Start a quote</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+<div class="row">
+<top-bar>
+    <h2>All Quotes</h2>
+
+    <form class="form col-sm-6 searchbox" ng-submit="search()" autocomplete="off">
+        <lookup result="search.text" placeholder="Search by Customer Name or Chassis Number" on-select="search"
+                type="quote_lookup" autocomplete="off"></lookup>
+    </form>
+    <a class="btn btn-primary pull-right" href="../quotes/new" role="button">
+        <i class="glyphicon glyphicon-plus"></i> New Quote
+    </a>
+</top-bar>
+</div>
+
+<div class="container">
+    <div class="row">
+        <ajax-data-table data-table="table_object" data-config="ajax_config"
+                         data-options="table_config"></ajax-data-table>
+    </div>
+</div>

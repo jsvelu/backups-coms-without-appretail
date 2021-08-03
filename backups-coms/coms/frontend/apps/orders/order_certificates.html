@@ -1,0 +1,85 @@
+<div class="status" xmlns="http://www.w3.org/1999/html">
+    <div class="status-spinner"><bar-spinner ng-if="cert_loading" /></div>
+ 
+    <div ng-if="message" class="alert {{ message.type }}">
+         <div ng-repeat="text in message.message_list">{{ text }}</div> 
+    </div>
+
+<div ng-if="message" class="alert {{ message.type }}">
+    <div ng-repeat="text in message.message_list">{{ text }}</div>
+    
+</div>
+
+<div id="status">
+ 
+ 
+ <CENTER><h3 class="top-margin-40">CERTIFICATES FOR # {{ order.chassis }} </h3> </CENTER>
+ 
+    <div class="row top-margin-20">
+        <div class="row">
+        <form name="order_certificate_form" ng-submit="updateDoc(order_certificate_form, certificate.file_upload, certificate_type)">
+           <div class="col-sm-2">
+           <label class="form-label">&nbsp;</label>
+            </div>
+            <div class="col-sm-2">
+                <select class="form-control" ng-model="certificate_type" name="certificate_type" ng-change="populateText()">
+                <option value="" selected disabled hidden>Certificate Type</option>
+                <option value="plumbing" >Plumbing</option>
+                <option value="electrical">Electrical</option>">
+                <option value="weighbridge">Weighbridge</option>">
+                <option value="qualitycontrol">Quality Control</option>">
+                <option value="others">Others</option>">
+            </select>
+            </div>
+            
+            <div class="col-sm-2" ng-show="checkcertvalue()">
+                <input type="text" class="form-control" ng-model="certificate_note" name="certificate_note">
+            </div>
+            <div class="col-sm-2">
+                <label class="form-label"></label>
+                <label ng-if="certificate.file_upload">
+                    Selected: {{ certificate.file_upload.name }}
+                </label>
+            </div>
+                <div class="col-sm-2">
+                <button class="form-control btn btn-default" ngf-select
+                        ng-model="certificate.file_upload"
+                        name="certificate">
+                    Select File
+                </button>
+            </div>
+            <div class="col-sm-2">
+                <button type="submit" class="btn btn-primary form-control">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <div class="row header-top">
+        <div class="col-sm-2">Cert Id</div>
+        <div class="col-sm-3">Certificate Title</div>
+        <div class="col-sm-3">File Name</div>
+        <div class="col-sm-2">View</div>
+        <div class="col-sm-2">Delete</div>
+    </div>
+
+
+            <div class="row" ng-repeat="doc in status_docs">
+                        <div class="col-sm-2"> {{ doc.id }} </div>
+                        <div class="col-sm-3"> {{ doc.title }} </div>
+                        <div class="col-sm-3"> {{ doc.file }} </div>
+                        <div class="col-sm-2"><a target="_blank" href="{{ doc.url }}" > Download <a/></div>
+                        <div class="col-sm-2" ng-if="canDeleteCertificates()">
+                            <a href="" ng-click="deleteDoc(doc.id, 'order_certificate_form')">Delete</a>
+
+                        </div>
+            </div>
+
+
+               
+            </div>
+
+
+
+
+

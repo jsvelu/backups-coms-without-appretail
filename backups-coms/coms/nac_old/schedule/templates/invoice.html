@@ -1,0 +1,58 @@
+
+            {{ order.dealership.name }}
+            <div class="address">
+                {{ order.dealership.address.address|default:"" }}<br />
+                {{ order.dealership.address.suburb|default:"" }}<br />
+                {{ order.dealership.phone1|default:""<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  {% load staticfiles %}
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title>Notification E-mail</title>
+</head>
+    <body>
+    <div class="row header">
+        <div class="col-sm-5 dealership-info"> }}<br />
+                {{ order.dealership.phone2|default:"" }}
+            </div>
+
+        </div>
+        <div class="col-sm-7 order-info">
+            <div class="row"><label>Order</label> #{{ order.id }}{% if order.chassis %} ({{ order.chassis }}){% endif %}</div>
+            {% if order.build.vin_number %}
+                <div class="row"><label>VIN:</label> {{ order.build.vin_number }}</div>
+            {% endif %}
+            <div class="row"><label>Customer:</label> {{ order.customer.name }}</div>
+            <div class="row"><label>Model/Series:</label> {{ order.get_series_description }}</div>
+            <div class="row"><label>Date printed:</label> {{ date_printed|date:"d/m/Y" }}</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="row header">
+            <div class="col-sm-9">Item</div>
+            <div class="col-sm-3">Price</div>
+        </div>
+
+        <div class="row odd">
+            <div class="col-sm-9">{{ order.orderseries.series.name }}</div>
+        <div class="col-sm-3 price">${{ order.orderseries.wholesale_price|default:'0'|floatformat:2  }}
+        </div>
+        </div>
+
+        {% for item in items %}
+            <div class="row {% cycle 'even' 'odd' %}">
+                <div class="col-sm-9"><span class="type">{{ item.type }}</span> {{ item.name }}</div>
+                <div class="col-sm-3 price">${{ item.price|floatformat:2 }}</div>
+            </div>
+        {% endfor %}
+
+        <div class="row">
+            <div class="col-sm-offset-9 col-sm-3 price total">${{ total|floatformat:2 }}</div>
+        </div>
+    </div>
+ </body>
+</html>
+

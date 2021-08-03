@@ -1,0 +1,9 @@
+<span>
+    <span class="glyphicon glyphicon-ok"
+        ng-if="date"
+        uib-tooltip="By {{ who ? who : '(unknown)' }} on {{ date|date:'short' }}"
+        tooltip-placement="top"
+        tooltip-trigger="mouseenter focus"
+        ></span>
+    <span ng-if="!value">&nbsp;</span>
+</span>

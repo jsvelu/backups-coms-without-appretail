@@ -1,0 +1,132 @@
+{% extends 'newage/printable/base_print.html' %}
+
+{% load static_or_data %}
+
+{% block css %}
+    {% include "orders/printable/yuiapp_printSpecBulk.css" %}
+{% endblock css %}
+
+ 
+
+{% block container %}
+{% for orders in orders1 %}
+    <Table style="margin-top:-30px;padding:0px;width:98%;border-width: 0px;background: #ffffff;">
+ 
+        <tr style="background:#ffffff"> 
+        <td rowspan="2" style="padding:5px;text-align: center;border:0px;"> 
+            <h2> <strong>{{ orders.order.get_chassis_description }}</strong> </h2>
+        </td>
+        </tr>
+
+        <tr >
+        <td colspan="2" style="padding:5px;text-align: center;border:0px;background:#ffffff;">
+        <div class="red">
+            <h2><strong>CUSTOMER: {{ orders.order.customer.name }}</strong></h2>
+        </div>
+        </td>
+     
+        <td colspan="2" style="padding:5px;text-align: center;border:0px;background:#ffffff;">
+        <h2><div style="text-align:center;"><strong>SPECIFICATIONS {{ orders.order.get_series_description }}</strong></div></h2>
+        </td>
+    </tr>
+     </table>
+    {% for category in orders.categories %}
+        {% ifchanged category.print_order %}
+            {% if not forloop.first %}
+                </div>
+            {% endif %}
+            <div style="display: inline-block; width: 16%; border: solid #000 1pt;" class="categories_block">
+        {% endifchanged %}
+
+        <div class="header_cat"><h3 class="item">{{ category.name }}</h3></div>
+
+        {% for feature in category.features %}
+            {% if feature.missing_selections %}
+                <div class="border_top" style="font-weight: bold; width: 100%;">
+                    <div class="item item_margin">{{ feature.description }}</div>
+                </div>
+                <div class="border_top" style="width: 100%;">
+                    <div class="item item_margin">&nbsp;</div>
+                </div>
+            {% else %}
+                {% if feature.department %}
+                    <div class="border_top" style="font-weight: bold; width: 100%;">
+                        <div class="item item_margin">{{ feature.department }}</div>
+                    </div>
+                {% endif  %}
+                <div class="border_top {% if feature.red %}red{% endif %}" style="width: 100%;">
+                    <div class="item item_margin">{{ feature.description }}</div>
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        {% if category.extras %}
+            {% if category.features %} {# vertical padding #}
+                <div class="border_top" style="width: 100%;"><div class="item item_margin">&nbsp;</div></div>
+            {% endif %}
+            <div class="border_top red center"><h3 class="item">Extras Selected</h3></div>
+            {% for extra in category.extras %}
+                <div class="red border_top" style="width: 100%;">
+                    <div class="item item_margin">{{ extra.description }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if category.special_features %}
+            {% if category.features %} {# vertical padding #}
+                <div class="border_top" style="width: 100%;"><div class="item item_margin">&nbsp;</div></div>
+            {% endif %}
+            <div class="border_top red center"><h3 class="item">Special Features</h3></div>
+            {% for description in category.special_features %}
+                <div class="red border_top" style="width: 100%;">
+                    <div class="item item_margin">{{ description }}</div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+    {% endfor %}
+    </div>{# see 'ifchanged' above #}
+
+    <div class="clear"></div>
+
+    {% if orders.production_notes %}
+        <div class="foot-note no_page_break">
+            {% if orders.plans_completed %}
+                <h1>Production Notes</h1>
+            {% else %}
+                <h1>Special features subject to manufacturer approval</h1>
+            {% endif %}
+            <ul>
+                {% for note in production_notes %}
+                <li>{{ note }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    {% if orders.plans_completed %}
+
+        <div id="footer" class="border_top footer_margin no_page_break">
+
+            <img src="{% static_or_data 'newage/images/new-age-new-logo-2.jpg' file_path_mode %}" id="logo" style="float:left; padding: 0px 0; width:110pt;" />
+
+            <div class="footer_information">
+                <div>All content is the exclusive intellectual property of New Age Caravans.</div>
+                <div>Unauthorized reproduction of this content is illegal and prosecutable under Australian Intellectual Property Law.</div>
+                <div>It is customer’s responsibility to ensure that the caravan suits the intended tow vehicle.</div>
+                <div>The payload indicates the maximum permissible loading capacity. It is the users responsibility to ensure this is never exceeded.</div>
+                <div>It is the customer’s responsibility to ensure that the payload is distributed throughout the van, to provide adequate and safe ball weight.</div>
+                <div>New Age Caravans is not responsible for any aftermarket modifications, nor subsequent issues arising due to these modifications.</div>
+                <div>&nbsp;</div>
+                <div>&nbsp;</div>
+                <div>I hereby acknowledge that I have gone through the plan and specification sheet.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Signature: _____________________________ &nbsp;&nbsp;&nbsp; Date: ___________</div>
+            </div>
+            <div class="clear"></div>
+        </div>
+
+    {% endif %}
+<p class="new-page">
+{% endfor %}
+
+
+{% endblock container %}

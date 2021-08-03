@@ -1,0 +1,102 @@
+{% extends "admin/base_site.html" %}
+{% load append_get %}
+{% load floppyforms %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+{% load alliance_bundle %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+    <script>
+        $(function() {
+            const dateFormat = '{{ APP_SETTINGS.FORMAT_DATE_DATEPICKER_JS }}';
+            const datePickerSelector = '.datepicker';
+
+            $(datePickerSelector).datepicker({
+                showOtherMonths: true,
+                selectOtherMonths: true,
+                dateFormat: dateFormat,
+            });
+
+            // Set min and max dates per group of datepickers
+            const froms = $(datePickerSelector).parent().find(datePickerSelector + ':first');
+            froms.on( "change", function() {
+                const to = $(this).parent().find(datePickerSelector + ':last');
+                to.datepicker("option", "minDate", getDate(this));
+            });
+
+            const tos = $(datePickerSelector).parent().find(datePickerSelector + ':last');
+            tos.on( "change", function() {
+                const from = $(this).parent().find(datePickerSelector + ':first');
+                from.datepicker("option", "maxDate", getDate(this));
+            });
+
+            const getDate = (element) => {
+                try {
+                    return $.datepicker.parseDate(dateFormat, element.value);
+                } catch( error ) {
+                    return null;
+                }
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class=" top-margin-40">
+        {% block form %}
+            {% if form %}
+                <div class="newage-generic-filter">
+                    <div class="panel-group" id="genericListFilter" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="genericListFilterHeading">
+                                <h4 class="panel-title">
+                                    <a
+                                        role="button"
+                                        data-toggle="collapse"
+                                        data-parent="#genericListFilter"
+                                        href="#collapseGenericListFilter"
+                                        aria-expanded="{{ collapsed|yesno:"false,true" }}"
+                                        aria-controls="collapseOne"
+                                        class="{% if collapsed %}collapsed{% endif %}"
+                                    >
+                                      Filter
+                                    </a>
+                                </h4>
+                            </div>
+                            <div
+                                id="collapseGenericListFilter"
+                                class="panel-collapse collapse {% if not collapsed %}in{% endif %}"
+                                role="tabpanel"
+                                aria-labelledby="genericListFilterHeading"
+                                aria-expanded="{{ collapsed|yesno:"true,false" }}"
+                            >
+                                <div class="panel-body">
+                                    <form method="get" action="{{ submit_url }}" novalidate>
+                                        {% block form_layout %}
+                                            {% form form using "floppyforms/layouts/bootstrap.html" %}
+                                        {% endblock form_layout %}
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <input type="submit" class="btn btn-newage" value="Filter" />
+                                                <a href="{{ submit_url }}" class="btn btn-newage">Reset</a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        {% endblock form %}
+
+        {% render_table table %}
+    </div>
+{% endblock %}

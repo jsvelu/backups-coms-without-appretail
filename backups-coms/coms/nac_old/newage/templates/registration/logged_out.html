@@ -1,0 +1,17 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+{% endblock %}
+
+{% block title %}Logged Out - {{ block.super }}{% endblock title %}
+{% block page_heading %}Logged Out{% endblock page_heading %}
+{% block page_subheading_wrapper %}{% endblock page_subheading_wrapper %}
+
+{% block content %}
+
+<p>{% trans "Thanks for spending some quality time with the Web site today." %}</p>
+
+<p><a href="{% url 'newage:login' %}" class="btn btn-default">{% trans 'Log in again' %}</a></p>
+
+{% endblock %}

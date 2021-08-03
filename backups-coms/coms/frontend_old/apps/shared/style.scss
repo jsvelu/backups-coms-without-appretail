@@ -1,0 +1,318 @@
+
+
+// Overrides should go above bootstrap imports
+
+@import "config";
+
+
+// Core variables and mixins
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+
+// Reset and dependencies
+@import "bootstrap/normalize";
+@import "bootstrap/print";
+
+$icon-font-path: "../../bower_components/bootstrap-sass/assets/fonts/bootstrap/";
+@import "bootstrap/glyphicons";
+
+// Core CSS
+@import "bootstrap/scaffolding";
+@import "bootstrap/type";
+@import "bootstrap/code";
+@import "bootstrap/grid";
+@import "bootstrap/tables";
+@import "bootstrap/forms";
+@import "bootstrap/buttons";
+
+// Components
+@import "bootstrap/component-animations";
+@import "bootstrap/dropdowns";
+@import "bootstrap/button-groups";
+@import "bootstrap/input-groups";
+@import "bootstrap/navs";
+@import "bootstrap/navbar";
+@import "bootstrap/breadcrumbs";
+//@import "bootstrap/pagination";
+//@import "bootstrap/pager";
+@import "bootstrap/labels";
+//@import "bootstrap/badges";
+//@import "bootstrap/jumbotron";
+//@import "bootstrap/thumbnails";
+@import "bootstrap/alerts";
+//@import "bootstrap/progress-bars";
+@import "bootstrap/media";
+//@import "bootstrap/list-group";
+//@import "bootstrap/panels";
+//@import "bootstrap/responsive-embed";
+//@import "bootstrap/wells";
+@import "bootstrap/close";
+
+// Components w/ JavaScript
+@import "bootstrap/modals";
+@import "bootstrap/tooltip";
+@import "bootstrap/popovers";
+//@import "bootstrap/carousel";
+
+// Utility classes
+@import "bootstrap/utilities";
+//@import "bootstrap/responsive-utilities";
+
+// Core CSS
+//
+
+@import "../../node_modules/susy/sass/susy";
+@import "../../node_modules/angular-carousel/src/css/angular-carousel.scss";
+@import "../../node_modules/ui-select/dist/select.css";
+
+@import "./styles/layout";
+@import "./styles/directives";
+@import "./styles/forms";
+@import "./styles/site";
+@import "./styles/transitions";
+
+
+/*Tab formats*/
+:not(.secondary) > div > div > ul.nav.nav-tabs li.active a {
+  border: 0px;
+  color:#00193A;
+  font-weight: bold;
+  //background-color: #EBEBEB;
+}
+
+:not(.secondary) > div > div > ul.nav.nav-tabs li.active {
+  //background-color: #EBEBEB;
+}
+
+.nav-tabs-justified > li > a, .nav-tabs.nav-justified > li > a {
+  border: none;
+  border-radius: 4px 4px 0 0;
+  margin-right: 2px;
+  margin-left: 2px;
+}
+
+.row-fluid{
+     white-space: nowrap;
+}
+
+.row-fluid .col-lg-12{
+     display: inline-block;
+}
+
+.large-thumbnail {
+  height: 90px;
+}
+
+/*These classes are nested accordions differentiated through color*/
+.panel.category > div:first-child {
+  color: white;
+  background-color: #000000; /* #337ab7; */
+}
+.panel.sub-category
+{
+  background-color: #FAFAFC;
+}
+
+.panel.sub-category > div:first-child {
+  color: white;
+  background-color: #656565; /* #47AAFF; */
+}
+
+.panel.sub-sub-category > div:first-child {
+  color: black;
+  background-color: #C2E3FF;
+}
+
+/* links with ng-click and no href default to not showing cursor change */
+a[ng-click] {
+    cursor: pointer;
+}
+
+.icon-photo {
+  display: inline-block;
+  background: url('/static/newage/icons/icon-camera.png') no-repeat 0 0;
+  text-indent: -9999px;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+}
+
+.ui-select-bootstrap .ui-select-toggle.btn {
+  padding: 6px 25px 6px 12px;
+}
+
+.navbar .navbar-right {
+  margin-right: 0;
+}
+
+// inner navbar
+
+.navbar-content {
+  border-bottom: 1px solid #c7c8ca;
+  margin-bottom: 0;
+  min-height: 60px;
+
+  .navbar-brand {
+    font-size: 15px;
+    font-weight: 700;
+    color: #000;
+
+    &:hover,
+    &:focus {
+      color: #000;
+    }
+
+    img {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .glyphicon {
+      font-size: 11px;
+    }
+  }
+
+  .navbar-nav {
+    padding: 20px 0 0;
+
+    & > li > a {
+      padding: 0 15px;
+      color: #000;
+
+      &:hover {
+        color: $newage-red;
+      }
+    }
+
+    & > li:not(:first-child) > a {
+      border-left: 1px solid #ccc;
+    }
+  }
+}
+
+.navbar-global {
+  border-width: 0 0 5px;
+
+  .navbar-brand {
+    text-indent: -9999px;
+    width: 226px;
+    height: 50px;
+    background: url('/static/newage/images/new-age-new-logo-2.jpg') no-repeat 0 0;
+    background-size: 50px;
+
+    padding: 0;
+    margin: 0px 20px;
+  }
+}
+
+.select2-widget {
+  select {
+    width: 200px;
+  }
+  .select2-select-btn {
+    @extend .btn-link;
+    font-size: 0.8em;
+    padding: 0;
+  }
+}
+
+.splash {
+  margin-top: 40px;
+
+  position: relative;
+  z-index: 1;
+  text-align: center;
+
+  &-actions {
+    position: relative;
+    z-index: 2;
+    bottom: 150px;
+    left: 0;
+    right: 0;
+    background: rgba(255,255,255, 0.9);
+    padding: 60px 150px;
+  }
+}
+
+//transferred from orders/style.scss
+div.top-bar-info {
+  margin-bottom: 25px;
+
+  div > h5 {
+    color: $newage-lightgrey;
+    margin: 5px 0px;
+  }
+  div > h4 {
+    margin: 0px;
+    padding: 0px;
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+}
+
+:not(.secondary) > div > div > ul.nav.nav-tabs {
+  margin-top: -48px;
+
+  li {
+    margin-right: 2px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 10px 20px;
+    background-color: white;
+
+    a {
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      background-color: white;
+      padding: 0 0 6px;
+    }
+
+    &.active a {
+      border-bottom: 3px solid #5eca53;
+    }
+  }
+}
+
+tabs.secondary > div > div > ul.nav.nav-tabs {
+  border: none;
+
+  li {
+    border: none;
+    border-right: 1px solid black;
+    a {
+      color: #0D72BF;
+      padding: 0px 30px;
+      border: none;
+      background-color: white;
+    }
+
+    &:last-child {
+      border: none;
+    }
+
+    &.active {
+      a {
+        color: black;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+div.tab-content {
+  background-color: white;
+  margin-top: 0px;
+  padding-top: 20px;
+}
+
+.truncate {@include text-overflow;}
+
+/* Fallback in case you set an invalid env class */
+body        { background: url('/static/newage/images/env-unknown.png') repeat; }
+
+/* body background environment indicator */
+.env-prod   { background: inherit;  }
+.env-uat    { background: url('/static/newage/images/env-uat.png')    repeat; }
+.env-stage  { background: url('/static/newage/images/env-stage.png')  repeat; }
+.env-ci     { background: url('/static/newage/images/env-ci.png')     repeat; }
+.env-dev    { background: url('/static/newage/images/env-dev.png')    repeat; }

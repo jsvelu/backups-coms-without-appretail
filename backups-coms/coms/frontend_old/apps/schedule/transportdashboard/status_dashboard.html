@@ -1,0 +1,307 @@
+<div id="transport_dashboard">
+    <top-bar>
+        <h2 class="top-bar__title">Caravans Production Status</h2>
+    </top-bar>
+
+    <messages>{{ order.messages }}</messages>
+</div>
+
+<div id="transport_dashboard_status">
+    
+    <div class="content">
+        <table style="table-layout:fixed">
+            <thead>
+                <tr>                    
+                    <th style="background-color: #f49e95">Chassis </th>                          
+                    <th style="background-color: #82c0ea">Building  </th>                       
+                    <th style="background-color: #c3c6c9">Pre-Wire  </th>                      
+                    <th style="background-color: #c3c6c9">Plumbing  </th>                      
+                    <th style="background-color: #76f4db">Aluminium / <br> Fit Off  </th> 
+                    <th style="background-color: #d074f4">Finishing  </th>
+                    <th style="background-color: #ABB2B9">Detailing Canopy  </th>
+                    <th style="background-color: #A9CCE3">Water Testing  </th>                    
+                    <!-- <th style="background-color: #5ee796">QC  </th> -->
+                    <th style="background-color: #f9d959"> QC </th>
+                    <th style="background-color: #f2b47f">Ready For Dispatch</th>
+                    <th style="background-color: #7ac4f4">Dispatched Today  </th>
+                    <th style="background-color: #99abbd">Dispatched Yesterday  </th>
+                    <th style="background-color: #a4cfea">Dispatched <br> This Week  </th>
+                    <th style="background-color: #c884e5">Dispatched <br> This Month  </th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+                <tr>  
+                    <th style="background-color: #E6B0AA"> {{ (chassis_list | filter: { production_unit : 1 }).length }}  </th>
+
+                    <th style="background-color: #AED6F1"> {{ (building_list | filter: { production_unit : 1 }).length }}</th>                          
+                    <th style="background-color: #E5E7E9">{{ (prewire_list | filter: { production_unit : 1 }).length }}</th>
+
+                     <th style="background-color: #E5E7E9">{{ (plumbing_list | filter: { production_unit : 1 }).length }}</th>
+
+                    <th style="background-color: #A3E4D7"> {{ (aluminium_list | filter: { production_unit : 1 }).length }}</th>                          
+                    
+                    <th style="background-color: #D2B4DE"> {{ (finishing_list | filter: { production_unit : 1 }).length }} </th>
+
+                    <th style="background-color: #ABB2B9"> {{ (detailing_list | filter: { production_unit : 1 }).length }}  </th>
+
+                    <th style="background-color: #A9CCE3">  {{ (water_test_list | filter: { production_unit : 1 }).length }}</th>
+
+                    
+                    <th style="background-color: #F9E79F">{{ (final_qc_list | filter: { production_unit : 1 }).length }} </th>                          
+                    <th style="background-color: #F9E79F">{{ (actual_dispatch_list | filter: { production_unit : 1 }).length }} </th>                          
+                    <th style="background-color: #A9CCE3"> {{ (today_dispatched_list | filter: { production_unit : 1 }).length }} </th>                          
+                    <th style="background-color: #ABB2B9">{{ (yesterday_dispatched_list | filter: { production_unit : 1 }).length }} </th>                          
+                    <th style="background-color: #D4E6F1"> {{ (this_week_dispatched_list | filter: { production_unit : 1 }).length }} </th>                          
+                    <th style="background-color: #D7BDE2"> {{ (this_month_dispatched_list | filter: { production_unit : 1 }).length }} </th>
+                    
+                </tr>
+                <tr>
+                    <th valign="top" style="background-color: #E6B0AA">
+                        <table rules="none">
+                            
+                            <tbody >
+                                <tr ng-repeat="chassis in chassis_list | filter: { production_unit : 1 }" >              
+                                    <td>
+                                        <a href="{{ chassis.url }}" target="_blank"> {{ chassis.chassis }} </a> 
+                                     
+                                    </td>                          
+                                </tr>
+                            <tbody>
+                        </table>
+                    </th>  
+                
+                    <th valign="top" style="background-color: #AED6F1">
+                        <table rules="none"> 
+                           
+                            <tbody>
+                                <tr ng-repeat="building in building_list | filter: { production_unit : 1 }">  
+                                    <td>
+                                        <a href="{{ building.url }}" target="_blank"> {{ building.chassis}} </a>
+                                      
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </th>                    
+                    
+                    <th valign="top" style="background-color: #E5E7E9">
+                        <table rules="none"> 
+                             
+                            <tbody>
+                                      
+                                <tr ng-repeat="prewire in prewire_list | filter: { production_unit : 1 }">                         
+                                    <td>
+                                        <a href="{{ prewire.url }}" target="_blank"> {{ prewire.chassis }} </a> 
+                                       
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </th>
+
+                    <th valign="top" style="background-color: #E5E7E9">
+                        <table rules="none"> 
+                             
+                            <tbody>
+                                      
+                                <tr ng-repeat="plumbing in plumbing_list | filter: { production_unit : 1 }">                         
+                                    <td>
+                                        <a href="{{ plumbing.url }}" target="_blank"> {{ plumbing.chassis }} </a> 
+                                       
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </th>                          
+
+                    <th valign="top" style="background-color: #A3E4D7">
+                        <table rules="none">
+                            
+                            <tbody> 
+                                <tr ng-repeat="aluminium in aluminium_list | filter: { production_unit : 1 }">                          
+                                    <td> 
+                                        <a href="{{ aluminium.url }}" target="_blank"> {{ aluminium.chassis }} </a> 
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </th> 
+
+                    <th valign="top" style="background-color: #D2B4DE">
+                        <table rules="none">
+                         
+                        <tbody>
+                            <tr ng-repeat="finishing in finishing_list | filter: { production_unit : 1 }">                         
+                                <td>
+                                    <a href="{{ finishing.url }}" target="_blank"> {{ finishing.chassis }} </a> 
+                                </td>
+                            </tr>
+                        </tbody> 
+                        </table>
+                    </th>
+
+                     <th valign="top" style="background-color: #ABB2B9">
+                        <table rules="none">
+                         
+                        <tbody>
+                            <tr ng-repeat="detailing in detailing_list | filter: { production_unit : 1 }">                         
+                                <td>
+                                    <a href="{{ detailing.url }}" target="_blank"> {{ detailing.chassis }} </a> 
+                                </td>
+                            </tr>
+                        </tbody> 
+                        </table>
+                    </th>   
+
+
+                    <th valign="top" style="background-color: #A9CCE3">
+                        <table style="table-layout:fixed" >
+                        <col style="width:20%">
+                        <col style="width:80%">
+                        <tbody>
+                            <tr ng-repeat="water_test in water_test_list | filter: { production_unit : 1 }">                         
+                                <td>
+                                    <div> 
+                                        <font face="Arial" color="Black"> <b>*</b>  </font>
+                                    </div> 
+                                </td>
+                                <td>
+                                    <a href="{{ water_test.url }}" target="_blank"> {{ water_test.chassis }} </a> 
+                                </td>
+                            </tr>
+                        </tbody> 
+                        </table>
+                    </th>   
+                   
+
+                    <th valign="top" style="background-color: #F9E79F">
+                        <table style="table-layout:fixed" >
+                                <col style="width:20%">
+                                <col style="width:80%">
+                            <tbody>  
+                                <tr ng-repeat="final_qc in final_qc_list | filter: { production_unit : 1 }">                          
+                                    <td> 
+                                        <div ng-if="final_qc.check_weights"> 
+                                            <span style='font-size:14px;color:green'>&#xbb;</span>   
+                                    </div> 
+                                    <div ng-if="!final_qc.check_weights"> 
+                                        <span style='font-size:14px;color:red'>&#xbb;</span>   
+                                    </div>
+                                </td>
+                                <td>
+                                        <a href="{{ final_qc.url }}" target="_blank"> {{ final_qc.chassis }} </a> 
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </th>                    
+ 
+                    <th  style="background-color: #F5CBA7;vertical-align: top">
+                        <table style="table-layout:fixed;" >
+                            <tbody> 
+                                <!-- email_sent_green_list -->
+                            <tr ng-repeat="email_sent_green in email_sent_green_list | filter: { production_unit : 1 }" style="line-height: auto;">                          
+                                    <td style="line-height: auto">        
+                                    <div ng-if="email_sent_green.status_red">
+                                        
+
+                        <a href="{{ email_sent_green.url }}" style="color:#FF6347;"  target="_blank" >
+                                                     {{ email_sent_green.chassis }} </a>
+                                </div>
+                                </td>                                  
+                                 </tr>   
+
+                        <tr ng-repeat="email_sent_green in email_sent_green_list | filter: { production_unit : 1 }"  style="height: 10px;">
+                                    
+                                    <td style="line-height: auto">
+                                    <div ng-if="email_sent_green.status_green" style="line-height: auto"> 
+                                                                  
+                        <a href="{{ email_sent_green.url }}" style="color:#32CD32;" target="_blank"> 
+                                                                  {{ email_sent_green.chassis }}
+                                                              </a>
+                                 
+                                    </div>
+                                </td>
+                                </tr>
+                            <tr ng-repeat="email_sent_green in email_sent_green_list | filter: { production_unit : 1 }"  style="line-height: auto;">
+                            <td style="line-height: auto">
+                            <div ng-if="email_sent_green.status_grey" style="line-height: auto"> 
+                                    
+                                  
+                        <a href="{{ email_sent_green.url }}" style="color:#000000;"  target="_blank"> 
+                                                                  {{ email_sent_green.chassis }}
+                                                                   </a> 
+                                    
+                                    </div>
+                                </td>
+                                </tr>
+                            </tbody>
+                                </table>
+
+                    </th>                    
+
+                    <th valign="top" style="background-color: #A9CCE3">
+                        <table rules="none">
+                            
+                            <tbody> 
+                        <tr ng-repeat="today_dispatched in today_dispatched_list | filter: { production_unit : 1 }">                       
+                                    <td> 
+                                        <a href="{{ today_dispatched.url }}" target="_blank"> {{ today_dispatched.chassis }} </a> 
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </th>                    
+
+                    <th valign="top" style="background-color: #ABB2B9">
+                        <table rules="none">
+                            
+                            <tbody> 
+                    <tr ng-repeat="yesterday_dispatched in yesterday_dispatched_list | filter: { production_unit : 1 }">
+                                    <td> 
+                                        <a href="{{ yesterday_dispatched.url }}" target="_blank"> {{ yesterday_dispatched.chassis }} </a> 
+                                    </td>
+                                </tr>
+                            </tbody> 
+                        </table>
+                    </th>                                   
+
+                    <th valign="top" style="background-color: #D4E6F1">
+                        <table rules="none">
+                            
+                            <tbody> 
+            <tr ng-repeat="this_week_dispatched in this_week_dispatched_list | filter: { production_unit : 1 }">
+                                    <td> 
+                                        <a href="{{ this_week_dispatched.url }}" target="_blank"> {{ this_week_dispatched.chassis }} </a> 
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </th>                    
+
+                    <th valign="top" style="background-color: #D7BDE2">
+                        <table rules="none"> 
+                            
+                            <tbody> 
+                <tr ng-repeat="this_month_dispatched in this_month_dispatched_list | filter: { production_unit : 1 }">
+                                    <td>
+                                        <a href="{{ this_month_dispatched.url }}" target="_blank"> {{ this_month_dispatched.chassis }} </a> 
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </th>
+                                        
+                </tr>
+            </tbody>     
+        </table>
+       
+    </div>  
+</div>
+
+
+ 
+
+
+</div>

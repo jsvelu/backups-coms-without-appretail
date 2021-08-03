@@ -1,0 +1,14 @@
+<div class="container model-select">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2>Select a model</h2>
+
+            <div class="model-panel" ng-repeat="model in choices.model_series|filter:hasModelAvailableSeries" ng-click="onModelClick(model)">
+                <div class="model-logo">
+                    <img ng-src="{{ model.logo }}" class="series-image"/>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,90 @@
+{% extends "crm/crm.html" %}
+{% load alliance_bundle %}
+{% load append_get %}
+{% load floppyforms %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+{% endblock %}
+
+{% block crm_content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="collapse-div collapsed" data-toggle="collapse" data-target="#dvFilters">Filter Leads</div>
+            </div>
+        </div>
+
+        <div class="row top-margin-20 collapse" id="dvFilters">
+            <div class="col-xs-12">
+                <div class="panel panel-primary">
+                    <div class="panel-body">
+                        <form method="get" action="{% url 'crm:lead_listing' %}">
+                            <div class="row">
+                                {% form form using %}
+                                    {% formconfig row using "floppyforms/rows/bootstrap.html" %}
+                                    <div class="col-xs-3">
+                                        {% formrow form.customer_statuses %}
+                                    </div>
+                                    <div class="col-xs-3">
+                                        {% formrow form.states %}
+                                    </div>
+                                    <div class="col-xs-3">
+                                        {% formrow form.model_series %}
+                                    </div>
+                                    <div class="col-xs-3">
+                                        {% formrow form.dealership %}
+                                    </div>
+                                    <div class="col-xs-3">
+                                        {% formrow form.customer_id %}
+                                    </div>
+                                    <div class="col-xs-3">
+                                        {% formrow form.customer_name %}
+                                    </div>
+                                {% endform %}
+                            </div>
+
+                            <div class="row top-margin-20">
+                                <div class="col-xs-12">
+                                    <button type="submit" class="btn btn-newage pull-right" id="btnFilter">
+                                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Apply Filter
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-margin-40">
+            <form method="post" enctype="multipart/form-data" action="{% url 'crm:invite_customer' %}?redirect={{ request.GET.urlencode }}">
+                {% csrf_token %}
+                {% render_table customer_table %}
+            </form>
+            <div class="top-margin-10">
+            <span class="record-count">Total Records: {{ customer_table.paginator.count }}</span>
+            {% for page_num in customer_table.paginator.page_range %}
+                <a class="btn btn-default btn-small {% if page_num|slugify == request.GET.page %}active{% endif %}" href="{% append_get page=page_num %}">{{ page_num }}</a>
+            {% endfor %}
+            {{ perms.customers.add_customer }}
+            {% if perms.customers.add_customer %}
+                <a href="{% url 'crm:add_lead' %}" type="button" class="btn btn-newage pull-right">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add New Lead
+                </a>
+            {% endif %}
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

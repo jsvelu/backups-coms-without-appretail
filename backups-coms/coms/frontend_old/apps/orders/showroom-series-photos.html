@@ -1,0 +1,15 @@
+<div class="container series-photos">
+    <div class="row">
+        <div class="col-sm-12">
+            <h2><span class="series-code">{{ current.series.code }}</span> {{ current.series.name }}</h2>
+        </div>
+    </div>
+    <div class="row" ng-repeat="photo in current.series.photos">
+        <div class="col-sm-12">
+            <img ng-src="{{ photo.url }}" class="series-photo" width="600px" />
+        </div>
+    </div>
+
+    <button class="btn btn-primary" ng-click="onSeriesSelect()">Select Series</button>
+    <div ng-if="errors.series_select" class="top-margin-30 alert alert-danger">{{ errors.series_select }}</div>
+</div>

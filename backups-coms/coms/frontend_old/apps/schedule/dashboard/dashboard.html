@@ -1,0 +1,195 @@
+<div id="dashboard">
+    <top-bar>
+        <h2 class="top-bar__title">Caravans Dashboard</h2>
+    </top-bar>
+
+
+
+    <messages></messages>
+
+    <div class="row header">
+        <div class="col-sm-2">
+            <label>Month: </label>
+                <input id='chosen_month_show' type="text" class="form-control" />
+                <input id='chosen_month' hidden ng-model="currentMonth" no-dirty-check />
+            <bar-spinner ng-if="monthDataLoading"></bar-spinner>
+        </div>
+        <div class="col-sm-5">
+            <label>Filter: </label>
+            <input ng-model="searchStr" placeholder="Type to filter on Model, Customer, Dealership, Chassis or Comments..." size="60" />
+        </div>
+
+        <div ng-if="permissions.change_schedule_dashboard" class="col-sm-4 pull-right">
+            <button ng-click="assignProductionDates()" class="btn btn-primary pull-right">Assign production dates</button>
+            <div class="spinner-container"><bar-spinner ng-if="assignProductionDatesLoading"></bar-spinner></div>
+        </div>
+        <div ng-if="permissions.change_schedule_dashboard" class="col-sm-3 pull-right">
+            <button ng-click="moveOrders()" ng-disabled="!moveOrderCount() || !isOrderMovingButtonAvailable() " class="btn btn-primary">Move Orders</button>
+            <div class="spinner-container" ng-if="moveCmdInitiated"><bar-spinner></bar-spinner></div>
+        </div>
+        <div ng-if="permissions.change_schedule_dashboard" class="col-sm-2 pull-right">
+            <button ng-click="moveOrders2()" ng-disabled="!moveOrderCount() || !isOrderMovingButtonAvailable() " class="btn btn-primary">Move to Pop-Top/Campers</button>
+            <div class="spinner-container" ng-if="moveCmdInitiated"><bar-spinner></bar-spinner></div>
+        </div>
+        <div ng-if="permissions.finalize_order" class="col-sm-1 pull-right">
+            <button ng-click="lockOrders()" ng-disabled="!moveOrderCount()" class="btn btn-primary">Lock Orders</button>
+            <div class="spinner-container" ng-if="lockCmdInitiated"><bar-spinner></bar-spinner></div>
+        </div>
+    </div>
+
+    <div class="row content">
+        <table>
+            <thead>
+                <tr>
+                    <th ng-if="isSortingAllowed()">&nbsp;</th>
+                    <th>Sch. No.</th>
+                    <th>Production date</th>
+                    <th>Chassis</th>
+                    <th>Order #</th>
+                    <th>Series Code</th>
+                    <th>Special</th>
+                    <th>Dealership</th>
+                    <th>Customer</th>
+                    <th>Drafter</th>
+                    <th class="comments">Comments</th>
+                    <th>VIN No.</th>
+                    <th ng-if="permissions.change_schedule_dashboard">Select</th>
+                    <th>Manage</th>
+                    <th ng-if="permissions.change_schedule_dashboard">Lock</th>
+                </tr>
+            </thead>
+            <tbody ui-sortable="sortableOptions" ng-model="orderList">
+                <tr ng-repeat="order in orderList | filter:filterOrders" ng-class-odd="'odd'" ng-class-even="'even'">
+                    <td ng-if="order.month_header && isSortingAllowed()" class="month-header">&nbsp;</td>
+                    <td ng-if="order.month_header" class="month-header" colspan="42">
+                        {{ order.month_header }}
+                        <span class="capacity">
+                            <span>Available: {{ order.available }}</span>
+                            <span>Taken: {{ order.taken }}</span>
+                            <span>Capacity: {{ order.capacity }}</span>
+                            <span>Lock down date: {{ order.signoff_date }}</span>
+                        </span>
+                        <span class="status-summary">
+                            Status Summary:
+                            <span ng-repeat="(status, value) in getOrderSummarySorted(order.status_summary)" ng-class="order.status" class="{{ getStatusClass(status) }}">{{ value }}</span>
+                        </span>
+                    </td>
+
+                    <td ng-if="!order.month_header && isSortingAllowed()" ng-class="isSortingAvailable() ? 'drag-handle' : 'not-available'"><i class="glyphicon glyphicon-move"></i></td>
+                    <td ng-if="!order.month_header">
+                        <i class="glyphicon glyphicon-lock" ng-if="order.month < lockdownMonth || (order.month === lockdownMonth && order.index <= lockdownNumber)"></i>
+                        {{ order.index }}
+                    </td>
+                    <td ng-if="!order.month_header">{{ order.production_date | date: AppSettings.FORMAT_DATE_WEEKDAY_JS }}</td>
+                    <td ng-if="!order.month_header" ng-class="order.status">{{ order.chassis }}</td>
+                    <td ng-if="!order.month_header" ng-class="order.status">{{ order.order_id }}</td>
+                    <td ng-if="!order.month_header">{{ order.model_series }}</td>
+                    <td ng-if="!order.month_header"><i class="glyphicon" ng-class="getSpecialFeatureClass(order)"></i></td>
+                    <td ng-if="!order.month_header">{{ order.dealership }}</td>
+                    <td ng-if="!order.month_header">{{ order.customer }}</td>
+                    <td ng-if="!order.month_header">{{ order.drafter }}</td>
+                    <td ng-if="!order.month_header" class="comments">
+                        <input class="input-comments" type="text" placeholder="Comments..." maxlength="2000"
+                               ng-model="order.schedule_comments" ng-blur="onOrderCommentChange($event, order)"
+                               ng-model-options="{ updateOn: 'blur', debounce:0 }"
+                               no-dirty-check
+                               ng-readonly="!permissions.edit_comments_schedule_dashboard"/>
+                        <bar-spinner ng-if="orderCommentLoading[order.id]"></bar-spinner>
+                    </td>
+                    <td ng-if="!order.month_header">{{ order.vin_number }}</td>
+                    <td ng-if="!order.month_header && permissions.change_schedule_dashboard">
+                       <input type="checkbox" ng-model="order.selected "/>
+                    </td>
+                    <td ng-if="!order.month_header"><a href="{{ order.url }}" target="_blank">Manage</a></td>
+
+                    <td ng-if="!order.month_header && permissions.change_schedule_dashboard">
+                        <a href="#" ng-click="onLockdown(order.month, order.index)">Lock</a>
+                    </td>
+
+                    <td ng-if="orderSortLoading[order.id]" class="spinner-container"><bar-spinner></bar-spinner></td>
+                </tr>
+                <tr class="extra-placeholder"><td colspan="42"></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" id="moveOrderModal">
+   <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal_title"> {{ modalTitle }} </h4>
+            </div>
+            <div class="modal-body">
+                <form name="move_orders_form">
+                  <div class="row move_orders">
+                    <span class="col-md-4 col-md-offset-2">
+                      <label>Schedule Month </label>
+                      <select ng-model="move_month"
+                              ng-options="month.value as month.title|date: AppSettings.FORMAT_DATE_MONTH_SHORT_JS for month in monthList"
+                              no-dirty-check>
+                        <option value="">Select</option>
+                      </select>
+                    </span>
+                  <span class="col-md-3">
+                      <label> Order Position</label>
+                      <input type="number" placeholder="" min="1" max="99999" maxlength="5" ng-model="new_position"/>
+                    </span>
+                  </div>
+                </form>
+
+                <div class="alert alert-warning" ng-if="clone.message">{{ clone.message }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" ng-disabled="!(move_month && new_position)" ng-click="onMoveCmd()">Move</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="moveOrderModal2">
+   <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title modal_title"> {{ modalTitle }} </h4>
+            </div>
+            <div class="modal-body">
+                <form name="move_orders_form1">
+                  <div class="row move_orders">
+                    <span class="col-md-4 col-md-offset-2">
+                      <label>Schedule Month </label>
+                      <select ng-model="move_month"
+                              ng-options="month.value as month.title|date: AppSettings.FORMAT_DATE_MONTH_SHORT_JS for month in monthList"
+                              no-dirty-check>
+                        <option value="">Select</option>
+                      </select>
+                    </span>
+                    <span class="col-md-3">
+                      <label> Order Position</label>
+                    <input type="number" placeholder="" min="1" max="99999" maxlength="5" ng-model="new_position"/>
+                    </span>
+                    <span class="col-md-3">
+                      <label> Pop-Top/Campers</label>
+                      <input type="hidden" ng-model="production_unit" value='2' />
+                       
+                    </span>
+                  </div>
+                </form>
+
+                <div class="alert alert-warning" ng-if="clone.message">{{ clone.message }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" ng-disabled="!(move_month && new_position)" ng-click="onMoveCmd1()"> Move To Pop-Top/Campers </button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+
+</div>

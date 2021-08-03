@@ -1,0 +1,151 @@
+div.navbar.navbar-default {
+  margin-bottom: 0;
+  border-bottom: 5px solid #26AE13;
+}
+
+.sliding-nav-button {
+  position: relative;
+  color: white !important;
+  background-color: black;
+  width: 110px;
+  font-size: 15px;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  float: left;
+  padding: 17px 15px;
+  border: none;
+
+  .hamburger {
+    float: left;
+    margin-right: 5px;
+  }
+
+  .icon-bar {
+    background-color: #fff;
+    height: 3px;
+    width: 24px;
+    display: block;
+
+    & + .icon-bar {
+      margin-top: 5px;
+    }
+  }
+  > span {
+    display: inline-block;
+  }
+}
+
+.sliding-nav-button:hover {
+  background-color: black;
+  color: white;
+}
+
+a {
+  color: grey;
+}
+
+.gradient-header {
+  background: #7097ce url('/static/newage/images/header-background.jpg') no-repeat 0 0;
+  background-size: 100%;
+  padding: 40px 45px;
+
+  h1 {
+    margin: 0;
+    line-height: 1;
+    font-weight: 700;
+    font-size: 30px;
+  }
+}
+
+div.breadcrumbs {
+  line-height: 32px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  span.breadcrumb-icon {
+    margin-right: 10px;
+    font-size: 32px;
+    line-height: 32px;
+  }
+
+  a:nth-child(2) {
+    font-weight: bold;
+  }
+
+  ul.breadcrumb {
+    display: inline;
+    background: none;
+    padding: 0px;
+    vertical-align: top;
+
+    li {
+      vertical-align: top;
+    }
+
+    li:first-child {
+      font-weight: bold;
+    }
+
+    li + li:before {
+      content: ">";
+    }
+  }
+}
+
+table.table-bordered {
+  border: none;
+
+  tr {
+    th, td {
+      border: none;
+      border-top: 1px solid #ddd;
+    }
+  }
+}
+
+table > thead > tr:first-child th:first-child {
+  border-top-left-radius: 15px;
+}
+
+table > thead > tr:first-child th:last-child {
+  border-top-right-radius: 15px;
+}
+
+table {
+  width: 100%;
+}
+
+table > thead > tr {
+  background-color: #252626;
+  color: white;
+}
+
+table > thead > tr > th {
+  font-weight: normal;
+  padding: 15px 15px !important;
+}
+
+table > thead > tr > th a {
+  color: white;
+}
+
+table > thead > tr > th.asc a:after {
+  margin-left: 10px;
+  content: '\25B2';
+}
+
+table > thead > tr > th.desc a:after {
+  margin-left: 10px;
+  content: '\25BC';
+}
+
+table.remove-pagination + ul.pagination {
+  display: none;
+}
+
+
+table thead th.currency,
+table tbody td.currency {
+  text-align: right;
+}

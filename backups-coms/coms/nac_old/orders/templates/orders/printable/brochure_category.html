@@ -1,0 +1,30 @@
+
+<div class="category_detail">
+    <h1>{{ category.name }}</h1>
+    <ul>
+        {% for item in category.features %}
+            <li class="{% if item.red %}red{% endif %}">{{ item.name }}</li>
+        {% endfor %}
+
+        {% if category.extras %}
+            {% if category.features %} {# vertical padding #}
+                <li class="v-spacing">&nbsp;</li>
+            {% endif %}
+            <li class="title">Extras</li>
+            {% for item in category.extras %}
+                <li class="red">{{ item.name }}</li>
+            {% endfor %}
+        {% endif %}
+
+        {% if category.special_features %}
+            {% if category.features %} {# vertical padding #}
+                <li class="v-spacing">&nbsp;</li>
+            {% endif %}
+            <li class="title">Special Features</li>
+            {% for description in category.special_features %}
+                <li class="red">{{ description }}</li>
+            {% endfor %}
+        {% endif %}
+    </ul>
+</div>
+

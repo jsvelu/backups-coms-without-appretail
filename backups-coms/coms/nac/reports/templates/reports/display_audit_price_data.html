@@ -1,0 +1,423 @@
+{% extends "admin/base_site.html" %}
+{% load floppyforms %}
+{% load alliance_bundle %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-highcharts' 'css' %}
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-highcharts' 'js' %}
+    <script type="text/javascript" src="{% static "reports/js/reports.js" %}"></script>
+{% endblock %}
+
+{% block bodyclass %}reports-viewer{% endblock %}
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="#">Reports</a>
+{% endblock %}
+
+{% block page_heading %}Reports{% endblock %}
+{% block page_subheading_wrapper %}{% endblock %}
+
+ 
+{% block content %}
+
+    <div id="report-index">
+        
+    
+        <div> <center> <h2> <b>  PRICE DATA CHANGES AUDIT </b></h2> </center> 
+        </div>
+        <div>
+       
+
+          <a href="{% url 'reports:view_series_price_audit' %}?view_type=view_export "> 
+        <input align="left" type="Submit" style="background-color:#B2BEB5;float:left;background:red;color:white"; name="but2" value="Export" > 
+        </a>
+         
+          
+        <a href="{% url 'reports:index' %}" >
+        <input   type="Submit" style="background-color:#B2BEB5;float:right;background:red;color:white"; name="but1" value="Back To Reports" > 
+        </a>
+        <br>
+    </div>
+       
+        <br>
+       
+        <table>
+            <thead>
+                <tr>
+                    <th>SNo</th>
+                    <th>Series Code</th>
+                    <th>Price Changed Date</th>
+                    <th>Previous Wholesale Price</th>
+                    <th>New WholeSale Price </th>
+                    <th>Previous Retail Price</th>
+                    <th>New Retail Price </th>
+                    <th>  Changed By </th>
+                </tr>
+            </thead>
+
+            <tbody>
+            <tr><td colspan="3"><center></td></tr>
+                {%for data in series_audit_data %}
+                <tr>
+                   
+                    <td> <h4>{{ forloop.counter }}  </td>
+                    
+                   
+                     <td>  <font color='red'>   {{ data.series_code }} </font> </td>
+                        
+                      <td> {{ data.price_changed_datetime }}  </td> 
+
+                      <td>    {{ data.existing_wholesale_price }}  </td> 
+                    
+
+                     
+                    <td>   {{ data.new_wholesale_price }} </font> </td>
+                     
+                    
+                    <td> <font color='red'>  {{ data.existing_retail_price }} </font> </td>
+                    
+
+                    <td> <font color='red'> {{ data.new_retail_price }} </td>
+                    
+                    <td>   {{ data.price_changed_user }}  </td>
+                    </tr>                  
+                    </h4>
+                 {%  endfor %}
+        
+        </tbody>
+        </table>
+    </form>
+   
+    </div>
+   
+      <div>
+        {%if invalid_file_type %}    
+        <h4> <p>"The imported File  is Invalid! Upload accepts only csv files! 
+            <p>The First Column is a Valid Chassis No and the Second Column should be a valid VIN Number separated by a comma and should a header at the top . 
+        </h4>
+            <p><center> <a href="{% url 'reports:index' %}"  onmouseover="this.style.foreColor='blue';return true;"> Go Back to Reports </a>
+        <p>  <h3> {{ count_data }} </h3> 
+        {% endif %}
+    </div>
+     <div>
+        {%if invalid_series_file_type %}    
+        <h4> <br><p> The imported series price data file  is Invalid! Upload accepts only csv files! 
+            <p>The First Column should contain Series Code while the Second Column should contain wholesale price and the third column should contain the retail price. 
+        </h4>
+            <p><center> <a href="{% url 'reports:index' %}"  onmouseover="this.style.foreColor='blue';return true;"> Go Back to Reports </a>
+        <p>  <h3> {{ count_data }} </h3> 
+        {% endif %}
+    </div>
+
+    <div>
+        {%if invalid_file %}    
+        <h3>
+        <p> The imported File  format is not Invalid! 
+        <p> The First Column should contain a Valid Chassis No and the Second Column should be a valid VIN Number separated by a comma and there should be one header. 
+        </h3>
+            <center> <a href="{% url 'reports:index' %}" onmouseover="this.style.foreColor='blue';return true;"> Go Back to Reports </a>
+        <p>  <h3> {{ count_data }} </h3> 
+        {% endif %}
+    </div>
+
+
+
+    <div>
+        {%if no_data_to_update %}    
+        <h3> "There are No Records to Update!" 
+             
+        </h3>
+        {% endif %}
+    </div>
+
+
+    {%if series_data_type %}
+
+        <div> <center> <h2> <b>SERIES PRICE IMPORTED DATA </b></h2>
+         </center> </div>
+        <form method="POST" action="{% url 'reports:series_price_update' %}">
+
+
+         <div align="right"><input type="Submit" style="background-color:#B2BEB5;" name="but1" value="Upload" onmouseover="this.style.backgroundColor='blue';return true;" onmouseout="this.style.backgroundColor='#B2BEB5';return true;"> 
+        
+        <input type="Submit" name="but1" value="Cancel" style="background-color:#B2BEB5;"
+        onmouseover="this.style.backgroundColor='blue';return true;" onmouseout="this.style.backgroundColor='#B2BEB5';return true;"></div>
+       
+        <p>
+             <div align="right"><b>{{ ok_records }} out of  {{ total_records}} </b> price records can be updated. </div> 
+        </p>
+                
+        <table>
+            <thead>
+                <tr>
+                    <th><center>SNo</th>
+                     <th><center>Model Name</th>
+                    <th><center>Series Code</th>
+                    <th><center>Series Name</th>
+                    
+                    <th ><center>Existing Wholesale </th>
+                    <th > <center>Existing Retail </th>
+                    <th><center>New WholeSale Price</th>
+                    <th><center>New Retail Price</th>
+                    <th><center>Status</center></th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                  
+                {%for data in price_data %}
+                <tr>
+                   <center>
+                    <td align="center"> <h4>{{ forloop.counter }}  </td>
+
+                    {%if data.error_series  %}
+                    
+                    <td>  <font color='red'>   {{ data.model_name }} </font> </td>
+                        
+                    <td  align="center"> <font color='red'>   {{ data.series_code }}</font> </td>
+
+                    <td  align="center"> <font color='red'>   {{ data.series_name }}</font> </td>
+                    
+                    <td  align="center"> <font color='red'>   {{ data.exist_wholesale_price }}</font> </td>
+                    
+                    <td  align="center"> <font color='red'>   {{ data.exist_retail_price }}</font> </td>
+
+
+                    {% else %}
+
+                    <td  align="center">    {{ data.model_name }} </td>
+
+                    <td  align="center">  {{ data.series_code }} </td>
+
+                    <td  align="center">  {{ data.series_name }} </td>
+
+                    <td  align="center">  {{ data.exist_wholesale_price }} </td>
+
+                    <td  align="center">  {{ data.exist_retail_price }} </td>
+
+                    {% endif %}
+
+                    {%if data.error_wholesale  %}
+                     
+                    <td  align="center"> <font color='red'>   {{ data.new_wholesale_price }}</font> </td>
+                    
+                    {% else %}
+                    
+                    <td  align="center">   {{ data.new_wholesale_price }}</font> </td>
+
+                    {% endif %}
+
+                    {%if data.error_retail  %}
+
+                    <td  align="center"> <font color='red'> {{ data.new_retail_price }} </font></td>
+
+                    {% else %}
+
+                    <td  align="center">  {{ data.new_retail_price }} </td>
+
+                    {% endif %}
+
+
+                    {% if data.error_message %}
+                    <td  align="center">
+                     <font color='red'>   {{ data.error_message }}</font> 
+                    </td>
+
+                    {% endif %}
+                    {% if not data.error_message %}
+                     <td  align="center">  Ok <input type="hidden" name="{{ data.series_code }}" value="{{ data.series_code }}"> </td>
+                       
+                    {% endif %}
+
+
+                    </h4>
+               
+                </tr>
+                 {%  endfor %}
+
+             
+                 {% if ok_records != total_records %}
+                 <tr></tr>
+                  <tr><td colspan="4" align="center"> <font color="red"> *** Note: Records in red will not be uploaded! </font></td></tr>
+                   {% endif %}
+
+        </tbody>
+        </table>
+    </form>
+    </div>
+     {% endif %}
+
+  
+
+     {%if series_after_data_type %}
+
+        <div> <center> <h2> <b>SERIES PRICE UPLOADED DATA  </b></h2>
+         </center> </div>
+         
+        <center> <a href="{% url 'reports:index' %}" > 
+        <div align="center"><input type="Button" style="background-color:#B2BEB5;" name="but1" value="Back to Reports" onmouseover="this.style.backgroundColor='blue';return true;" onmouseout="this.style.backgroundColor='#B2BEB5';return true;"></a> </div>
+        <p>  <h3> {{ count_data }} </h3> 
+                
+        <table>
+            <thead>
+                <tr>
+                    <th><center>SNo</th>
+                    <th><center>Model Name</th>
+                    <th><center>Series Code</th>
+                    
+                    <th><center>Series Name</th>
+                     
+                    <th> <center>WholeSale Price</th>
+                     
+                    <th> <center>Retail Price</th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+                  
+                {%for data in series_updated_data %}
+                <tr>
+                   <center>
+                    <td align="center"> <h4>{{ forloop.counter }}  </td>
+                    
+                     <td align="center"> <h4>{{ data.model_name }}  </td>
+                    <td  align="center">
+                       <font color="#00008B">  {{ data.series_code }}
+                    </td>
+                    <td  align="center">
+                         <font color="#00008B"> {{ data.series_name }}
+                    </td>
+                  
+
+                     <td  align="center">
+                         <font color="#00008B"> {{ data.wholesale_price }}
+                    </td>
+
+                    
+
+                    <td  align="center">
+                         <font color="#00008B"> {{ data.retail_price }}
+                    </td>
+
+                    </h4>
+               
+                </tr>
+                 {%  endfor %}
+
+                  {%for data in series_not_updated_data %}
+                <tr>
+                   <center>
+                    <td align="center"> <h4>{{ forloop.counter }}  </td>
+                    
+                    <td  align="center">
+                       <font color="red">  {{ data.series_code }}
+                    </td>
+                    <td  align="center">
+                         <font color="red"> {{ data.series_name }}
+                    </td>
+                  
+
+                     <td  align="center">
+                         <font color="red"> {{ data.wholesale_price }}
+                    </td>
+
+                    <td  align="center">
+                         <font color="red"> {{ data.retail_price }}
+                    </td>
+
+                    </h4>
+               
+                </tr>
+                 {%  endfor %}
+                    {%if series_no_data_to_update %} 
+         <h3> 
+            "There are No Records to Update!" 
+             
+        </h3>
+        {% endif %} 
+               
+        </tbody>
+        </table>
+    </form>
+    </div>
+     {% endif %}
+    
+        {%if vin_after_data_type %}
+    
+        <div> <center> <h2> <b> VIN DATA UPLOADED  </b></h2>
+        <p>  <h3> {{ count_data }} </h3> 
+              <p><a href="{% url 'reports:index' %}"> Back To Reports </a>
+             </center> </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>SNo</th>
+                    <th>Chassis No</th>
+                    <th>Vin No</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {%for data in updated_data %}
+                <tr>
+                    
+                    <td> <h4>  <b><font color="#013220">{{ forloop.counter }} </font> </td>
+                    <td>
+                        <b> <font color="#013220"> {{ data.chassis_no }} </font>
+                    </td>
+                    <td>
+                         <b><font color="#013220"> {{ data.vin_number }}</font>
+                    </td>
+                    </h4>
+
+               
+                </tr>
+                
+                 {%  endfor %}
+
+                  {%for data in not_updated_data %}
+                <tr>
+                   <font color="red">
+                    <td> <b><h4> <font color="red"> {{ forloop.counter }} </font> </td>
+                    <td>
+                       <b> <font color="red"> {{ data.chassis_no }} </font>
+                    </td>
+                    <td>
+                       <b>  <font color="red">{{ data.vin_number }}</font>
+                    </td>
+                    </h4>
+
+                </tr>
+                </font >
+                 {%  endfor %}
+        {%if not_updated_data %} 
+        <tr><td colspan="2" align="center"> <font color="red"> *** Records in Red are not uploaded due to Invalid Chassis No ! </font></td></tr>
+        {% endif %}        
+        </tbody>
+        </table>
+    </form>
+
+    </div>
+      {% endif %}
+
+    
+
+  
+
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

@@ -1,0 +1,22 @@
+{
+  "name": "datatables-select",
+  "main": [
+    "js/dataTables.select.js",
+    "css/select.dataTables.scss"
+  ],
+  "dependencies": {
+    "jquery": ">=1.7.0",
+    "datatables": ">=1.10.8"
+  },
+  "homepage": "https://github.com/DataTables/Select",
+  "version": "1.1.2",
+  "_release": "1.1.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.1.2",
+    "commit": "fa3717a03e645702e2ab2a02c1e248f1a177c29f"
+  },
+  "_source": "https://github.com/DataTables/Select.git",
+  "_target": "~1.1.0",
+  "_originalSource": "datatables-select"
+}

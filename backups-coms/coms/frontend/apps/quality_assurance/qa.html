@@ -1,0 +1,28 @@
+<quality-top-bar>
+    <h2>Quality Assurance</h2>
+    <div class="form-group">
+        <button class="btn btn-primary pull-right header-right-button" id="save_button">Save</button>
+        <label for="save_button" class="pull-right header-button-label">Page will autosave every 2 mins</label>
+    </div>
+    <div class="row top-bar-info">
+        <div class="col-sm-2">
+            <h5>Dealership</h5>
+            <h4>{{ order.dealership.name }}</h4>
+        </div>
+        <div class="col-sm-2">
+            <h5>Model</h5>
+            <h4>{{ order.model.name }}</h4>
+            <h6>{{ order.series.name }}</h6>
+        </div>
+        <div class="col-sm-2">
+            <h5>Chassis No.</h5>
+            <h4>{{ order.chassis }}</h4>
+        </div>
+    </div>
+</quality-top-bar>
+
+<div>
+    <tabs data="tabData" type="tabs" />
+    <a id="message-anchor"></a>
+    <ui-view></ui-view>
+</div>

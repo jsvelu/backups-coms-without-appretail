@@ -1,0 +1,41 @@
+{% extends "admin/base_site.html" %}
+{% load append_get %}
+{% load alliance_bundle %}
+{% load compress %}
+{% load floppyforms %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+{% endblock %}
+
+
+{% block bodyclass %}newage-home{% endblock %}
+{% block breadcrumb_icon %}<img src="{% static 'newage/icons/dashboard.png' %}">{% endblock %}
+{% block breadcrumbs %}<a href="{% url 'home' %}">Home</a>{% endblock %}
+
+{% block content %}
+
+    <div class="top-margin-20">
+    {% if banner %}
+        {{ banner | safe }}
+    {% endif %}
+    </div>
+
+
+    <div class='row top-margin-40'>
+        <div class="col-sm-12">
+            <h3>Todo List</h3>
+            <hr>
+            {% render_table todo_table %}
+        </div>
+    </div>
+
+{% endblock %}

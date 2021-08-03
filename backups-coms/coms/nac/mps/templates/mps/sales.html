@@ -1,0 +1,274 @@
+{% extends "admin/base_site.html" %}
+{% load alliance_bundle %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+    <link rel="stylesheet" type="text/css" href="{% static "mps/css/index.css" %}" />
+    <link rel="stylesheet" type="text/css" href="{% static "mps/css/StyleCalender.css" %}" />
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+    <script type="text/javascript">
+        $("#month-display").hide();
+        var BASE_RUNSHEET_URL = '{% url 'mps:runsheet' show_id='' %}';
+        var BASE_SALES_URL = '/mps/sales/';
+        var BASE_MONTH_URL =  '/mps/monthsales/'; 
+        var BASE_STOCK_URL = '/mps/stock/';
+        var BASE_EXTRACT_URL = '/mps/data_extract/'
+        var BASE_STOCK_EXTRACT_URL = '/mps/stock_data_extract'
+
+        window.dateFormat = '{{ APP_SETTINGS.FORMAT_DATE_DATEPICKER_DASH_FMT_JS }}';
+    </script>
+    
+    <script type="text/javascript" src="{% static "mps/js/sales.js" %}"></script>
+    <script type="text/javascript" language="javascript" src="{% static "mps/js/CalendarControl.js" %}"></script>
+    
+     
+{% endblock %}
+
+{% block bodyclass %}reports-index{% endblock %}
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+
+{% endblock %}
+
+{% block page_heading %}Reports{% endblock %}
+{% block page_subheading_wrapper %}{% endblock %}
+
+{% block content %}
+
+    <div id="report-index">
+        <table>
+            <thead>
+                <tr>
+                    <th><center>Type</center></th>
+                    <th colspan="2"><center>Parameters</center></th>
+                    <th><center>Export</center></th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                {%  if can_export_runsheet %}
+                <tr>
+                    <td>Runsheet</td>
+                        <td colspan="2">
+                            <center>
+                            <label for="show">
+                                Show:
+                            </label>
+                            <select id="show">
+                                <option value="">--- Select Show ---</option>
+                                {% for show in shows %}
+                                <option value="{{ show.id }}">{{ show.name }}</option>
+                                {% endfor %}
+                            </select>
+                            </center>
+                        </td>
+                    <td>
+                        <a id="runsheet-link" class="btn btn-default" target="_blank">Export</a>
+                        <button id="runsheet-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                    </td>
+                </tr>
+                {%  endif %} 
+
+            {% if can_view_mps_sales_report %}                
+                <tr>
+                    <td rowspan="4">Sales</td>
+                    <tr>
+                        <td colspan="2">
+                        <center> <label for="dealership">
+                            Dealership List:
+                        </label>
+                        <select id="dealership">
+                            <option value="">--- Select Dealership ---</option>
+                            {% if can_export_sales_any  or can_export_sales_user %}
+                                {% for dealership in dealerships %}
+                                    <option value="{{ dealership.id }}">{{ dealership.name }}</option></center>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                        </td>
+                         <td rowspan = "2">
+                        <a id="sales-link" class="btn btn-default" target="_blank">Export</a>
+                        <button id="sales-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                        </td>
+                    </tr>
+                     
+                    <tr>
+                        <td>
+                            <div id="frequency-radio">
+                                <center><label> <b>Frequency </b></label><br>
+                                <label class="radio-inline"> <input type="radio" id="optradio1" name="optradio" value='AdHoc'/> Ad hoc </label>
+                                <label class="radio-inline"> <input type="radio" id="optradio2" name="optradio" value='Monthly'/> Monthly </label>
+                                </center>
+                            </div>      
+                        </td>
+
+                        <td>
+                            <div id='adhoc' name='adhoc' value='adhoc'>
+                                    <label for="order_date">
+                                            Ad Hoc Sales:
+                                        </label>
+                                        <div id="order_date">
+                                            <span>
+                                                <label>
+                                                    From :
+                                                    <input type="text" id="sales-date-from" name="sales-date-from" />
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </label>
+                                            </span>
+                                            <span>
+                                                <label>
+                                                    To :
+                                                    <input type="text" id="sales-date-to" name="sales-date-to" />
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </label>
+                                            </span>
+                                        </div>
+                            </div> 
+                                
+
+
+                            <div id='month-display' name='month-display'>
+                                    <label for="stock_date">
+                                            Monthly Sales :
+                                        </label>
+                                        <div id="stock_date">
+                                            <span>
+                                                <label>
+                                                    From :
+                                                    <input type="text" id="sales-month-from" name="sales-month-from" onclick="showCalendarControl('sales-month-from')" />
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                    
+                                                </label>
+                                            </span>
+                                            <span>
+                                                <label>
+                                                    To :
+                                                    <input type="text" id="sales-month-to" name="sales-month-to" onclick="showCalendarControl('sales-month-to')"/>
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </label>
+                                            </span>
+                                        </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% if can_extract_sales_report or can_extract_stock_report %}
+                    <tr>
+                        <td>
+                            <div id="frequency-radio">
+                                <center><label><b>Sales Data Extract</b></label><br>
+                                <label for ='data-extract'> 
+                                    <input type="radio" name="extract_sales" id="extract_retail_sales" value='extract_retail_sales'/> Retail Sales
+                                </label>
+                                <label for ='data-extract'> 
+                                    <input type="radio" name="extract_sales" id="extract_stock_sales" value='extract_stock_sales'/> Stock Sales 
+                                </label>
+                                </center>                         
+                            </div>        
+                        </td>
+                        
+                        <td aligne='center'>
+                            <div id='data-extract'  name='data-extract'>
+                                <center>
+                                    <label for="data_extract_date">
+                                        Data Extract:
+                                    </label>
+                                </center>
+                                <div id="data_extract_date"><center>
+                                    <span>
+                                        <label>
+                                            From :
+                                            <input type="text" id="extract-date-from" name="extract-date-from" />
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </label>
+                                    </span>
+                                    <span>
+                                        <label>
+
+                                            To :
+                                            <input type="text" id="extract-date-to" name="extract-date-to" />
+                                            <i class="glyphicon glyphicon-calendar"></i>
+                                        </label>
+                                    </span>
+                                    </center>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <a id="extract-link" class="btn btn-default" target="_blank">Export</a>
+                            <button id="extract-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                        </td>
+
+                    </tr>
+                    {% endif %}
+     
+                </tr>
+                {% endif %}
+                {% if can_export_stock_report %}
+                <tr>
+                    <tr>
+                    <td rowspan="3">Stock</td>
+                    </tr>
+                    <tr>
+                    <td colspan="2">
+                       <center> <label for="dealership">
+                            Dealership List:
+                        </label>
+                        <select id="dealership1">
+                            <option value="">--- Select Dealership ---</option>
+                            {% for dealership in dealerships %}
+                                <option value="{{ dealership.id }}">{{ dealership.name }}</option>
+                            {% endfor %}
+                        </select>
+                        </center>              
+                    </td>
+                    
+                    <td>
+                        <a id="stock-link" class="btn btn-default" target="_blank">Export</a>
+                        <button id="stock-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                    </td>
+                    </tr>
+                    {% endif %}
+                    {% if can_export_month_sales_report %}
+                    <tr>
+                            <td colspan="1">
+                                <div id="frequency-radio">
+                                    <center>
+                                        <label><b>Stock Data Extract</b></label><br>
+                                        <label for ='stock_data-extract'><input type="radio" name="extract_stock" id="extract_current_stock" value='extract_current_stock'/> Current Stock</label>
+                                        <label for ='stock_data-extract'><input type="radio" name="extract_stock" id="extract_future_stock" value='extract_future_stock'/> Future Stock</label>
+                                    </center>                   
+                                </div>        
+                            </td>
+                            <td>
+                                <div>
+                                    <center>
+                                        <label></label>
+                                    </center>
+                                </div>
+                            </td>
+                            <td rowspan="2">
+                                <a id="extract_stock-link" class="btn btn-default" target="_blank">Export</a>
+                                <button id="extract_stock-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                            </td>
+                    </tr>
+
+                </tr>                
+                {%  endif %}
+            </tbody>
+        </table>
+        <br>                       
+    </div>     
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

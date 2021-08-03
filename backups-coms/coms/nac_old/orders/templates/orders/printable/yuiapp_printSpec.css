@@ -1,0 +1,165 @@
+body {
+    background-color: #fff;
+    font-size: 12px;
+    font-family: Arial;
+}
+
+.sub_header {
+    font-size: 16px;
+    margin-bottom: -10px;
+    margin-top: -10px;
+    padding: 20px;
+}
+
+.new-page {
+    page-break-before: always;
+}
+
+#container {
+    border: solid #000 1px;
+    width: 1640px;
+}
+
+#footer {
+    font-size: 15px;
+}
+
+#table {
+    font-size: 13px;
+}
+
+#version {
+    width: 100px;
+}
+
+#date_version {
+    width: 100px;
+}
+
+#logo {
+    width: 150px;
+    margin: 10px;
+}
+
+.foot-note {
+    border: 1px solid black;
+    margin: -1px;
+    padding: 5px 10px;
+}
+
+.foot-note h1 {
+    margin: 0;
+}
+
+.foot-note ul {
+    margin: 15px;
+}
+
+.foot-note li {
+    font-size: 1.2em;
+}
+
+h2 {
+    text-align: center;
+}
+
+table {
+    width: inherit;
+    background-color: #fff;
+    border-spacing: 0px;
+}
+
+table th,
+table td {
+    border: solid #000 1px;
+    padding: 5px;
+}
+
+table td {
+    vertical-align: top;
+}
+
+table thead {
+    background-color: #C6C6C6;
+    color: #000;
+    font-weight: bold;
+}
+
+tbody>tr:nth-child(even)>td {
+    background-color: #F0F0F0;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+.header_cat {
+    background-color: #C6C6C6;
+    color: #000;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.border_top {
+    border-top: solid #000 1px;
+}
+
+.center {
+    text-align: center;
+}
+
+.categories_block {
+    vertical-align: top;
+    margin-right: -4px;
+}
+
+.subcategory {
+    background-color: #E9E9E9;
+    font-size: 16px;
+    font-weight: bold;
+    height: 100%;
+    width: 100%;
+}
+
+.item {
+    margin: 3px;
+}
+
+.item_margin {
+    margin-bottom: 5px;
+}
+
+.clear {
+    clear: both;
+}
+
+.inline {
+    display: inline-block;
+}
+
+.red {
+    color: #ff0000;
+}
+
+.footer_information {
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+.signature_margin {
+    margin-top: 20px;
+    margin-left: 5px;
+    text-align: right;
+}
+
+.blue {
+    color: #000099;
+}
+
+.no_page_break {
+    page-break-inside: avoid;
+}

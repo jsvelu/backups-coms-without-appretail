@@ -1,0 +1,79 @@
+<div id="planner">
+    <top-bar>
+        <h2 class="top-bar__title">Pop-Top/Campers Planner</h2>
+    </top-bar>
+
+    <messages></messages>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Production Month</th>
+                <th>Start Production</th>
+                <th>Production capacity</th>
+                <th>Month status</th>
+                <th>Number of orders</th>
+                <th>Lock down date</th>
+                <th>Drafting completion</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="month_data in all_data">
+                <td>{{ month_data.production_month | date: AppSettings.FORMAT_DATE_MONTH_JS}}</td>
+                <td>
+                    <div class="input-group date-group">
+                        <input type="text" class="form-control" uib-datepicker-popup="{{ AppSettings.FORMAT_DATE_JS }}" is-open="datepickerState.production_start_date"
+                               ng-model="month_data.production_start_date" close-text="Close"
+                               datetimepicker-neutral-timezone init-date="month_data.initialValue"
+                               ng-readonly="!permissions.change_schedule_planner" />
+
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="datepickerState.production_start_date = true"
+                                    ng-disabled="!permissions.change_schedule_planner"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </div>
+
+                </td>
+                <td ng-class="month_data.capacity < month_data.total_orders ? 'alert-danger' : ''">{{ month_data.capacity }}</td>
+                <td><label><input type="checkbox" ng-model="month_data.closed" /> Closed</label></td>
+                <td ng-class="month_data.capacity < month_data.total_orders ? 'alert-danger' : ''">{{ month_data.total_orders }}</td>
+                <td>
+                    <div class="input-group date-group" ng-if="!month_data.sign_off_reminder_sent">
+                        <input type="text" class="form-control" uib-datepicker-popup="{{ AppSettings.FORMAT_DATE_JS }}" is-open="datepickerState.sign_off_reminder"
+                               ng-model="month_data.sign_off_reminder" close-text="Close"
+                               datetimepicker-neutral-timezone
+                               ng-readonly="!permissions.change_schedule_planner" />
+
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="datepickerState.sign_off_reminder = true"
+                                    ng-disabled="!permissions.change_schedule_planner"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </div>
+                    <div ng-if="month_data.sign_off_reminder_sent">
+                        Email has been sent on {{ month_data.sign_off_reminder | date: AppSettings.FORMAT_DATE_JS }}
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group date-group">
+                        <input type="text" class="form-control" uib-datepicker-popup="{{ AppSettings.FORMAT_DATE_JS }}" is-open="datepickerState.draft_completion"
+                               ng-model="month_data.draft_completion" close-text="Close"
+                               datetimepicker-neutral-timezone
+                               ng-readonly="!permissions.change_schedule_planner" />
+
+                        <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="datepickerState.draft_completion = true"
+                                    ng-disabled="!permissions.change_schedule_planner"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <button ng-if="permissions.change_schedule_planner" class="btn btn-primary btn-lg btn-danger" ng-click="save()">Save changes</button>
+    </div>
+</div>

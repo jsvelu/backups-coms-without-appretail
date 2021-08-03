@@ -1,0 +1,196 @@
+<div class="row">
+    <div class="col-sm-12" ng-if="isTruncated">
+        <div class="alert alert-warning" role="alert">Too many results to show everything</div>
+    </div>
+    <div class="col-sm-12">
+        <div class="btn-group">
+            <label class="btn btn-default" ng-model="showColumns.dates"      uib-btn-checkbox>Dates</label>
+            <label class="btn btn-default" ng-model="showColumns.details"    uib-btn-checkbox>Details</label>
+            <label class="btn btn-default" ng-model="showColumns.drawing"    uib-btn-checkbox>Drawing</label>
+            <label class="btn btn-default" ng-model="showColumns.production" uib-btn-checkbox>Production</label>
+            <label class="btn btn-default" ng-model="showColumns.quality"    uib-btn-checkbox>Quality</label>
+            <label class="btn btn-default" ng-model="showColumns.notes"      uib-btn-checkbox>Notes</label>
+        </div>
+    </div>
+</div>
+<div class="row" style="width:100%">
+    <div class="col-sm-12">
+        <div ng-if="!weeks">No data to display</div>
+        <div class="schedule-wrap" ng-if="weeks">
+            <table class="table table-striped schedule">
+                <tbody>
+                    <tr class="header">
+                        <th colspan="2">&nbsp;</th>
+
+                        <th colspan="5" ng-if="showColumns.dates">
+                            Dates
+                        </th>
+
+                        <th colspan="7" ng-if="showColumns.details">
+                            Details
+                        </th>
+
+                        <th colspan="6" ng-if="showColumns.drawing">
+                            Drawing
+                        </th>
+
+                        <th colspan="{{ ::refData.productionChecklists.length }}" ng-if="showColumns.production">
+                            Production
+                        </th>
+
+                        <th colspan="{{ ::refData.qualityChecklists.length }}" ng-if="showColumns.quality">
+                            Quality
+                        </th>
+
+                        <th colspan="{{ ::refData.notesChecklists.length }}" ng-if="showColumns.notes">
+                            Notes
+                        </th>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr class="subheader">
+                        <th>Chassis No</th>
+                        <th>Customer<br/>
+                            Photo Mgr</th>
+
+                        <th ng-show="showColumns.dates" class="tbl-section-start field-completion">Est Completion</th>
+                        <th ng-show="showColumns.dates">Build Priority</th>
+                        <th ng-show="showColumns.dates" class="narrow">Prod<br/>Week</th>
+                        <th ng-show="showColumns.dates">Est Build Start</th>
+                        <th ng-show="showColumns.dates">Drawing Deadline</th>
+
+                        <th ng-show="showColumns.details" class="tbl-section-start">Model Code</th>
+                        <th ng-show="showColumns.details">Customer</th>
+                        <th ng-show="showColumns.details">Dealer</th>
+                        <th ng-show="showColumns.details">Order Type</th>
+                        <th ng-show="showColumns.details">Completed Prod</th>
+                        <th ng-show="showColumns.details">Completed QC</th>
+                        <th ng-show="showColumns.details">Drafter</th>
+
+                        <th ng-show="showColumns.drawing" class="tbl-section-start">Drawing</th>
+                        <th ng-show="showColumns.drawing">Drawing to Prod</th>
+                        <th ng-show="showColumns.drawing">Chassis Ordered</th>
+                        <th ng-show="showColumns.drawing">Coils Ordered</th>
+                        <th ng-show="showColumns.drawing">Coil Type</th>
+                        <th ng-show="showColumns.drawing">Galvanised</th>
+
+                        <th ng-show="showColumns.production"
+                            ng-repeat="productionChecklist in ::refData.productionChecklists track by productionChecklist.checklistId"
+                            ng-class="{'tbl-section-start': $index == 0}"
+                            >{{ ::productionChecklist.name }}</th>
+
+                        <th ng-show="showColumns.quality"
+                            ng-repeat="qualityChecklist in ::refData.qualityChecklists track by qualityChecklist.checklistId"
+                            ng-class="{'tbl-section-start': $index == 0}"
+                            >{{ ::qualityChecklist.name }}</th>
+
+                        <th ng-show="showColumns.notes"
+                            ng-repeat="notesChecklist in ::refData.notesChecklists track by notesChecklist.checklistId"
+                            ng-class="{'tbl-section-start': $index == 0}"
+                            >{{ ::notesChecklist.name }}</th>
+                    </tr>
+                    </tbody>
+                    <tbody class="table-striped" ng-repeat="week in weeks track by week.weekKey">
+                    <tr class="schedule-week-header">
+                        <th
+                            colspan="{{ 2 + 6 + 7 + 6 + refData.productionChecklists.length + refData.qualityChecklists.length + refData.notesChecklists.length }}"
+                            ng-class="{'over-capacity': week.orders.length >= week.capacity, empty: week.orders.length == 0}"
+                            >
+                            <a ng-click="toggleWeekVisibility(week.weekKey)" class="accordion-toggle">
+                                <span ng-if="isWeekVisible(week.weekKey)" class="glyphicon glyphicon-chevron-down"></span>
+                                <span ng-if="!isWeekVisible(week.weekKey)" class="glyphicon glyphicon-chevron-right"></span>
+
+                                <span class="schedule-week">Week {{ week.weekStart | date:'ww' }}:</span>
+                                <span class="schedule-week-range">
+                                    {{ week.weekStart | date:'shortDate' }} - {{week.weekEnd | date:'shortDate'}}
+                                </span>
+                                <span class="utilization"
+                                      ng-class="{true: 'in-error', false: ''}[week.orders.length == week.capacity]">{{ week.orders.length }} | {{ week.capacity }} capacity</span>
+                            </a>
+                        </th>
+                    </tr>
+                    <tr class="schedule-order"
+                        ng-class="{error: getCapacity(order.buildDate) <= 0 || remainingCapacity(order.buildDate) < 0}"
+                        ng-repeat="order in week.orders track by order.orderId"
+                        ng-if="isWeekVisible(week.weekKey)"
+                    >
+                        <td>{{ order.chassis }}</td>
+                        <!--<td class="blank">&nbsp;</td>-->
+                        <td class="tbl-section-start"><span class="glyphicon glyphicon-camera"></span> &times; {{ order.photoCount }}
+                            <div ng-if="order.photoCountShared > 0">{{ order.photoCountShared }} shared</div>
+                        </td>
+
+                        <td class="field-build-date" ng-if="showColumns.dates">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-default"
+                                ng-click="changeBuildDate.open(order)"
+                                uib-popover-template="'schedule-change-build-date.html'"
+                                popover-is-open="changeBuildDate.isEditing(order.orderId)"
+                                popover-title="Change Build Date"
+                                popover-placement="right"
+                                popover-trigger="outsideClick"
+                            >
+                                {{ order.buildDate|date:'shortDate' }}
+                            </button>
+
+                            <div class="subtext" ng-show="order.buildDate.valueOf() != order.buildDateOriginal.valueOf()">Was {{ order.buildDateOriginal | date:'shortDate' }}</div>
+                            <div class="error-capacity" ng-if="getCapacity(order.buildDate) <= 0">Closed</div>
+                            <div class="error-capacity" ng-if="remainingCapacity(order.buildDate) < 0">Over Capacity</div>
+                        </td>
+                        <td ng-if="showColumns.dates"><schedule-build-priority ng-model="order.buildPriorityId" ng-model-options="{debounce: 400}" ng-change="onPriorityChange(order)"></schedule-build-priority></td>
+                        <td ng-if="showColumns.dates">{{ order.buildWeek }}
+                            <div class="subtext" ng-if="order.buildWeek != order.buildWeekOriginal">Was {{ order.buildWeekOriginal }}</div></td>
+                        <td ng-if="showColumns.dates">{{ order.buildStart | date:'shortDate' }}</td>
+                        <td ng-if="showColumns.dates" class="tbl-section-start">{{ order.drawingDeadline | date:'shortDate' }}</td>
+
+                        <td ng-if="showColumns.details">{{ order.modelSeriesCode }}</td>
+                        <td ng-if="showColumns.details">{{ order.customer }}</td>
+                        <td ng-if="showColumns.details">
+                            {{ order.dealerSalesRep }}
+                            <div class="subtext">{{ order.dealership }}</div>
+                        </td>
+                        <td ng-if="showColumns.details">{{ order.order_type }}</td>
+                        <td ng-if="showColumns.details"><schedule-completion-percent value="order.completionProduction" ></schedule-completion-percent></td>
+                        <td ng-if="showColumns.details"><schedule-completion-percent value="order.completionQuality"    ></schedule-completion-percent></td>
+                        <td ng-if="showColumns.details" class="tbl-section-start">{{ order.drafter }}</td>
+
+                        <td ng-if="showColumns.drawing"><schedule-completion-date date="order.drawingOn"        who="order.drawingBy"       ></schedule-completion-date></td>
+                        <td ng-if="showColumns.drawing"><schedule-completion-date date="order.drawingToProdOn"  who="order.drawingToProdBy" ></schedule-completion-date></td>
+                        <td ng-if="showColumns.drawing"><schedule-completion-date date="order.chassisOrderedOn" who="order.chassisOrderedBy"></schedule-completion-date></td>
+                        <td ng-if="showColumns.drawing"><schedule-completion-date date="order.coilsOrderedOn"   who="order.coilsOrderedBy"  ></schedule-completion-date></td>
+                        <td ng-if="showColumns.drawing">{{ order.coilType }}</td>
+                        <td ng-if="showColumns.drawing" class="tbl-section-start">{{ order.frameGalvanized ? 'Yes' : 'No' }}</td>
+
+                        <td ng-if="showColumns.production" ng-repeat="checklistCompletion in order.completionChecklistProduction track by checklistCompletion.checklistId">
+                            <schedule-completion-override checklist-completion="checklistCompletion" save-completion-override="saveCompletionOverride(order, checklistCompletion, overrideValue)"></schedule-completion-override>
+                        </td>
+
+                        <td ng-if="showColumns.quality" ng-repeat="checklistCompletion in order.completionChecklistQuality track by checklistCompletion.checklistId">
+                            <schedule-completion-override checklist-completion="checklistCompletion" save-completion-override="saveCompletionOverride(order, checklistCompletion, overrideValue)"></schedule-completion-override>
+                        </td>
+
+                        <td ng-if="showColumns.notes" ng-repeat="notesChecklist in refData.notesChecklists track by notesChecklist.checklistId">
+                            <a href
+                                ng-click="buildNotes.open(order, notesChecklist)"
+                                uib-popover-template="'schedule-build-notes.html'"
+                                popover-is-open="buildNotes.isOpen(order, notesChecklist)"
+                                popover-title="{{ buildNotes.title }}"
+                                popover-placement="left"
+                                popover-trigger="outsideClick"
+                            >
+                                <span class="glyphicon"
+                                    ng-class="{
+                                        'glyphicon-plus': !order.checklistNotes[notesChecklist.checklistId].length,
+                                        'glyphicon-file': order.checklistNotes[notesChecklist.checklistId].length,
+                                    }"></span>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+

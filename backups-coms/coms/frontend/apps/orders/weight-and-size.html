@@ -1,0 +1,58 @@
+<form name="weightsize_form" novalidate class="form">
+    <div class="row top-margin-40">
+        <div class="col-sm-10 col-sm-offset-1">
+            <h2>Avg Measurements -- Estimates Only</h2>
+            <h5>The measurements displayed below are representing the STOCK version of this product and are not specific to the order (with all of the added options).</h5>	
+            <div class="row">
+                <div class="col-sm-2 th">
+                    Travel Length : 
+                </div>
+                <div class="col-sm-2 th">
+                    Max External Travel Height: 
+                </div>
+                <div class="col-sm-2 th">
+                    Max Internal Living Height: 
+                </div>
+                <div class="col-sm-2 th">
+                    Max Travel Width:
+                </div>
+                <div class="col-sm-2 th">
+                    Avg. Tare weight:
+                     
+                </div>
+                <div class="col-sm-2 th">
+                    Avg. Tow Ball weight:
+                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-2">
+                    {{ info.series_detail.length_aframe }} mm
+                </div>
+                <div class="col-sm-2">
+                    {{ info.series_detail.length_bumper }} mm
+                </div>
+                
+                <div class="col-sm-2">
+                    {{ info.series_detail.height_ac }} mm
+                </div>
+                <div class="col-sm-2">
+                    {{ info.series_detail.width_awning }} mm
+                </div>
+                <div class="col-sm-2">
+                     {{ info.series_detail.avg_tare_weight }} kg
+                </div>
+                <div class="col-sm-2">
+                    {{ info.series_detail.avg_ball_weight }} kg
+                </div>
+            </div>
+
+        <div class="row top-margin-40">
+                <div class="col-sm-3">
+                    <button class="btn btn-primary form-control" type="submit" ng-click="proceed(weightsize_form)" ng-if="order.isEditable()">Save and proceed
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

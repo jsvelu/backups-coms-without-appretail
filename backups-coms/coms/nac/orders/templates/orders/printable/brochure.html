@@ -1,0 +1,87 @@
+{% extends 'newage/printable/base_print.html' %}
+
+{% load static_or_data %}
+
+{% block css %}
+    {% include "orders/printable/brochure.css" %}
+{% endblock css %}
+
+{% block body_class %}{% if is_html %}html-display{% endif %}{% endblock body_class %}
+
+{% block container %}
+    {# This layout is made for 7 categories and will break if that number changes #}
+
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-12"><img src="{% static_or_data 'newage/images/new-age-new-logo-2.jpg' file_path_mode %}" style='width:110pt;' alt="New Age Caravans" /></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6"><img class="dealer-logo" src="{% if dealership.logo %}{% static_or_data dealership.logo file_path_mode %}{% endif %}" alt="{{ dealership.name }}" /></div>
+                <div class="col-sm-6">
+                    <div class="row">Sales Person: {{ dealer_rep_name|default:'' }}</div>
+                    <div class="row">
+                        <b>{{ dealership.name }}</b><br />
+                        <div class="address">
+                            {{ dealership.address.address|default:'' }}<br />
+                            {{ dealership.address.suburb|default:'' }}<br />
+                            {{ dealership.phone1|default:'' }}<br />
+                            {{ dealership.phone2|default:'' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <h1>{{ customer.first_name }}'{% if customer.first_name|last != 's' %}s{% endif %} {{ order.series_description }}</h1>
+            </div>
+        </div>
+
+        <div class="col-sm-4">
+            <div class="header">
+                Customer: {{ customer.name }}<br />
+                Reference: {{ order.reference }}<br />
+                Desired Delivery Month: {{ order.delivery_date|date:"F Y" }}<br />
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <img class="main-photo" src="{% if photo_urls.main_photo %}{% static_or_data photo_urls.main_photo file_path_mode %}{% endif %}" alt="Series main photo" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4">
+            {% include "orders/printable/brochure_category.html" with category=categories.0 %}
+        </div>
+        <div class="col-sm-4">
+            {% include "orders/printable/brochure_category.html" with category=categories.1 %}
+        </div>
+        <div class="col-sm-4">
+            {% include "orders/printable/brochure_category.html" with category=categories.2 %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4">
+            {% include "orders/printable/brochure_category.html" with category=categories.3 %}
+        </div>
+        <div class="col-sm-4">
+            {% include "orders/printable/brochure_category.html" with category=categories.4 %}
+        </div>
+        <div class="col-sm-4">
+            {% include "orders/printable/brochure_category.html" with category=categories.5 %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            {% include "orders/printable/brochure_category.html" with category=categories.6 %}
+        </div>
+
+        <div class="col-sm-8 photos">
+            <ul>
+                {% for photo in photo_urls.other %}
+                    <li><img src="{% static_or_data photo file_path_mode %}" alt="Series photo {{ forloop.counter }}" /></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock container %}

@@ -1,0 +1,92 @@
+{% extends 'newage/printable/base_print.html' %}
+
+{% block css %}
+    {% include "orders/printable/autocad.css" %}
+{% endblock css %}
+
+{% block container %}
+    <div class="header">
+        <div class="first">
+            <em>Model:</em> {{ order.get_series_description }}
+            <br />
+            <em>Chassis #:</em> {{ order.chassis|default:"" }}
+        </div>
+
+        <div>
+            <em>Dealership:</em> {{ order.dealership.name|default:"" }}
+        </div>
+
+        <div>
+            <em>Customer:</em> {{ order.customer.name|default:"" }}
+        </div>
+
+        <div class="last">
+            <em><small>Dealership Signature:</small></em>
+            <br />
+            <em><small>Date:</small></em>
+        </div>
+    </div>
+
+    {% for category in categories %}
+        <div class="category">
+            <div class="cat-header">
+                <h3>{{ category.name }}</h3>
+            </div>
+
+            {% for feature in category.features %}
+                {% if feature.missing_selections %}
+                    <div class="selection-header">
+                        {{ feature.description }}
+                    </div>
+                    <div>
+                        &nbsp;
+                    </div>
+                {% else %}
+                    {% if feature.department %}
+                        <div class="selection-header">
+                            {{ feature.department }}
+                        </div>
+                    {% endif  %}
+                    <div class="{{ feature.class }}">
+                        {{ feature.description }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            {% if category.extras %}
+                <div>
+                    <h3>Extras Selected</h3>
+                </div>
+                {% for extra in category.extras %}
+                    <div class="extra">
+                        {{ extra.description }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if category.special_features %}
+                <div>
+                    <h3>Special Features</h3>
+                </div>
+                {% for description in category.special_features %}
+                    <div class="extra">
+                        {{ description }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+        </div>
+    {% endfor %}
+
+    {% if production_notes %}
+        <div class="clear"></div>
+        <div class="foot-note">
+            <h1>Production Notes</h1>
+            <ul>
+                {% for note in production_notes %}
+                    <li>{{ note }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+{% endblock container %}

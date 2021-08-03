@@ -1,0 +1,12 @@
+{% extends "help/help.html" %}
+
+{% block popup_sub_heading %}{{ sub_heading }}{% endblock %}
+
+{% block help_content %}
+    <div class="container-fluid">
+        {{ help.content|safe }}
+    </div>
+
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

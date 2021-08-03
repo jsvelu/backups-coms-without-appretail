@@ -1,0 +1,48 @@
+{% extends "crm/edit_lead.html" %}
+{% load floppyforms %}
+{% load staticfiles %}
+
+{% block bodyclass %}crm-addactivity{% endblock %}
+{% block crm_breadcrumbs %}{{ block.super }} > <a href="{% url 'crm:add_activity' customer_id %}">Add Activity</a>{% endblock %}
+
+{% block crm_content %}
+    <script src="{% static "crm/js/add_activity.js" %}"></script>
+    <div class="container-fluid">
+
+        <form method="post" action="{% url 'crm:add_activity' customer_id %}" novalidate>
+            {% csrf_token %}
+            {% form form using  %}
+                {% formconfig row using "floppyforms/rows/bootstrap.html" %}
+                <div class="row top-margin-20">
+                    <div class="col-sm-12">
+                        {% formrow form.lead_activity_type %}
+                    </div>
+                </div>
+                <div class="row" id="dv_dealer_rep">
+                    <div class="col-sm-12">
+                        {% formrow form.dealer_rep %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        {% formrow form.followup_date %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-4">
+                        {% formrow form.new_customer_status %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        {% formrow form.notes %}
+                    </div>
+                </div>
+            {% endform %}
+            <button type="submit" class="btn btn-newage pull-right" id="btnSave">Save</button>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

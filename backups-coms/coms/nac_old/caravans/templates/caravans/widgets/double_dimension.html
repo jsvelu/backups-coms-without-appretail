@@ -1,0 +1,13 @@
+
+<div>
+    <input class="form-control"
+           style="width: 5em; display: inline-block; margin-right: 3px;"
+           id="{{ name }}_one" name="{{ name }}_one" placeholder="{{ placeholder_one }}"
+           type="text" value="{{ value_one|default_if_none:'' }}" />
+    {{ after_value_one|safe }}
+    <input class="form-control"
+           style="width: 5em; display: inline-block; margin-right: 3px; margin-left: 5px;"
+           id="{{ name }}_two" name="{{ name }}_two" placeholder="{{ placeholder_two }}"
+           type="text" value="{{ value_two|default_if_none:'' }}" />
+    {{ after_value_two|safe }}
+</div>

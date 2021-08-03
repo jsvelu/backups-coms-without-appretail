@@ -1,0 +1,350 @@
+<top-bar>
+    <h2>Create New Quote</h2>
+    <div class="row top-bar-info">
+        <div class="col-sm-2" ng-if="current_dealership()">
+            <h5>Dealership</h5>
+            <h4>{{ current_dealership().title }}</h4>
+        </div>
+        <div class="col-sm-2" ng-if="order.model && order.series">
+            <h5>Model</h5>
+            <h4>{{ info.model_detail.title }}</h4>
+            {{ info.series_detail.title }}
+        </div>
+        <div class="col-sm-2" ng-if="order.model && order.series">
+            <h5>Retail Sale price</h5>
+            <h4 ng-if="info.show_price">{{ info.series_detail.rrp | currency }}</h4>
+            <a href="" ng-click="info.show_price = !info.show_price">
+                <span ng-if="info.show_price">Hide </span>
+                <span ng-if="!info.show_price">Show </span>price
+            </a>
+        </div>
+    </div>
+</top-bar>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">Create a new Quote for:</div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="radio">
+              <label>
+                <input type="radio" ng-model="customer_type" value="Customer">
+                Customer
+              </label>
+            </div>
+            <div class="radio">
+              <label>
+                <input type="radio" ng-model="customer_type" value="Dealership">
+                Dealership
+              </label>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-if="customer_type=='Dealership'">
+        <div class="col-sm-12">
+
+            <form name="stock_form" class="form top-margin-30">
+                <div class="panel panel-primary" id="panels">
+                    <div class="panel-heading">Create a stock quote</div>
+                    <div class="panel-body">
+                            <div class="col-sm-6">
+                                <label class="form-label">DEALERSHIP</label>
+                                <select class="form-control"
+                                        ng-model="order.dealer_dealership"
+                                        ng-options="dealer.id as dealer.title for dealer in choices.dealerships"
+                                        required>
+                                    <option value="">Select a dealership</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="form-label">DESIRED DELIVERY DATE</label>
+                                <date-dropdowns></date-dropdowns>
+                            </div>
+                    </div>
+                </div>
+                <div class="form-group col-sm-3">
+                    <button type="submit" class="btn btn-primary form-control" ng-click="proceed(stock_form)">Create and proceed</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row" ng-if="customer_type=='Customer'">
+        <div class="col-sm-12">
+            <form name="customer_form" novalidate class="form top-margin-30" autocomplete="off" form-autofill-fix ng-submit="add_customer_quote(customer_form)">
+                <div class="panel panel-primary" id="panels">
+                    <div class="panel-heading">Create a Customer quote</div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">DEALERSHIP</label>
+                                <select class="form-control"
+                                        ng-model="order.customer_dealership"
+                                        ng-options="dealer.id as dealer.title for dealer in choices.dealerships">
+                                    <option value="">Select a dealership (optional)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Customer details -->
+
+                        <div class="row top-margin-40">
+                            <div class="col-sm-6"><h4>Customer Details</h4></div>
+                            <div class="col-sm-6">
+                                <button class="btn btn-default pull-right">Retrieve customer from leads</button>
+                            </div>
+                        </div>
+
+                        <div class="row top-margin-30">
+                            <div class="col-sm-6"><i>Fields marked with an asterisk are required</i></div>
+                        </div>
+
+                        <div class="row top-margin-20">
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">
+                                    <red-star></red-star>
+                                    FIRST NAME</label>
+                                <input type="text" class="form-control" ng-model="order.customer.first_name" name="first_name" required/>
+                                <required-field form="customer_form" name="customer_form.first_name" label="First Name"></required-field>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">
+                                    <red-star></red-star>
+                                    LAST NAME</label>
+                                <input type="text" class="form-control" ng-model="order.customer.last_name" name="last_name" required/>
+                                <required-field form="customer_form" name="customer_form.last_name" label="Last Name"></required-field>
+                            </div>
+                        </div>
+
+                        <div class="row top-margin-20">
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">
+                                    <red-star></red-star>
+                                    EMAIL</label>
+                                <input type="text" class="form-control" ng-model="order.customer.email" name="email" required/>
+                                <required-field form="customer_form" name="customer_form.email" label="Email Address"></required-field>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">PARTNER'S NAME</label>
+                                <input type="text" class="form-control" ng-model="order.customer.partner_name" name="partner_name" />
+                            </div>
+                        </div>
+
+                        <div class="row top-margin-20">
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">
+                                    <red-star></red-star>
+                                    PHONE NUMBER</label>
+                                <input type="text" class="form-control" ng-model="order.customer.phone_number" name="phone_number" required/>
+                                <required-field form="customer_form" name="customer_form.phone_number" label="Phone Number"></required-field>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">DESIRED DELIVERY DATE</label>
+                                <div class="date-dropdowns">
+                                    <select class="form-control"
+                                            ng-model="order.desired_dd_day"
+                                            ng-options="day as day for day in days">
+                                        <option value="">dd</option>
+                                    </select>
+                                    <select class="form-control"
+                                            ng-model="order.desired_dd_month"
+                                            ng-options="month[0] as month[1] for month in months">
+                                        <option value="">mm</option>
+                                    </select>
+                                    <select class="form-control"
+                                            ng-model="order.desired_dd_year"
+                                            ng-options="year as year for year in years">
+                                        <option value="">yyyy</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!-- Address -->
+
+
+                        <div class="row top-margin-40">
+                            <div class="col-sm-6"><h4>Address</h4></div>
+                        </div>
+
+                        <div class="row top-margin-20">
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">
+                                    REGISTERED OWNER</label>
+                                <input type="text" ng-model="order.physical_add.owner" name="physical_add_owner" class="form-control"/>
+                            </div>
+                        </div>
+
+                        <div class="row top-margin-20">
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">
+                                    STREET ADDRESS</label>
+                                <input type="text" ng-model="order.physical_add.street" name="physical_add_street" class="form-control"/>
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">
+                                    LOOKUP CITY OR SUBURB</label>
+                                <lookup result="search.physical_suburb"
+                                        on-select="select_physical_suburb" type="suburb_lookup" name="physical_add_suburb" autocomplete="off"></lookup>
+                            </div>
+                        </div>
+
+                        <div class="row top-margin-20">
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">
+                                    CITY / SUBURB</label>
+                                <input type="text"  ng-model="order.physical_add.suburb" name="physical_add_suburb" class="form-control"/>
+                            </div>
+                            <div class="form-group col-sm-4">
+                                <label class="form-label">
+                                    POSTCODE</label>
+                                <input type="text" ng-model="order.physical_add.postcode" name="physical_add_postcode" class="form-control"/>
+                            </div>
+                            <div class="form-group col-sm-2">
+                            </div>
+                        </div>
+
+                        <div class="row top-margin-20">
+                            <div class="form-group col-sm-6">
+                                <label class="form-label">
+                                    STATE</label>
+                                <select  class="form-control"
+                                        ng-model="order.physical_add.state" name="physical_add_state"
+                                        ng-options="state.id as state.title for state in choices.states">
+                                    <option value="">Select a state</option>
+                                </select>
+                            </div>
+
+                        </div>
+
+                        <div class="row top-margin-40">
+
+                            <accordion class="red" close-others="false">
+
+                                <!-- Delivery -->
+
+                                <accordion-group>
+                                    <accordion-heading>
+                                        <div>Add Delivery details (if different)</div>
+                                    </accordion-heading>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">NAME</label>
+                                            <input type="text" ng-model="order.delivery_add.name" class="form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">STREET ADDRESS</label>
+                                            <input type="text" ng-model="order.delivery_add.street" class="form-control"/>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">LOOKUP CITY OR SUBURB</label>
+                                            <lookup result="search.delivery_suburb"
+                                                on-select="select_delivery_suburb" type="suburb_lookup" autocomplete="off"></lookup>
+                                        </div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">
+                                                CITY / SUBURB</label>
+                                            <input type="text"  ng-model="order.delivery_add.suburb" name="delivery_add_suburb" class="form-control"/>
+                                        </div>
+                                        <div class="form-group col-sm-4">
+                                            <label class="form-label">POSTCODE</label>
+                                            <input type="text" ng-model="order.delivery_add.postcode" class="form-control"/>
+                                        </div>
+                                        <div class="form-group col-sm-2">
+                                        </div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">STATE</label>
+                                            <select  class="form-control"
+                                                    ng-model="order.delivery_add.state"
+                                                    ng-options="state.id as state.title for state in choices.states">
+                                                <option value="">Select a state</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </accordion-group>
+
+
+                                <!-- Invoice -->
+
+                                <accordion-group>
+                                    <accordion-heading>
+                                        <div>Add Invoice details (if different)</div>
+                                    </accordion-heading>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">NAME</label>
+                                            <input type="text" ng-model="order.invoice_add.name" class="form-control"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">STREET ADDRESS</label>
+                                            <input type="text" ng-model="order.invoice_add.street" class="form-control"/>
+                                        </div>
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">LOOKUP CITY OR SUBURB</label>
+                                            <lookup result="search.invoice_suburb"
+                                                on-select="select_invoice_suburb" type="suburb_lookup" autocomplete="off"></lookup>
+                                        </div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">
+                                                CITY / SUBURB</label>
+                                            <input type="text"  ng-model="order.invoice_add.suburb" name="invoice_add_suburb" class="form-control"/>
+                                        </div>
+                                        <div class="form-group col-sm-4">
+                                            <label class="form-label">POSTCODE</label>
+                                            <input type="text" ng-model="order.invoice_add.postcode" class="form-control"/>
+                                        </div>
+                                        <div class="form-group col-sm-2"></div>
+                                    </div>
+
+                                    <div class="row top-margin-20">
+                                        <div class="form-group col-sm-6">
+                                            <label class="form-label">STATE</label>
+                                            <select  class="form-control"
+                                                    ng-model="order.invoice_add.state"
+                                                    ng-options="state.id as state.title for state in choices.states">
+                                                <option value="">Select a state</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </accordion-group>
+                            </accordion>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group col-sm-3">
+                        <button type="submit" class="btn btn-primary form-control" data-ng-disabled="progress.active()">Create and proceed</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="alert alert-success" ng-if="order.insert_successful_message">{{ order.insert_successful_message }}</div>
+                    <div class="alert alert-danger" ng-if="order.insert_failed_message">{{ order.insert_failed_message }}</div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

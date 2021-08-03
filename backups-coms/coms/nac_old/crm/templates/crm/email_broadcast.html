@@ -1,0 +1,183 @@
+{% extends "crm/crm.html" %}
+{% load alliance_bundle %}
+{% load append_get %}
+{% load floppyforms %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+    <script type="text/javascript" src="{% static "crm/js/email_broadcast.js" %}"></script>
+    <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% endblock %}
+
+{% block bodyclass %}crm-emailbroadcast{% endblock %}
+
+{% block crm_content %}
+        <div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="collapse-div collapsed" data-toggle="collapse" data-target="#dvFilters">Filter Leads</div>
+                </div>
+            </div>
+
+            <div class="row top-margin-20 collapse" id="dvFilters">
+                <div class="col-xs-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-body">
+                            <form method="get" action="{% url 'crm:email_broadcast' %}" id="frm_filter">
+                                <div class="row">
+                                    {% form form using %}
+                                        {% formconfig row using "floppyforms/rows/bootstrap.html" %}
+                                        <div class="col-xs-3">
+                                            {% formrow form.customer_statuses %}
+                                        </div>
+                                        <div class="col-xs-3">
+                                            {% formrow form.states %}
+                                        </div>
+                                        <div class="col-xs-3">
+                                            {% formrow form.model_series %}
+                                        </div>
+                                        <div class="col-xs-3">
+                                            {% formrow form.dealership %}
+                                        </div>
+                                        <div class="col-xs-3">
+                                            {% formrow form.customer_id %}
+                                        </div>
+                                        <div class="col-xs-3">
+                                            {% formrow form.customer_name %}
+                                        </div>
+                                    {% endform %}
+                                </div>
+
+                                <div class="row top-margin-20">
+                                    <div class="col-xs-12">
+                                        <button type="submit" class="btn btn-newage pull-right" id="btnFilter">
+                                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Apply Filter
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row top-margin-40">
+                <div class="col-xs-12">
+                    {% render_table customer_table %}
+                <span class="record-count">Total Records: {{ customer_table.paginator.count }}</span>
+                {% for page_num in customer_table.paginator.page_range %}
+                    <a class="btn btn-default btn-small {% if page_num|slugify == request.GET.page %}active{% endif %}" href="{% append_get page=page_num %}">{{ page_num }}</a>
+                {% endfor %}
+                </div>
+            </div>
+
+
+            <!-- email sending controls -->
+            <form method="post" enctype="multipart/form-data" id="frm_email">
+                {% csrf_token %}
+                <div class="row top-margin-40">
+                    {% if perms.emails.add_emailtemplate %}
+                        <div class="col-xs-9">
+                    {% else %}
+                        <div class="col-xs-12">
+                    {% endif %}
+                        <select name="cboEmailTemplates" id="select_email_template" class="form-control">
+                            <option value="">--Select an Email Template--</option>
+                            {% for t in email_templates %}
+                                <option value="{{ t.id }}">{{ t.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% if perms.emails.add_emailtemplate %}
+                        <div class="col-xs-3 pull-right">
+                            <a target="_blank" href="{% url 'admin:emails_emailtemplate_changelist' %}" type="button" class="btn btn-newage pull-right">
+                                <span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Manage Email Templates
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="row top-margin-20">
+                    <div class="col-xs-12">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spndscEmailSubject">Subject</span>
+                            <input type="text" class="form-control" placeholder="Enter Email Subject Here" name="email_subject"
+                                   id="email_subject" aria-describedby="spndscEmailSubject" value="{{ email_subject }}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row top-margin-20">
+                    <div class="col-xs-12">
+                        <textarea class="form-control" id="email_body" name="email_body" rows="15" required>{{ email_body }}</textarea>
+                    </div>
+                </div>
+
+                <div class="row top-margin-40">
+                    <div class="col-xs-4">
+                        <div class="form-group">
+                            <label for="fic_mail_attachment">Upload attachment:</label>
+                            <input type="file" id="fic_mail_attachment" name="fic_mail_attachment" />
+                        </div>
+                    </div>
+                    <div class="col-xs-8">
+                        <select name="broadcast_attachments" id="cbo_bc_attachments" class="form-control">
+                            <option value="">--Select an Attachment--</option>
+                            {% for att in attachment_list %}
+                                <option value="{{ att.id }}" {% if att.id == selected_attachment_id %}selected{% endif %}>{{ att.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row top-margin-40">
+                    <div class="col-xs-12">
+                        <label>Send the email</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <label >
+                            <input type="radio" id="rd_schedule_now" name="schedule_selection" value="now" checked="checked" /> Now
+                        </label>
+                    </div>
+                </div>
+                <div class="row top-margin-10">
+                    <div class="col-xs-12">
+                         <label>
+                            <input type="radio" id="rd_schedule_time" name="schedule_selection" value="time" /> Later
+                        </label>&nbsp;&nbsp;
+                        <input type="text" name="schedule_date_time" id="dtp_schedule" readonly>
+                    </div>
+                </div>
+                <div class="row top-margin-10">
+                    <div class="col-xs-12">
+                         <label>
+                            <input type="radio" id="rd_schedule_test" name="schedule_selection" value="test" /> As a Test
+                        </label>&nbsp;&nbsp;
+                        <input type="text" name="test_recipient" id="txt_test_recipient" style="display: none;">
+                    </div>
+                </div>
+
+                <div class="row top-margin-20">
+                    <div class="col-xs-12">
+                        <button type="submit" class="btn btn-newage pull-right" id="btn_send_email" name="send_email" value="Send Mail">
+                            <span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> Send Email
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

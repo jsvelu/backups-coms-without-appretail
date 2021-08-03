@@ -1,0 +1,81 @@
+<nav class="navbar navbar-default navbar-content">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <span class="navbar-brand">
+                <img src="/static/newage/icons/orders.png" />
+                Dealer Dashboard
+            </span>
+        </div>
+</nav>
+
+<div id="dashboard">
+    <top-bar>
+        <h2 class="top-bar__title">Dealer Dashboard</h2>
+    </top-bar>
+
+    <messages></messages>
+
+    <div class="row header">
+        <div class="col-sm-2">
+            <label>Month: </label>
+            <select ng-model="currentMonth"
+                ng-options="month.value as month.title for month in monthList" no-dirty-check></select>
+            <bar-spinner ng-if="monthDataLoading"></bar-spinner>
+        </div>
+        <div class="col-sm-5">
+            <label>Filter: </label>
+            <input ng-model="searchStr" placeholder="Type to filter on Model, Customer, or Chassis..." size="60" />
+        </div>
+    </div>
+
+    <div class="row content">
+        <div class="legend">
+          <table>
+           <tr>
+              <td class="not_finalized highlight"> Not Finalised </td>
+              <td class="pending_draft"> To be Drafted </td>
+              <td class="customer_approved highlight"> Customer Plan Completed </td>
+              <td class="summary_plans_completed"> Plans Completed </td>
+           </tr>
+          </table>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Chassis</th>
+                    <th>Series Code</th>
+                    <th>Special</th>
+                    <th>Customer</th>
+                    <th>Comment</th>
+                    <th>Manage</th>
+                </tr>
+            </thead>
+            <tbody ng-model="orderList">
+                <tr ng-repeat="order in orderList | filter:filterOrders" ng-class-odd="'odd'" ng-class-even="'even'">
+                    <td ng-if="order.month_header" class="month-header" colspan="42">
+                        {{ order.month_header }}
+                        <span class="capacity">
+                            <span>Lock down date: {{ order.signoff_date }}</span>
+                        </span>
+                    </td>
+
+                    <td ng-if="!order.month_header" ng-class="order.status">{{ order.chassis }}</td>
+                    <td ng-if="!order.month_header">{{ order.model_series }}</td>
+                    <td ng-if="!order.month_header"><i class="glyphicon" ng-class="getSpecialFeatureClass(order)"></i></td>
+                    <td ng-if="!order.month_header">{{ order.customer }}</td>
+                    <td ng-if="!order.month_header" class="comments">
+                        <input class="input-comments" type="text" placeholder="Comments..." maxlength="2000"
+                               ng-model="order.dealer_comments" ng-blur="onOrderDealerCommentChange($event, order)"
+                               ng-model-options="{ updateOn: 'blur', debounce:0 }"
+                               ng-readonly="isOrderDealerCommentSaving[order.id]"
+                               no-dirty-check
+                               />
+                        <bar-spinner ng-if="isOrderDealerCommentSaving[order.id]"></bar-spinner>
+                    </td>
+                    <td ng-if="!order.month_header"><a href="{{ order.url }}" target="_blank">Manage</a></td>
+                </tr>
+                <tr class="extra-placeholder"><td colspan="42"></td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

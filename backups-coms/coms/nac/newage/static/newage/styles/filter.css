@@ -1,0 +1,30 @@
+
+/* TODO: Can this be used for panel-group generally? */
+.newage-generic-filter .panel-group {
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding:7px;
+    margin-bottom: 1em;
+}
+
+.newage-generic-filter .panel-heading a {
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding:7px;
+    background-color: #eee;
+    color: #00001a;
+    font-weight: 700;
+    display: block;
+    /*text-decoration: none;*/
+}
+
+.newage-generic-filter .panel-heading a:after {
+    font-family: 'Glyphicons Halflings';
+    content: "\e114";
+    float: right;
+    color: grey;
+}
+
+.newage-generic-filter .panel-heading a.collapsed:after {
+    content: "\e080";
+}

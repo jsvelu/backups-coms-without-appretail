@@ -1,0 +1,16 @@
+{% load compress %}
+{% load staticfiles %}
+{% load script_json %}
+
+    {% if DEBUG_WEBPACK %}
+        <script type="text/javascript" src="{% static "bower_components/jquery/dist/jquery.js" %}"></script>
+        <script>window.__APP_SETTINGS = {{ APP_SETTINGS|script_json }};</script>
+        <script>window.__TEST_SETTINGS = {{ TEST_SETTINGS|script_json }};</script>
+    {% else %}
+        {% compress js %}
+            {# See webpack.config.js CopyWebpackPlugin for where this comes from #}
+            <script type="text/javascript" src="{% static "dist/prod/jquery.min.js" %}"></script>
+            <script>window.__APP_SETTINGS = {{ APP_SETTINGS|script_json }};</script>
+            <script>window.__TEST_SETTINGS = {{ TEST_SETTINGS|script_json }};</script>
+        {% endcompress js %}
+    {% endif %}

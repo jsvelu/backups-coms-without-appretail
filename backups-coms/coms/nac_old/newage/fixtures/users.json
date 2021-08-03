@@ -1,0 +1,264 @@
+[
+{
+  "fields": {
+    "date_joined": "2015-11-23T03:33:00Z",
+    "email": "admin",
+    "groups": [],
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": true,
+    "last_login": "2016-02-22T03:35:47Z",
+    "name": "",
+    "password": "pbkdf2_sha256$20000$0InNllszCIMY$2pggVyJapaqJ9qRNZCBJMpFpc2Ixb86gg4VYxr5JpHk=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2015-12-16T01:18:40Z",
+    "email": "dealerrep",
+    "groups": [
+      [
+        "Dealer Sales Rep"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false,
+    "last_login": "2016-02-17T01:48:58Z",
+    "name": "Dealer Sales Rep",
+    "password": "pbkdf2_sha256$20000$UklOAXi79sKv$XOs+eiy6rSiMZUyeOzEyLIlC5aDicIAkphmflLcJm2Q=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2015-12-16T01:19:40Z",
+    "email": "dealerprincipal",
+    "groups": [
+      [
+        "Dealer Sales Rep"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false,
+    "last_login": "2016-02-05T03:27:31Z",
+    "name": "Dealer Principal",
+    "password": "pbkdf2_sha256$20000$dGnobg4u46c4$bnjhg9yR/FLdqEhcxJkVv4gb+hxmuuJLp8ocW6cre7Y=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2016-01-07T03:14:15Z",
+    "email": "schedule",
+    "groups": [
+      [
+        "Schedule Manager"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false,
+    "last_login": null,
+    "name": "Schedule Manager",
+    "password": "pbkdf2_sha256$20000$ftIErEV82Clh$/kprQbuM9sGcnIzN8excuvJ3JoS6sEhnQg3FaAL8SQ0=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2016-01-07T09:55:05Z",
+    "email": "nationalsales",
+    "groups": [
+      [
+        "National Sales Manager"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false,
+    "last_login": "2016-01-07T10:45:32Z",
+    "name": "National Sales",
+    "password": "pbkdf2_sha256$20000$AIBp7ZvcvS9O$EGO+rTBm6prN3oSmQhKffMgkjFSXkYIC/mXG90qtaDs=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2016-01-11T05:17:06Z",
+    "email": "drafter",
+    "groups": [
+      [
+        "Drafter"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false,
+    "last_login": null,
+    "name": "Drafter",
+    "password": "pbkdf2_sha256$20000$zw9ZWIWZTjYc$2Lv17taoO0iKjOXbVbbcOiEPk8NTP7d5Aia5CLj2um4=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2016-01-28T05:08:15Z",
+    "email": "dealer2rep",
+    "groups": [
+      [
+        "Dealer Sales Rep"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false,
+    "last_login": "2016-02-05T01:36:55Z",
+    "name": "Dealer 2 Sales Rep",
+    "password": "pbkdf2_sha256$20000$ZWy2OjcCpFTY$W1e/IH3srwcqW7r3Em0qmpMWPLNmcUM5wby5AiixbB0=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2016-01-28T05:11:05Z",
+    "email": "dealer2principal",
+    "groups": [
+      [
+        "Dealer Sales Rep"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": false,
+    "is_superuser": false,
+    "last_login": null,
+    "name": "Dealer 2 Principal",
+    "password": "pbkdf2_sha256$20000$GsNHBV6xRSbg$xEqv5b6wGtwG6wZBpObkUU0l1Smhgpwe+AYulmY7cRQ=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2016-02-09T04:02:42Z",
+    "email": "drafterprincipal",
+    "groups": [
+      [
+        "Principal Drafter"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false,
+    "last_login": null,
+    "name": "Principal Drafter",
+    "password": "pbkdf2_sha256$20000$uxvbVPvNUXWX$n536lhz/6p06AW3EWF20W1lsNjmDl1/afclhNUfErwM=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2016-04-29T06:13:12Z",
+    "email": "standmanager",
+    "groups": [
+      [
+        "Dealer Sales Rep"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false,
+    "last_login": null,
+    "name": "Stand Manager",
+    "password": "pbkdf2_sha256$20000$ZT25B61xbKyD$k0SB+wfptZnBGkiAdKjy7TD88Fo4LsuF8+95AkUvPz0=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2016-04-29T06:13:12Z",
+    "email": "schedulemanager",
+    "groups": [
+      [
+        "Schedule Manager"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false,
+    "last_login": null,
+    "name": "Schedule Manager",
+    "password": "pbkdf2_sha256$20000$KBL6Y2nVYxS2$4xcAfJ8ls7DrlSd0KTvIm4HaxitfPf5yQQ/hMXPxyrs=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2016-04-29T06:13:12Z",
+    "email": "useradmin",
+    "groups": [
+      [
+        "User Manager"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false,
+    "last_login": null,
+    "name": "User Manager",
+    "password": "pbkdf2_sha256$20000$e0a499E0PZ2Z$D0rKoq/8AElXM6u50ZLHYYW6AEIRKhUmU6B/thHsgYY=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2016-04-29T06:13:12Z",
+    "email": "transport",
+    "groups": [
+      [
+        "Transport"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false,
+    "last_login": null,
+    "name": "Transport User",
+    "password": "pbkdf2_sha256$20000$UCCG19bsQFJY$pqC5eKc/aVPy9fceRbzAX1rQqKsxWTT7zjc9m5ZIWYU=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+},
+{
+  "fields": {
+    "date_joined": "2016-04-29T06:13:12Z",
+    "email": "vin",
+    "groups": [
+      [
+        "VIN Department"
+      ]
+    ],
+    "is_active": true,
+    "is_staff": true,
+    "is_superuser": false,
+    "last_login": null,
+    "name": "VIN User",
+    "password": "pbkdf2_sha256$20000$B2mdgvrzGKq9$FYUQLaDmFJBdv3AWr+rzX5Cn5KaYCe5RH1yiO7EUwuk=",
+    "user_permissions": []
+  },
+  "model": "authtools.user"
+}
+]

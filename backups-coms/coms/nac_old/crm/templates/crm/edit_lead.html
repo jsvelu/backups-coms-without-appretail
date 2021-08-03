@@ -1,0 +1,95 @@
+{% extends "crm/crm.html" %}
+{% load append_get %}
+{% load floppyforms %}
+{% load render_table from django_tables2 %}
+
+{% block breadcrumbs %}{{ block.super }} > <a href="{% url 'crm:edit_lead' customer_id %}">Edit Lead</a>{% endblock %}
+
+{% block crm_content %}
+    <div class="container-fluid">
+
+        <form method="post" action="{% url 'crm:edit_lead' customer_id %}" novalidate>
+            {% csrf_token %}
+            {% form form using %}
+                {% formconfig row using "floppyforms/rows/bootstrap.html" %}
+                <div class="row top-margin-20">
+                    <div class="col-sm-4">
+                        {% formrow form.first_name %}
+                    </div>
+                    <div class="col-sm-4">
+                        {% formrow form.last_name %}
+                    </div>
+                    <div class="col-sm-4">
+                        {% formrow form.email %}
+                    </div>
+                </div>
+
+                <div class="row top-margin-20">
+                    <div class="col-sm-4">
+                        {% formrow form.phone1 %}
+                    </div>
+                    <div class="col-sm-4">
+                        {% formrow form.phone2 %}
+                    </div>
+                    <div class="col-sm-4">
+                        {% formrow form.partner_name %}
+                    </div>
+                </div>
+
+                <div class="row top-margin-20">
+                    <div class="col-sm-4">
+                        {% formrow form.appointed_dealer %}
+                    </div>
+                    <div class="col-sm-4">
+                        {% formrow form.acquisition_source %}
+                    </div>
+                    <div class="col-sm-4">
+                        {% formrow form.source_of_awareness %}
+                    </div>
+                </div>
+
+                <div class="row top-margin-20">
+                    <div class="col-sm-4">
+                        {% formrow form.customer_status %}
+                    </div>
+                    <div class="col-sm-4">
+                        {% formrow form.lead_series %}
+                    </div>
+                    <div class="col-sm-4">
+                        {% formrow form.model_type %}
+                    </div>
+                </div>
+
+            {% endform %}
+
+            <h3>Activity</h3>
+
+            <div class="row top-margin-40">
+            {% render_table activity_table %}
+                <div class="top-margin-40">
+                    <span class="record-count">Total Records: {{ activity_table.paginator.count }}</span>
+                    {% for page_num in activity_table.paginator.page_range %}
+                        <a class="btn btn-default btn-small {% if page_num|slugify == request.GET.page %}active{% endif %}" href="{% append_get page=page_num %}">{{ page_num }}</a>
+                    {% endfor %}
+
+                    {% if perms.crm.add_leadactivity %}
+                        <a href="{% url 'crm:add_activity' customer_id %}" type="button" class="btn btn-newage pull-right">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Activity
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="row top-margin-40">
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-newage pull-right" id="btnSave">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

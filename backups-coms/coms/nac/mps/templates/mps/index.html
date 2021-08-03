@@ -1,0 +1,90 @@
+{% extends "admin/base_site.html" %}
+{% load alliance_bundle %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+    <link rel="stylesheet" type="text/css" href="{% static "mps/css/index.css" %}" />
+{% endblock %}
+
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+    <script type="text/javascript">
+        var BASE_SALES_URL = '/mps/schedule_csv/';
+        var SCHEDULE_SALES_URL = '/mps/export_schedule_csv/';
+        window.dateFormat = '{{ APP_SETTINGS.FORMAT_DATE_DATEPICKER_DASH_FMT_JS }}';
+    </script>
+    <script type="text/javascript" src="{% static "mps/js/index.js" %}"></script>
+
+{% endblock %}
+
+{% block bodyclass %}reports-index{% endblock %}
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    MPS
+{% endblock %}
+
+{% block page_heading %}MPS REPORTS{% endblock %}
+{% block page_subheading_wrapper %}{% endblock %}
+
+{% block content %}
+
+    <div id="report-index">
+        <table>
+            <thead>
+                <tr><td colspan="3" style=" text-align:left"><H4>FILTER</H4></td></tr>
+                
+            </thead>
+
+            <tbody>
+                {% if can_export_schedule %}
+                <tr>
+                     
+                    <th align="center">  <center>Schedule Month</th>
+                </tr>
+               
+                <tr>
+                  
+                    <td>
+                    <div id="placed_date" class="col-md-8">
+                    <label for="date-from">Start Date :</label>
+                    <input type="text" id="date-from" name="date-from"  placeholder="YYYY-MM">  
+                    <i class="glyphicon glyphicon-calendar"></i>
+                    <label for="date-to">   End Date :</label>
+                    <input type="text" id="date-to" id="date-to"  placeholder="YYYY-MM"> 
+                    <i class="glyphicon glyphicon-calendar"></i>
+                   <!-- <input type="text" id="date1"> -->
+                   </div>
+                    </td>
+                     
+                </tr>
+                <tr>
+                <td colspan="3"  style="padding:1px;text-align:right">
+                </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                    <a id=filter_link class="btn btn-default" target="_blank" style="float:left;font-weight: bold;color:white;background:red;border: 1px solid #0099CC;display: inline-block; padding: 10px;">Export</a>
+                    </td>
+                </tr>
+
+                
+                <tr style=" border: 0px;">
+                <td  colspan="3" style=" border: 0px;text-align:right">
+                   
+                </td>
+                {% endif %}
+            </tbody>
+        </table>
+     
+    </div>
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

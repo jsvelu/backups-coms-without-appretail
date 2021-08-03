@@ -1,0 +1,19 @@
+
+<table>
+    <tr>
+        <th style="border-bottom: 1px solid lightgrey;">Quote/order #</th>
+        <th style="border-bottom: 1px solid lightgrey;">Customer</th>
+        <th style="border-bottom: 1px solid lightgrey;">Model/series</th>
+        <th style="border-bottom: 1px solid lightgrey;">Manage</th>
+    </tr>
+    {% for order in order_list %}
+        <tr style="{% cycle '' 'background-color: #eeeeee;' %}">
+            <td>{{ order.get_order_stage_details.label }} #{{ order.id }}</td>
+            <td>{{ order.customer.name | default:"Stock" }}</td>
+            <td>{{ order.get_series_description }}</td>
+            <td style="text-align: center;">
+                <a href="{{ host }}/{% url "newage:angular_app" app='orders' %}#/{{ order.id }}/caravan/features">Manage</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>

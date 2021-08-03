@@ -1,0 +1,178 @@
+{
+  "status": "done",
+  "chunks": {
+    "shared-spa": [
+      {
+        "name": "shared-spa.js",
+        "publicPath": "/static/dist/prod/shared-spa.js",
+        "path": "dist/prod/shared-spa.js"
+      },
+      {
+        "name": "shared-spa.styles.css",
+        "publicPath": "/static/dist/prod/shared-spa.styles.css",
+        "path": "dist/prod/shared-spa.styles.css"
+      }
+    ],
+    "shared-bower-common": [
+      {
+        "name": "shared-bower-common.bundle.js",
+        "publicPath": "/static/dist/prod/shared-bower-common.bundle.js",
+        "path": "dist/prod/shared-bower-common.bundle.js"
+      },
+      {
+        "name": "shared-bower-common.styles.css",
+        "publicPath": "/static/dist/prod/shared-bower-common.styles.css",
+        "path": "dist/prod/shared-bower-common.styles.css"
+      }
+    ],
+    "shared-bower-jqueryui": [
+      {
+        "name": "shared-bower-jqueryui.bundle.js",
+        "publicPath": "/static/dist/prod/shared-bower-jqueryui.bundle.js",
+        "path": "dist/prod/shared-bower-jqueryui.bundle.js"
+      },
+      {
+        "name": "shared-bower-jqueryui.styles.css",
+        "publicPath": "/static/dist/prod/shared-bower-jqueryui.styles.css",
+        "path": "dist/prod/shared-bower-jqueryui.styles.css"
+      }
+    ],
+    "shared-bower-highcharts": [
+      {
+        "name": "shared-bower-highcharts.bundle.js",
+        "publicPath": "/static/dist/prod/shared-bower-highcharts.bundle.js",
+        "path": "dist/prod/shared-bower-highcharts.bundle.js"
+      }
+    ],
+    "shared-bower-datatables": [
+      {
+        "name": "shared-bower-datatables.bundle.js",
+        "publicPath": "/static/dist/prod/shared-bower-datatables.bundle.js",
+        "path": "dist/prod/shared-bower-datatables.bundle.js"
+      },
+      {
+        "name": "shared-bower-datatables.styles.css",
+        "publicPath": "/static/dist/prod/shared-bower-datatables.styles.css",
+        "path": "dist/prod/shared-bower-datatables.styles.css"
+      }
+    ],
+    "shared-styles": [
+      {
+        "name": "shared-styles.bundle.js",
+        "publicPath": "/static/dist/prod/shared-styles.bundle.js",
+        "path": "dist/prod/shared-styles.bundle.js"
+      },
+      {
+        "name": "shared-styles.styles.css",
+        "publicPath": "/static/dist/prod/shared-styles.styles.css",
+        "path": "dist/prod/shared-styles.styles.css"
+      }
+    ],
+    "orders": [
+      {
+        "name": "orders.bundle.js",
+        "publicPath": "/static/dist/prod/orders.bundle.js",
+        "path": "dist/prod/orders.bundle.js"
+      },
+      {
+        "name": "orders.styles.css",
+        "publicPath": "/static/dist/prod/orders.styles.css",
+        "path": "dist/prod/orders.styles.css"
+      }
+    ],
+    "schedule2": [
+      {
+        "name": "schedule2.bundle.js",
+        "publicPath": "/static/dist/prod/schedule2.bundle.js",
+        "path": "dist/prod/schedule2.bundle.js"
+      },
+      {
+        "name": "schedule2.styles.css",
+        "publicPath": "/static/dist/prod/schedule2.styles.css",
+        "path": "dist/prod/schedule2.styles.css"
+      }
+    ],
+    "schedule": [
+      {
+        "name": "schedule.bundle.js",
+        "publicPath": "/static/dist/prod/schedule.bundle.js",
+        "path": "dist/prod/schedule.bundle.js"
+      },
+      {
+        "name": "schedule.styles.css",
+        "publicPath": "/static/dist/prod/schedule.styles.css",
+        "path": "dist/prod/schedule.styles.css"
+      }
+    ],
+    "quality": [
+      {
+        "name": "quality.bundle.js",
+        "publicPath": "/static/dist/prod/quality.bundle.js",
+        "path": "dist/prod/quality.bundle.js"
+      },
+      {
+        "name": "quality.styles.css",
+        "publicPath": "/static/dist/prod/quality.styles.css",
+        "path": "dist/prod/quality.styles.css"
+      }
+    ],
+    "models": [
+      {
+        "name": "models.bundle.js",
+        "publicPath": "/static/dist/prod/models.bundle.js",
+        "path": "dist/prod/models.bundle.js"
+      },
+      {
+        "name": "models.styles.css",
+        "publicPath": "/static/dist/prod/models.styles.css",
+        "path": "dist/prod/models.styles.css"
+      }
+    ],
+    "quotes": [
+      {
+        "name": "quotes.bundle.js",
+        "publicPath": "/static/dist/prod/quotes.bundle.js",
+        "path": "dist/prod/quotes.bundle.js"
+      },
+      {
+        "name": "quotes.styles.css",
+        "publicPath": "/static/dist/prod/quotes.styles.css",
+        "path": "dist/prod/quotes.styles.css"
+      }
+    ],
+    "quotes-new": [
+      {
+        "name": "quotes-new.bundle.js",
+        "publicPath": "/static/dist/prod/quotes-new.bundle.js",
+        "path": "dist/prod/quotes-new.bundle.js"
+      },
+      {
+        "name": "quotes-new.styles.css",
+        "publicPath": "/static/dist/prod/quotes-new.styles.css",
+        "path": "dist/prod/quotes-new.styles.css"
+      }
+    ],
+    "leads": [
+      {
+        "name": "leads.bundle.js",
+        "publicPath": "/static/dist/prod/leads.bundle.js",
+        "path": "dist/prod/leads.bundle.js"
+      }
+    ],
+    "edit_quote": [
+      {
+        "name": "edit_quote.bundle.js",
+        "publicPath": "/static/dist/prod/edit_quote.bundle.js",
+        "path": "dist/prod/edit_quote.bundle.js"
+      }
+    ],
+    "uom": [
+      {
+        "name": "uom.bundle.js",
+        "publicPath": "/static/dist/prod/uom.bundle.js",
+        "path": "dist/prod/uom.bundle.js"
+      }
+    ]
+  },
+  "publicPath": "/static/dist/prod/"
+}

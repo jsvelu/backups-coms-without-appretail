@@ -1,0 +1,119 @@
+{% extends "warranty/warranty.html" %}
+{% load alliance_bundle %}
+{% load append_get %}
+{% load floppyforms %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+    <script src="{% static "warranty/listing.js" %}"></script>
+{% endblock %}
+
+{% block bodyclass %}warranty-listing{% endblock %}
+{% block warranty_content %}
+    <div class="container-fluid">
+            <ul class="nav nav-tabs">
+                <li><a data-toggle="tab" href="#chassis">Chassis Search</a></li>
+                <li><a data-toggle="tab" href="#listing">Claims Listing</a></li>
+            </ul>
+
+            <div class="tab-content">
+
+                <div id="chassis" class="tab-pane fade">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <form method="get" action="{% url 'warranty:listing' %}">
+                                {% form form using %}
+                                    {% formconfig row using "floppyforms/rows/bootstrap.html" %}
+                                        {% formrow form.chassis %}
+                                        <input type="hidden" id="hdn_order_id" name="hdn_order_id" />
+                                {% endform %}
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <button type="button" class="btn btn-newage" id="btn_chassis_next">
+                                <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span> Next
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="listing" class="tab-pane fade">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="collapse-div collapsed" data-toggle="collapse" data-target="#dvFilters">Filter Orders</div>
+                        </div>
+                    </div>
+
+                    <div class="row top-margin-20 collapse" id="dvFilters">
+                        <div class="col-xs-12">
+                            <div class="panel panel-primary">
+                                <div class="panel-body">
+                                    <form method="get" action="{% url 'warranty:listing' %}">
+                                        {% form form using %}
+                                            <div class="row">
+                                                {% formconfig row using "floppyforms/rows/bootstrap.html" %}
+                                                <div class="col-xs-3">
+                                                    {% formrow form.warranty_statuses %}
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    {% formrow form.states %}
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    {% formrow form.model_series %}
+                                                </div>
+                                                <div class="col-xs-3">
+                                                    {% formrow form.dealership %}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-3">
+                                                    {% formrow form.customer_name %}
+                                                </div>
+                                            </div>
+                                        {% endform %}
+                                        <div class="row top-margin-20">
+                                            <div class="col-xs-12">
+                                                <button type="submit" class="btn btn-newage pull-right" id="btnFilter">
+                                                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Apply Filter
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row top-margin-40">
+                        {% render_table warranty_table %}
+                        <div class="row top-margin-10">
+                        <span class="record-count">Total Records: {{ warranty_table.paginator.count }}</span>
+                        {% for page_num in warranty_table.paginator.page_range %}
+                            <a class="btn btn-default btn-small {% if page_num|slugify == request.GET.page %}active{% endif %}" href="{% append_get page=page_num %}">{{ page_num }}</a>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="dlg_select_chassis" title="Select a Chassis">
+          <p>
+            You must select a Chassis Number in order to proceed.
+          </p>
+        </div>
+
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

@@ -1,0 +1,832 @@
+<div class="features">
+
+    <div class="row top-margin-40 series-info-header">
+        <div class="col-sm-6">
+            <a href="" ng-click="onOpenSeriesPhotos()">
+                <img ng-if="info.series_detail.photos.length" class="series-thumbnail"
+                     ng-src="{{ info.series_detail.photos[0].url }}"/></a>
+
+            <div class="series-caption">
+                <h2>{{ info.series_detail.title }}</h2>
+                <a ng-if="info.series_detail.photos.length > 1" href=""
+                   ng-click="onOpenSeriesPhotos()">View {{ info.series_detail.photos.length }}
+                    images</a><br>
+                <a ng-if="info.series_detail.plans.length" href=""
+                   ng-click="onOpenSeriesPlans()">View plans</a><br>
+            </div>
+        </div>
+        <div class="col-sm-6 pull-right">
+            <div ng-if="info.show_price">
+                Retail sales price: <span class="series-cost">{{ calculatePrice().price | currency }}</span>
+                <a href="" ng-click="info.show_price = !info.show_price">Hide</a>
+            </div>
+
+            <div ng-if="!info.show_price">
+                <button class="btn btn-default" ng-click="info.show_price = !info.show_price">Show Retail Price</button>
+            </div>
+
+            <div class="top-margin-20">
+                <button class="btn btn-default" ng-click="onOpenTotals()">Display Totals</button>
+                <button class="btn btn-default" ng-if="specials.length" ng-click="onOpenSpecials()">Special Offers and Packs</button>
+
+                <div class="btn-group" uib-dropdown>
+                    <button id="print-menu-button" type="button" class="btn btn-default" uib-dropdown-toggle>
+                        Print Menu <span class="caret"></span>
+                    </button>
+
+                    <ul id="print-menu" class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="print-menu-button">
+                        <li role="menuitem">
+                            <a ng-href="/orders/spec/{{ order.id }}/" ng-click="onPrintPdfClick($event);">Print Specs</a>
+                        </li>
+                        <li role="menuitem">
+                            <a ng-href="/orders/brochure/{{ order.id }}/" ng-click="onPrintPdfClick($event);">Print Brochure</a>
+                        </li>
+                        <li role="menuitem" ng-if="permissions.print_invoice">
+                            <a ng-href="/orders/invoice/{{ order.id }}/" ng-click="onPrintPdfClick($event);">Print Invoice</a>
+                        </li>
+                        <li role="menuitem" ng-if="permissions.print_for_autocad">
+                            <a ng-href="/orders/autocad/{{ order.id }}/" ng-click="onPrintPdfClick($event);">Print for AutoCAD (PDF)</a>
+                        </li>
+                        <li role="menuitem" ng-if="permissions.print_for_autocad">
+                            <a ng-href="/orders/autocad/{{ order.id }}/?is_jpg=1" ng-click="onPrintPdfClick($event);">Print for AutoCAD (JPG)</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <br/>
+                <button class="btn btn-default" ng-click="onOpenTradeInComment()">
+                    <span class="glyphicon" ng-class="order.trade_in_comment ? 'glyphicon-ok' : 'glyphicon-unchecked'"></span>
+                    Trade-in comment
+                </button>
+                <button class="btn" ng-class="order.orderconditions.details ? (order.orderconditions.fulfilled ? 'btn-success' : 'btn-warning') : 'btn-default'" ng-click="onOpenConditions()">
+                    <span class="glyphicon" ng-class="order.orderconditions.details ? 'glyphicon-ok' : 'glyphicon-unchecked'"></span>
+                    Subject To...
+                </button>
+                <button class="btn btn-default" ng-click="onOpenAfterMarketNote()">
+                    <span class="glyphicon" ng-class="order.aftermarketnote.note ? 'glyphicon-ok' : 'glyphicon-unchecked'"></span>
+                    After-market note
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Specials -->
+    <div class="row top-margin-40 applied-specials" ng-if="hasAppliedShowSpecial()">
+        <label class="form-label">ADDED SPECIALS:</label>
+
+        <div class="applied-special row">
+            <div class="col-sm-4"><b>{{ order.show_special.name }}</b></div>
+            <div class="col-sm-offset-4 col-sm-2">
+                <div class="price-tag">
+                    <span class="glyphicon glyphicon-tag"></span>
+                    {{ (order.show_special.price || 0) | currency }}
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <a ng-click="unapplyShowSpecial(order.show_special)"><i class="glyphicon glyphicon-remove"></i> Remove</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row top-margin-40" ng-if="internal.file_uploads | hasKeys">
+        <div class="alert alert-info">
+            <h4>File Uploads in progress:</h4>
+            <ul>
+                <li ng-repeat="(k, v) in internal.file_uploads"><b>{{ v.name }}</b>: {{ v.percentage }}%</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row top-margin-40 selections-key">
+        <div class="col-sm-4"><b>Upgrades and Optional Extras</b></div>
+        <div class="col-sm-4" ng-if="order.isEditable()"><b>Key: </b>
+            <div class="new-selections-key-box"></div>
+            New selections for this customer
+        </div>
+    </div>
+
+    <div class="row top-margin-20">
+        <bar-spinner ng-if="loading.items"></bar-spinner>
+
+        <uib-accordion ng-if="!loading.items" class="features">
+            <uib-accordion-group ng-repeat="category in info.items">
+
+                <uib-accordion-heading>
+                    <div ng-class="{'missing-selections': getDepartmentsMissingSelection(category).length > 0}">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                        <i class="glyphicon glyphicon-chevron-down"></i>
+                        {{ category.name }}
+                        <span ng-if="getDepartmentsMissingSelection(category).length">: {{ getDepartmentsMissingSelection(category).length }} Selection(s) To Be Made</span>
+                        <!--span ng-if="order.special_features[category.id].length > 0" class="pull-right glyphicon glyphicon-exclamation-sign" title="There are special features within this category."></span-->
+                    </div>
+                </uib-accordion-heading>
+
+                <div class="row">
+                    <div ng-repeat="department in category.departments"
+                         class="col-sm-6 item-group-panel"
+                         ng-if="department.selections.length || department.upgrades.length">
+
+                        <form>
+                            <div class="btn-group" uib-dropdown
+                                 ng-class="{'dirty':department.changed, 'needs-selection':!order.items[department.id]}">
+
+                                <div id="single-button" type="button" class="btn btn-primary" uib-dropdown-toggle ng-disabled="!order.isEditable()">
+
+                                    <div ng-if="!hasSpecialFeatureForDepartment(category, department)" ng-click="onItemPhotoClick(order.items[department.id]); $event.stopPropagation();" class="item-thumbnail">
+                                        <i ng-if="order.items[department.id].photo" class="glyphicon glyphicon-camera"></i>
+                                    </div>
+
+                                    <div ng-if="order.items[department.id]" class="item-name" truncate truncate-title="order.items[department.id].public_description">
+                                        <span ng-if="hasSpecialFeatureForDepartment(category, department)" class="item-special-feature">Special feature</span>
+                                        <span ng-if="!hasSpecialFeatureForDepartment(category, department)">{{ order.items[department.id].public_description }}</span>
+                                    </div>
+
+                                    <div ng-if="!order.items[department.id]" class="item-name"><b>{{ department.name }}</b></div>
+
+                                    <div ng-if="isUpgrade(department, order.items[department.id]) && (+order.items[department.id].retail_price > 0)" class="price-tag">
+                                        <span class="glyphicon glyphicon-tag"></span>
+                                        <span ng-if="order.items[department.id].price_multiply">{{ order.items[department.id].price_multiply }} x </span>
+                                        {{ order.items[department.id].retail_price | currency }}
+                                    </div>
+
+                                    <span ng-if="!department.read_only && (department.selections.length > 1 || department.upgrades.length)" class="caret"></span>
+
+                                </div>
+
+                                <ul class="dropdown-menu" role="menu" aria-labelledby="single-button"
+                                    ng-if="!department.read_only && (department.selections.length > 1 || department.upgrades.length || (department.selections.length == 1 && !order.items[department.id]))">
+
+                                    <li role="menuitem" ng-repeat="item in department.selections">
+                                        <a href="javascript:void(0);" ng-click="onItemSelect(department, item)">
+
+                                            <span ng-if="item.photo" class="pull-left" ng-click="onItemPhotoClick(item); $event.stopPropagation();">
+                                                <i class="glyphicon glyphicon-camera item-thumbnail"></i>
+                                            </span>
+
+                                            <div truncate truncate-title="item.public_description">{{ item.public_description }}</div>
+                                        </a>
+                                    </li>
+
+                                    <li ng-if="department.upgrades.length" class="divider"></li>
+
+                                    <li role="menuitem" ng-repeat="item in department.upgrades">
+                                        <a href="javascript:void(0);" ng-click="onItemSelect(department, item)">
+
+                                            <span class="pull-right">
+                                                <span class="glyphicon glyphicon-tag"></span>
+                                                {{ item.retail_price | currency }}
+                                            </span>
+
+                                            <span ng-if="item.photo" class="pull-left"
+                                                  ng-click="onItemPhotoClick(item); $event.stopPropagation();">
+                                                <i class="glyphicon glyphicon-camera item-thumbnail"></i>
+                                            </span>
+
+                                            <div truncate truncate-title="item.public_description">{{ item.public_description }}</div>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>
+
+                        </form>
+                    </div>
+
+                    <div ng-repeat="item in getSelectedOptions(category)" class="col-sm-6 item-group-panel">
+                        <div class="btn-group dirty" uib-dropdown>
+                            <div id="single-button" type="button" class="btn btn-primary" uib-dropdown-toggle ng-class="{'has-special': item.special_name}" ng-disabled="!order.isEditable()">
+
+                                <span ng-if="!item.special_name && order.isEditable()" class="pull-right option-remove-icon" ng-click="onOptionSelect(item); $event.stopPropagation();">
+                                    <i class="glyphicon glyphicon-remove"></i>
+                                </span>
+
+                                <div ng-click="onItemPhotoClick(item); $event.stopPropagation();"
+                                     class="item-thumbnail">
+                                    <i ng-if="item.photo" class="glyphicon glyphicon-camera"></i>
+                                </div>
+                                <div class="item-name" truncate truncate-title="item.public_description">
+                                    {{ item.public_description }}
+                                    <div ng-if="item.special_name" class="item-special">{{ item.special_name }}</div>
+                                </div>
+                                <div class="price-tag">
+                                    <span class="glyphicon glyphicon-tag"></span>
+                                    {{ item.retail_price | currency }}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row top-margin-30" ng-if="hasCategoryOptions(category)">
+                    <div class="form-group col-sm-3">
+                        <button type="submit" class="btn btn-primary form-control" ng-click="onOpenOptions(category)" ng-if="order.isEditable()">
+                            + Add Optional Extra
+                        </button>
+                    </div>
+                </div>
+            </uib-accordion-group>
+        </uib-accordion>
+    </div>
+
+    <div id="options" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Options</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div ng-repeat="department in optionsByDepartment">
+                        <h4>{{ department.name }}</h4>
+
+                        <div ng-repeat="item in department.options">
+                            <div class="option-panel item-panel" ng-click="onOptionSelect(item)" ng-class="item.available ? '' : 'disabled'">
+                                <div ng-click="onItemPhotoClick(item); $event.stopPropagation();" class="item-thumbnail">
+                                    <i ng-if="item.photo" class="glyphicon glyphicon-camera"></i>
+                                </div>
+                                <div class="item-name">{{ item.public_description }}</div>
+                                <div class="price-tag"><span class="glyphicon glyphicon-tag"></span>
+                                    {{ item.retail_price | currency }}
+                                </div>
+                                <i ng-if="!isItemSelected(item, department)" class="glyphicon glyphicon-plus indicator"></i>
+                                <i ng-if="isItemSelected(item, department)" class="glyphicon glyphicon-ok indicator"></i>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="totals" class="modal fade">
+        <div class="modal-dialog wide">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Totals</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="totals-modal">
+
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th></th>
+                                <th ng-if="permissions.view_order_cost_price">Manufacturing Cost</th>
+                                <th ng-if="permissions.view_order_cost_price">Your Margin</th>
+                                <th ng-if="permissions.view_order_trade_price">Wholesale</th>
+                                <th ng-if="permissions.view_order_trade_price">Margin</th>
+                                <th>Retail</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><h4>Adjustments</h4><i ng-if="permissions.modify_order_retail_price || order.permissions.modify_retail_prices_finalized"> Please enter adjustments in these fields ></i></td>
+                                <td ng-if="permissions.view_order_cost_price" ng-disabled="!isModelEditable()">
+                                    <input ng-if="permissions.modify_order_cost_price" class="form-control" type="number" ng-model="order.price_adjustments.cost" ng-change="order.price_changed = true" />
+                                </td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ order.price_adjustments.wholesale | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price" ng-disabled="!isModelEditable()">
+                                    <div ng-if="permissions.modify_order_trade_price">
+                                        <div class="row">
+                                            <input class="form-control" type="number" ng-model="order.price_adjustments.wholesale" ng-change="order.price_changed = true" />
+                                        </div>
+                                        <div class="row">
+                                            <input class="form-control" type="text" ng-model="order.price_adjustments.wholesale_comment" placeholder="Comment" ng-change="order.price_changed = true" />
+                                            <div ng-if="order.price_adjustments.wholesale && !order.price_adjustments.wholesale_comment">
+                                                <span id="wholesale_comment-error" class="error">A comment is required if a value is entered.</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ order.price_adjustments.retail | currency }}
+                                </td>
+                                <td>
+                                    <input ng-if="permissions.modify_order_retail_price || order.permissions.modify_retail_prices_finalized" class="form-control" type="number" ng-model="order.price_adjustments.retail" ng-change="order.price_changed = true" />
+                                    <div class="top-margin-10" ng-if="!(permissions.modify_order_retail_price|| order.permissions.modify_retail_prices_finalized)">{{ order.price_adjustments.retail | currency }}</div>
+                                </td>
+                            </tr>
+                            
+                         
+                            <tr ng-if="permissions.view_order_trade_price">
+                                <td>Dealer Load Price</td>
+                                <td ng-if="permissions.view_order_cost_price">&nbsp;</td>
+                                <td ng-if="permissions.view_order_cost_price">&nbsp;</td>
+                                <td>
+                                    <input ng-if="order.permissions.modify_order_other_prices" class="form-control" type="number" ng-model="order.dealer_load" ng-change="order.price_changed = true" />
+                                    <span ng-if="!order.permissions.modify_order_other_prices">{{ order.dealer_load | currency }}</span>
+                                </td>
+                                <td>
+                                    {{ (-order.dealer_load) | currency }}
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr ng-if="permissions.view_order_trade_price">
+                                <td>Trade-in w/back</td>
+                                <td ng-if="permissions.view_order_cost_price">&nbsp;</td>
+                                <td ng-if="permissions.view_order_cost_price">&nbsp;</td>
+                                <td>
+                                    <input ng-if="order.permissions.modify_order_other_prices" class="form-control" type="number" ng-model="order.trade_in_write_back" ng-change="order.price_changed = true" />
+                                    <span ng-if="!order.permissions.modify_order_other_prices">{{ order.trade_in_write_back | currency }}</span>
+                                </td>
+                                <td>
+                                    {{ (-order.trade_in_write_back) | currency }}
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+
+                            <tr ng-if="permissions.view_order_trade_price">
+                                <td>After Sales</td>
+                                <td ng-if="permissions.view_order_cost_price">&nbsp;</td>
+                                <td ng-if="permissions.view_order_cost_price">&nbsp;</td>
+                                <td>
+                                    <input ng-if="order.permissions.modify_order_other_prices" class="form-control" type="number" ng-model="order.after_sales.wholesale" ng-change="order.price_changed = true" />
+                                    <span ng-if="!order.permissions.modify_order_other_prices">{{ order.after_sales.wholesale | currency }}</span>
+                                </td>
+                                <td>
+                                    {{ order.after_sales.retail-order.after_sales.wholesale | currency }}
+                                </td>
+                                <td>
+                                    <input ng-if="order.permissions.modify_order_other_prices" class="form-control" type="number" ng-model="order.after_sales.retail" ng-change="order.price_changed = true" />
+                                    <span ng-if="!order.permissions.modify_order_other_prices">{{ order.after_sales.retail | currency }}</span>
+                                </td>
+                            </tr>
+                            <tr ng-if="permissions.view_order_trade_price" >
+                                <td>Description</td>
+                                <td colspan="999">
+                                    <input class="form-control comments" type="text" ng-model="order.after_sales.description" ng-change="order.price_changed = true" />
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Basic Caravan Prices</td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ totals.manufacture.caravan | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ (totals.wholesale.caravan - totals.manufacture.caravan) | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ totals.wholesale.caravan | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ (totals.retail.caravan - totals.wholesale.caravan) | currency }}
+                                </td>
+                                <td>
+                                    {{ totals.retail.caravan | currency }}
+                                </td>
+                            </tr>
+                            <tr ng-hide="options_upgrades_expanded">
+                                <td>Options & Upgrades (<a ng-click="options_upgrades_expanded=true">show</a>)</td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ totals.manufacture.options + totals.manufacture.upgrades | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ (totals.wholesale.options - totals.manufacture.options) + (totals.wholesale.upgrades - totals.manufacture.upgrades) | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ totals.wholesale.options + totals.wholesale.upgrades | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ (totals.retail.options - totals.wholesale.options) + (totals.retail.upgrades - totals.wholesale.upgrades) | currency }}
+                                </td>
+                                <td>
+                                    {{ totals.retail.options + totals.retail.upgrades | currency }}
+                                </td>
+                            </tr>
+                            <tr class="totals-item totals-item-header" ng-show="options_upgrades_expanded">
+                                <td>Options & Upgrades (<a ng-click="options_upgrades_expanded=false">hide</a>)</td>
+                                <td colspan="5"></td>
+                            </tr>
+                            <tr class="totals-item totals-item-entry" ng-repeat="item in totals.options_upgrades track by $index" ng-show="options_upgrades_expanded">
+                                <td>{{ item.name }}</td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ item.manufacture | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ (item.wholesale - item.manufacture) | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ item.wholesale | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ (item.retail - item.wholesale) | currency }}
+                                </td>
+                                <td>
+                                    {{ item.retail | currency }}
+                                </td>
+                            </tr>
+                            <tr class="totals-item totals-item-totals" ng-show="options_upgrades_expanded">
+                                <td>Option & Upgrades Total</td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ totals.manufacture.options + totals.manufacture.upgrades | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ (totals.wholesale.options - totals.manufacture.options) + (totals.wholesale.upgrades - totals.manufacture.upgrades) | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ totals.wholesale.options + totals.wholesale.upgrades | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ (totals.retail.options - totals.wholesale.options) + (totals.retail.upgrades - totals.wholesale.upgrades) | currency }}
+                                </td>
+                                <td>
+                                    {{ totals.retail.options + totals.retail.upgrades | currency }}
+                                </td>
+                            </tr>
+                            <tr ng-hide="special_features_expanded">
+                                <td>Special Features (<a ng-click="special_features_expanded=true">show</a>)</td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ totals.manufacture.special_features | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ (totals.wholesale.special_features - totals.manufacture.special_features) | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ totals.wholesale.special_features | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ (totals.retail.special_features - totals.wholesale.special_features) | currency }}
+                                </td>
+                                <td>
+                                    {{ totals.retail.special_features | currency }}
+                                </td>
+                            </tr>
+                            <tr class="totals-item totals-item-header" ng-show="special_features_expanded">
+                                <td>Special Features (<a ng-click="special_features_expanded=false">hide</a>)</td>
+                                <td colspan="5"></td>
+                            </tr>
+                            <tr class="totals-item totals-item-entry" ng-repeat="item in totals.special_features track by $index" ng-show="special_features_expanded">
+                                <td>{{ item.name }}</td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ item.manufacture | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ (item.wholesale - item.manufacture) | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ item.wholesale | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ (item.retail - item.wholesale) | currency }}
+                                </td>
+                                <td>
+                                    {{ item.retail | currency }}
+                                </td>
+                            </tr>
+                            <tr class="totals-item totals-item-totals" ng-show="special_features_expanded">
+                                <td>Special Features Total</td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ totals.manufacture.special_features | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ (totals.wholesale.special_features - totals.manufacture.special_features) | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ totals.wholesale.special_features | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ (totals.retail.special_features - totals.wholesale.special_features) | currency }}
+                                </td>
+                                <td>
+                                    {{ totals.retail.special_features | currency }}
+                                </td>
+                            </tr>
+                            <tr ng-if="hasAppliedShowSpecial()">
+                                <td>Show Special</td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                </td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                </td>
+                                <td>
+                                    {{ order.show_special.price | currency }}
+                                </td>
+                            </tr>
+                            <tr id="totals--grand-totals">
+                                <td>Grand Totals</td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ totals.manufacture.totalNoAdjustment + order.price_adjustments.cost | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ (totals.wholesale.totalNoAdjustment + order.price_adjustments.wholesale) - (totals.manufacture.totalNoAdjustment + order.price_adjustments.cost) | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ totals.wholesale.totalNoAdjustment + order.price_adjustments.wholesale + order.dealer_load + order.trade_in_write_back + order.after_sales.wholesale| currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ (totals.retail.totalNoAdjustment + order.after_sales.retail + order.price_adjustments.retail) - (totals.wholesale.totalNoAdjustment + order.price_adjustments.wholesale) - order.after_sales.wholesale - order.dealer_load - order.trade_in_write_back | currency }}
+                                </td>
+                                <td>
+                                    {{ totals.retail.totalNoAdjustment + order.after_sales.retail + order.price_adjustments.retail | currency }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Total Excluding GST</td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ (totals.manufacture.totalNoAdjustment + order.price_adjustments.cost) / (1 + GST_PERCENT) | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_cost_price">
+                                    {{ ((totals.wholesale.totalNoAdjustment + order.price_adjustments.wholesale) - (totals.manufacture.totalNoAdjustment + order.price_adjustments.cost)) / (1 + GST_PERCENT) | currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ (totals.wholesale.totalNoAdjustment + order.price_adjustments.wholesale + order.dealer_load + order.after_sales.wholesale + order.trade_in_write_back) / (1 + GST_PERCENT)| currency }}
+                                </td>
+                                <td ng-if="permissions.view_order_trade_price">
+                                    {{ ((totals.retail.totalNoAdjustment + order.after_sales.retail + order.price_adjustments.retail) - (totals.wholesale.totalNoAdjustment + order.price_adjustments.wholesale) - order.after_sales.wholesale - order.dealer_load - order.trade_in_write_back) / (1 + GST_PERCENT) | currency }}
+                                </td>
+                                <td>
+                                    {{ (totals.retail.totalNoAdjustment + order.after_sales.retail + order.price_adjustments.retail) / (1 + GST_PERCENT) | currency }}
+                                </td>
+                            </tr>
+                            <tr ng-if="order.permissions.modify_order_other_prices" >
+                                <td>Other comments</td>
+                                <td colspan="999">
+                                    <input class="form-control comments" type="text" ng-model="order.price_comment" ng-change="order.price_changed = true" />
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-if="canOrderPricesBeSaved()" class="btn btn-primary" data-dismiss="modal" ng-click="saveOrder()">Save Prices</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="photos" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><b>{{ view_header }}</b></h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <ul ng-if="view_photos.length" rn-carousel rn-carousel-controls class="image">
+                        <li ng-repeat="image in view_photos">
+                            <div class="layer"><img ng-src="{{ image.url }}"/></div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rules" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Rules when choosing {{ info.rules[0].item.public_description }}</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                </div>
+                <form name="rules_form" novalidate ng-submit="acceptRules(rules_form, rules_plan_upload)">
+                    <div class="modal-body">
+                        <div ng-repeat="rule in info.rules">
+                            <h3>Rule: {{ rule.title }}</h3>
+                            <div ng-if="rule.type_code=='ADD_EXTRAS'" class="alert alert-info">
+                                <h4>The following extras will be automatically added:</h4>
+                                <ul>
+                                    <li ng-repeat="item in rule.items">{{ item.public_description }}</li>
+                                </ul>
+                            </div>
+                            <div ng-if="rule.type_code=='MAKE_SELECTION'" class="alert alert-info">
+                                <h4>Please select from the following:</h4>
+                                <select name="make_selection" class="form-control" ng-model="rule.selection"
+                                        ng-options="{item:item} as item.public_description for item in rule.items" required>
+                                    <option value="">-- Please select --</option>
+                                </select>
+                                <div ng-messages="rules_form.make_selection.$error" ng-if="rules_form.$submitted && rules_form.$invalid">
+                                    <p ng-message="required">Please make a selection</p>
+                                </div>
+                            </div>
+                            <div ng-if="rule.type_code=='WARNING'" class="alert alert-warning">
+                                {{ rule.text }}
+                            </div>
+                            <div ng-if="rule.type_code=='PRICE_MULTIPLY'" class="alert alert-info" ng-init="items = priceMultiplyItems(rule.item, rule.items)">
+                                <h4>The price of this item will be multiplied by:</h4>
+                                <ul><li ng-repeat="item in items.applicableItems">
+                                    {{ item.quantity }} x {{ item.public_description }}
+                                </li></ul>
+                                <b>Total cost based on current selections: </b>{{ items.totalPrice | currency }}<br><br>
+                                <h4>Price also depends on the following items, when selected:</h4>
+                                <ul><li ng-repeat="item in items.otherItems">
+                                    {{ item.quantity }} x {{ item.public_description }}
+                                </li></ul>
+                            </div>
+                            <div ng-if="rule.type_code=='CUSTOMER_ENTRY'" class="alert alert-info">
+                                <h4>Please specify additional information:</h4>
+                                <textarea class="form-control" name="customer_entry" ng-model="rule.customer_entry" required></textarea>
+                            </div>
+                            <div ng-if="rule.type_code=='PRODUCTION_NOTE'" class="alert alert-info">
+                                <h4>The following will be added as a production note on the order:</h4>
+                                <p>{{ rule.text }}</p>
+                            </div>
+                            <div ng-if="rule.type_code=='MARK_PLAN'" class="alert alert-info">
+                                <p>
+                                    <h4>Upload a new plan for this item:</h4>
+                                    <button class="btn btn-primary" ngf-select ng-model="rule.file_upload" name="mark_plan"
+                                            ngf-max-size="20MB" required>
+                                        Choose Plan to Upload
+                                    </button>
+                                    <span class='file-upload-filename' ng-if="rule.file_upload">{{ rule.file_upload.name }}</span>
+                                    <div ng-messages="rules_form.mark_plan.$error"
+                                         ng-if="rules_form.$submitted && rules_form.$invalid">
+                                        <p ng-message="required">Please select a file to upload</p>
+                                    </div>
+                                </p>
+                                <br>
+                                <p>
+                                <h4>Describe the location for the new item:</h4>
+                                <textarea class="form-control" name="mark_plan_notes" ng-model="rule.file_upload_notes"
+                                          required></textarea>
+
+                                <div ng-messages="rules_form.mark_plan_notes.$error"
+                                     ng-if="rules_form.$submitted && rules_form.$invalid">
+                                    <p ng-message="required">Please describe the item's location</p>
+                                </div>
+                                </p>
+                            </div>
+                            <div ng-if="rule.type_code=='FORCE_SELECTION'" class="alert alert-info">
+                                <h4>The following items will be automatically selected:</h4>
+                                <ul>
+                                    <li ng-repeat="item in rule.items">{{ item.public_description }}</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancelRules()">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">Accept</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="specials" class="modal fade specials">
+        <div class="modal-dialog medium">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div ng-repeat="special in specials">
+                        <hr ng-if="$index > 0" />
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h1>{{ special.name }}</h1>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h2>Offer:</h2>
+                            </div>
+                            <div class="col-sm-6">
+                                <h2>Availability:</h2>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <h3>
+                                    {{ special.description }} <i ng-if="special.applied" class="applied-special glyphicon glyphicon-ok"></i>
+                                </h3>
+                            </div>
+                            <div class="col-sm-6">
+                                <p>{{ special.availability_description }}</p>
+                                <small ng-if="special.tac_url"><a href="{{ special.tac_url }}" target="_blank">Terms and Conditions</a></small>
+                            </div>
+                        </div>
+
+                        <div ng-if="special.price !== undefined && special.price >= 0">
+                            <div class="row">
+                                <div class="col-sm-offset-3 col-sm-2">
+                                    <h2>Cost:</h2>
+                                </div>
+                                <div ng-if="special.normal_price != special.price && special.price > 0" class="col-sm-2">
+                                    <h2>Normal price:</h2>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-offset-3 col-sm-2">
+                                    <strong ng-if="special.price != 0">{{ special.price | currency}}</strong>
+                                    <strong ng-if="special.price == 0">FREE</strong>
+                                </div>
+                                <div ng-if="special.normal_price != special.price && special.price > 0" class="col-sm-2">
+                                    <strong>{{ special.normal_price | currency }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="buttons">
+                            <button ng-if="!special.applied" class="btn btn-primary apply" ng-click="applyShowSpecial(special)" ng-disabled="!info.items" ng-attr-title="{{ info.items?'':'Loading series items...' }}">Apply this special</button>
+                            <button ng-if="special.applied" class="btn btn-primary apply" ng-click="unapplyShowSpecial(special)" ng-disabled="!info.items" ng-attr-title="{{ info.items?'':'Loading series items...' }}">Unapply this special</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="order_conditions" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Subject to conditions:</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea rows="10" cols="65" placeholder="Enter the specific conditions for this order..."
+                              class="form-control"
+                              ng-model="order.orderconditions.details" ></textarea>
+                    <div>
+                        <label>
+                            <input type="checkbox" ng-model="order.orderconditions.fulfilled" ng-disabled="!order.orderconditions.details.length"/>
+                            These conditions are met.
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button ng-if="order.order_stage_details.code != 'ORDER_FINALIZED' && order.order_stage_details.code != 'ORDER'" type="button" class="btn btn-primary" ng-click="saveOrder()"data-dismiss="modal">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="after_market_note" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>After-Market notes</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea rows="10" cols="65" placeholder="Enter your after-market notes here..."
+                              class="form-control"
+                              ng-model="order.aftermarketnote.note"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" ng-click="saveOrder()"data-dismiss="modal">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="trade_in_comment" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Trade-in comments</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <textarea rows="10" cols="65" placeholder="Enter your trade-in comments here..."
+                              class="form-control"
+                              ng-model="order.trade_in_comment"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" ng-click="saveOrder()"data-dismiss="modal">Save</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

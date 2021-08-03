@@ -1,0 +1,21 @@
+{% extends "newage/generic/list.html" %}
+{% load staticfiles %}
+
+{% block bodyclass %}orders-list{% endblock %}
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="{% url 'orders:list' %}">Orders</a> {% if customer_filter %}> For customer {{ customer_filter }}{% endif %}
+{% endblock %}
+
+{% block page_heading %}Orders{% endblock %}
+{% block page_subheading %}
+    Manage Orders
+    <span class="btn-toolbar pull-right" >
+      <a class='btn btn-primary' href="{% url 'orders:export-all-orders' %}?{{ request.GET.urlencode }}">Export Orders</a>
+      {% if can_create_order %}<a class='btn btn-primary' href="{% url 'newage:angular_app' app='orders' %}">Create New Order</a>{% endif %}
+    </span>
+{% endblock %}
+

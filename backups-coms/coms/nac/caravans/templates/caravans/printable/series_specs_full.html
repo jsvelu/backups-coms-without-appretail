@@ -1,0 +1,99 @@
+{% extends 'newage/printable/base_print.html' %}
+
+{% block css %}
+    {% include "caravans/printable/series_specs_full.css" %}
+{% endblock css %}
+
+{% block container %}
+    <h1>
+      <span style="float:right">{{ date }}</span>{{ series.name }} ({{ series.code }}) Series Specification
+    </h1>
+
+    <table cellspacing="0" cellpadding="0">
+        <tr>
+            {% for _, category in categories.items %}
+                <td class="category">{{ category.title }}</td>
+            {% endfor %}
+        </tr>
+
+        <tr valign="top">
+            {% for _, category in categories.items %}
+                <td>
+                    <table class="category" cellspacing="0" cellpadding="0">
+                        {% if category.counts.standard %}
+                            <tr class="type-header">
+                                <td colspan="2">Standard</td>
+                            </tr>
+                        {% endif %}
+
+                        {% for _, dept in category.departments.items %}
+                            {% for item in dept.standard %}
+                                <tr class="{% if item.retail != None and item.retail > 0 %}warning{% endif %}">
+                                    <td>{{ item.title }}</td>
+                                    <td class="currency">{{ item.retail }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+
+                        {% if category.counts.selection %}
+                            <tr class="type-header">
+                                <td colspan="2">Selections</td>
+                            </tr>
+                        {% endif %}
+
+                        {% for _, dept in category.departments.items %}
+                            {% if dept.selection|length %}
+                                <tr class="dept-header">
+                                    <td colspan="2">{{ dept.title }}</td>
+                                </tr>
+                            {% endif %}
+
+                            {% for item in dept.selection %}
+                                <tr class="{% if item.retail != None and item.retail > 0 %}warning{% endif %}">
+                                    <td class="selection-padding">{{ item.title }}</td>
+                                    <td class="currency">{{ item.retail }}</td>
+                                </tr>
+                            {% endfor %}
+
+                            {% if dept.x_more_selections %}
+                                <tr class="x-more-selections">
+                                    <td class="selection-padding" colspan="2">plus {{ dept.x_more_selections }} more selection{% if dept.x_more_selections > 1 %}s{% endif %}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if category.counts.upgrade %}
+                            <tr class="type-header">
+                                <td colspan="2">Upgrades</td>
+                            </tr>
+                        {% endif %}
+
+                        {% for _, dept in category.departments.items %}
+                            {% for item in dept.upgrade %}
+                                <tr class="{% if item.retail != None and item.retail == 0 %}warning{% endif %}">
+                                    <td>{{ item.title }}</td>
+                                    <td class="currency">{{ item.retail }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+
+                        {% if category.counts.extra %}
+                            <tr class="type-header">
+                                <td colspan="2">Options</td>
+                            </tr>
+                        {% endif %}
+
+                        {% for _, dept in category.departments.items %}
+                            {% for item in dept.extra %}
+                                <tr class="{% if item.retail != None and item.retail == 0 %}warning{% endif %}">
+                                    <td>{{ item.title }}</td>
+                                    <td class="currency">{{ item.retail }}</td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </table>
+                </td>
+            {% endfor %}
+        </tr>
+    </table>
+{% endblock container %}

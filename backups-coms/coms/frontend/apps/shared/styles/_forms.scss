@@ -1,0 +1,35 @@
+.ng-touched.ng-dirty {
+  border: 2px solid $form-changed-color;
+}
+
+.btn.btn-primary {
+  @include gradient-vertical(#E93F4C, #E22431, 10%, 100%);
+  border-color: #E22431;
+  background-color: #E22431;
+
+  :focus {
+    outline: none;
+  }
+
+}
+
+button.header-right-button {
+  margin-right: 20px;
+  padding: 10px 15px;
+}
+
+label.form-label, label.control-label {
+  color: $newage-lightgrey;
+  font-size: .8em;
+}
+
+.form-control.ng-invalid.ng-dirty {
+  border: 2px solid $form-invalid-color;
+}
+
+div.validation-messages {
+}
+
+p[ng-message] {
+  color: red;
+}

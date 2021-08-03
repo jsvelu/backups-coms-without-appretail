@@ -1,0 +1,678 @@
+    
+<div id="transport_dashboard">
+    <top-bar>
+        <h2 class="top-bar__title">Caravans Production Dashboard</h2>
+    </top-bar>
+
+    <messages>{{ order.messages }}</messages>
+
+    <div class="row header" >
+        <div class="col-sm-2">
+            <label>Month: </label>
+                <input id='chosen_month_show' type="text" class="form-control" />
+                <input id='chosen_month' hidden ng-model="currentMonth" no-dirty-check />
+            <bar-spinner ng-if="monthDataLoading"></bar-spinner>
+        </div>
+        <div class="col-sm-2">
+            <label>Filter: </label>
+            <input ng-model="searchStr" placeholder="Type to filter on Order, Customer, Dealership or Chassis..." size="60" />      
+        </div>
+
+        <div class="col-sm-5 pull-right">
+            <label>Status Summary: </label>
+            <table border="2" width="50%">               
+                <tr>
+                    <!-- <th rowspan=3 align='center'> <center> Status <p> Summary</b></th> -->
+                    <th align='center'> <a href ng-click="filterchassis()">  <center>  Chassis  </b> </a></th>
+                    <th align='center'> <a href ng-click="filterbuilding()"> <center>  Building</b> </a></th>
+                    <th align='center'> <a href ng-click="filterprewire()"> <center>  Pre-Wire</b> </a></th>
+                        <th align='center'> <a href ng-click="filterplummbing()"> <center> Plumbing</b> </a></th>
+                    <th align='center'>  <a href ng-click="filteraluminium()"> <center>  Aluminium / Fit Off </b> </a></th>
+                    <th align='center'> <a href ng-click="filterfinishing()"><center>  Finishing</b> </a></th>
+                    <th align='center'> <a href ng-click="filterdetailing()"><center>  Detailing Canopy</b> </a></th>
+                    <th align='center'> <a href ng-click="filterwatertest()"><center>  Water Testing</b></a></th>
+                     
+                    <th align='center'><a href ng-click="filteractualqc()"><center>  <b>QC </b> </a></th> 
+                    <!-- <th align='center'> <a href ng-click="filterwatertest()"> <b> Water Testing </b> </a> </th>  -->
+                    <th align='center'> <a href ng-click="filterfinalqc()"> <center> <b> Final QC </b></a> </th> 
+                    <th align='center'>   <a href ng-click="filterreadyfordispatch()"> <center>  <b> Ready For <br> Dispatch </b> </a></th> 
+                    <th align='center'> <a href ng-click="testfilterfun()"> <center>  Dispatched </b> </a> </th>
+                </tr>
+
+                <tr>   
+                    
+                    
+                    <td style="background-color:#ffd700" align='center'rowspan="2"> 
+                    
+                     <h4>     <b> {{ await_chassis }} </b>  </h4>
+                    </td>   
+
+                    <td style="background-color:#ffd700" align='center'rowspan="2"> 
+                    
+                     <h4>     <b> {{ await_building }} </b>  </h4>
+                    </td>
+
+                     <td style="background-color:#ffd700" align='center'rowspan="2"> 
+                    
+                     <h4>     <b> {{ await_prewire }} </b>  </h4>
+                    </td>
+
+                    <td style="background-color:#ffd700" align='center'rowspan="2"> 
+                    
+                     <h4>     <b> {{ await_plumbing }} </b>  </h4>
+                    </td>   
+
+                    <td style="background-color:#ffd700" align='center'rowspan="2"> 
+                    
+                     <h4>  <b> {{ await_aluminium }} </b>   </h4>
+                    </td>   
+                    <td style="background-color:#ffd700" align='center'rowspan="2"> 
+                    
+                     <h4>    <b> {{ await_finishing }} </b>  </h4>
+                    </td>   
+                    
+                    <td style="background-color:#ffd700" align='center'rowspan="2"> 
+                    
+                     <h4>    <b> {{ await_detailing }} </b>  </h4>
+                    </td>   
+                    
+                    <td style="background-color:#ffd700" align='center'rowspan="2"> 
+                    
+                     <h4>    <b> {{ await_watertesting }} </b>  </h4>
+                    </td>   
+                     
+                    <td style="background-color:#ffd700" align='center'rowspan="2">
+                    
+                        <label style="background-color:#ffd700">
+                         <h4>  <b> {{ (await_qc_count_red + await_qc_count_yellow) }} </b> </h4>
+                        </label>
+                    </td>   
+                    <!--   
+                    <td style="background-color:#ffff17" align='center' rowspan="2"> 
+                        <h4>   <b> {{ await_water_count_red }}  </b>    </h4>
+                    </td>
+                    -->
+                    <td style="background-color:#FFD700" align='center' rowspan="2"> 
+                        <h4>  <b>   {{ final_qc_count }}  </b>   </h4>
+                    </td> 
+                    <td style="background-color:#33ff33" align='center'rowspan="2"> 
+                    
+                     <h4><b> <b> {{ ready_for_dispatch_count }} </b>  </h4>
+                    </td>   
+                    <td style="background-color:#C0C0C0" align='center'rowspan="2">
+                      <h4><b> {{ dispatched_count }} </b> </h4>
+                       
+                    </td>   
+                    
+                </tr>
+                <!--  
+                <tr>
+                    <td style="background-color:#FF4500" align='center'> 
+                          <h4>   <b>  {{ await_qc_count_yellow }} </h4></b>  
+                    </td> 
+               
+                    <td style="background-color:#FF4500" align='center'> 
+                    <h4>     <b>  {{ await_water_count_yellow }} </h4></b>   
+                    </td> 
+                
+                </tr>          
+                -->
+                <tr></tr>
+                 <tr>                   
+                    
+                <th align='center'> <a href ng-click="export_chassis()" target="_blank">  <center>  Export  </b> </a></th>
+                    <th align='center'> <a href ng-click="export_building()" target="_blank"> <center>  Export</b> </a></th>
+                    <th align='center'> <a href ng-click="export_prewire()" target="_blank"> <center>  Export</b> </a></th>
+                    <th align='center'> <a href ng-click="export_plumbing()" target="_blank"> <center>  Export</b> </a></th>
+                    <th align='center'> <a href ng-click="export_aluminium()" target="_blank"> <center>  Export</b> </a></th>
+                    <th align='center'> <a href ng-click="export_finishing()" target="_blank"><center>  Export</b> </a></th>
+                    <th align='center'> <a href ng-click="export_detailing()" target="_blank"><center>  Export</b> </a></th>
+                    <th align='center'> <a href ng-click="export_watertesting()" target="_blank"><center>  Export</b> </a></th>
+                    <th align='center'> <a href ng-click="export_actualqc()" target="_blank"><center>  <b>Export  </b> </a></th> 
+                    <th align='center'> <a href ng-click="export_finalqc()" target="_blank"> <center> <b> Export </b></a> </th> 
+                    <th align='center'> <a href ng-click="export_ready_dispatch()" target="_blank"> <center>  <b> Export  </b> </a></th> 
+                    <th align='center'> <a href ng-click="export_dispatched()" target="_blank"> <center>  Export </b> </a> </th>
+                </tr>  
+                 <tr><th align='center' colspan="12"> <a href ng-click="export_all()" target="_blank"> <center> <b> Export All </b></a> </th> </tr>  
+            </table> 
+        </div>
+
+        <div class="col-sm-2 pull-right">
+            <div class="spinner-container"><bar-spinner ng-if="assignProductionDatesLoading"></bar-spinner></div>
+        </div>
+        <div class="col-sm-1 pull-right">
+            <div class="spinner-container" ng-if="moveCmdInitiated"><bar-spinner></bar-spinner></div>
+        </div>
+        <div ng-if="permissions.finalize_order" class="col-sm-1 pull-right"> 
+            <div class="spinner-container" ng-if="lockCmdInitiated"><bar-spinner></bar-spinner></div> 
+        </div>      
+    </div>
+    <div class="row content">
+        <table>
+            <thead>
+                <tr ng-if="isSortingAllowed()"> 
+                    
+                    <th>Sch. No.</th>                               <!-- 1 --> 
+                    <th>Status</th>                                 <!-- 22 --> 
+                    <th>BackEnd Status </th>                                 <!-- 22 --> 
+                    <th>Manage</th>                                 <!-- 21 --> 
+                   <th>Hold / Release</th>                          <!-- 20 -->
+                    <th>Chassis </th>                               <!-- 2 --> 
+                    <th>Order # </th>                               <!-- 3 --> 
+                    <th>Series Code</th>                            <!-- 4 --> 
+                    <th>Dealership</th>                             <!-- 5 --> 
+                    <th>On-Line Date  </th>                         <!-- 6 --> 
+                    <th>Off-Line Date  </th>                        <!-- 6 --> 
+                    <th>Actual Production  </th>                    <!-- 7 --> 
+                      <!--  <th class="comments"> Production Comments</th>8 --> 
+                    <th>Chassis  </th>                              <!-- 9 -->
+                    <th>Chassis Comments</th>                       <!-- 10 -->
+                    <th>Building  </th>                             <!-- 11 -->
+                    <th>Building Comments</th>                      <!-- 12 -->
+                    <th>Pre-Wire  </th>                             <!-- 12 -->
+                    <th>Pre-Wire Comments</th>                      <!-- 14 -->
+                    <th>Plumbing  </th>                             <!-- 12 -->
+                    <th>Plumbing Comments</th>                      <!-- 14 -->
+                    <th>Aluminium / Fit Off </th>                   <!-- 14 -->
+                    <th>Aluminium Comments</th>                     <!-- 15 -->
+                    <th>Finishing  </th>                            <!-- 16 -->
+                    <th>Finishing Comments</th>                     <!-- 17 -->
+                    <th>Detailing Canopy </th>                      <!-- 16 -->
+                    <th>Detailing Canopy Comments</th>              <!-- 17 -->
+                    <th>Water Test  </th>                           <!-- 16 -->
+                    <th>Water Test Comments</th>                    <!-- 17 -->
+                    <!-- <th>Planned QC</th>  -->                   <!-- 18 -->
+                    <th> QC </th>                                   <!-- 19 --> 
+                    <th> QC Comments</th>                           <!-- 20 --> 
+                    <!-- Temporarily Disabled as per client request -->
+                    <!-- <th>Actual Water Testing </th> -->                 <!-- 21 --> 
+                    <!-- <th class="comments"> Water Test Comments</th> --> <!-- 22 --> 
+                    <th>Final QC</th>                               <!-- 23 --> 
+                    <th class="comments">Final QC Comments</th>     <!-- 24 --> 
+                    <th>Actual Dispatch</th>                        <!-- 26 --> 
+                    <th class="comments">Dispatch Comments</th>     <!-- 27 --> 
+                </tr>
+            </thead>
+            <tbody ui-sortable="sortableOptions" ng-model="orderList">
+         <tr ng-repeat="order in orderList | filter:filterOrders" ng-class-odd="'odd'" ng-class-even="'even'"> 
+                <!-- 1 --> 
+                    <td ng-if="!order.month_header">
+                        {{ order.index }} 
+                    </td>
+                    <!-- 2 -->   
+                <td ng-if="!order.month_header">     
+                         <!-- <div ng-show="holdblock[order.id]"> -->
+                        
+
+                        <div ng-show="blankblock[order.id]">
+                            <div> 
+                                <label style="background-color:#ffffff;height:25px" class="item item-text-wrap"> Ready For Production    </label>
+                            </div>
+                        </div>
+
+                        <div ng-show="prodblock[order.id]">
+                            <label style="background-color:#ffff17" class="item item-text-wrap"> Awaiting Production    </label>
+                        </div>
+                        <div ng-show="prodblock1[order.id]">
+                            <label style="background-color:#FF4500" class="item item-text-wrap"> Awaiting Production    </label>
+                        </div>
+
+                        <div ng-show="chassisblock[order.id]">
+                            <label style="background-color:#FFD700" class="item item-text-wrap">  Chassis      
+                            </label>
+                        </div>
+
+                        <div ng-show="buildingblock[order.id]">
+                            <label style="background-color:#FFD700" class="item item-text-wrap">  Building     </label>
+                        </div>
+
+                        <div ng-show="prewireblock[order.id]">
+                            <label style="background-color:#FFD700" class="item item-text-wrap">  Pre-wire      </label>
+                        </div>
+
+                        <div ng-show="plumbingblock[order.id]">
+                            <label style="background-color:#FFD700" class="item item-text-wrap">  Plumbing      </label>
+                        </div>
+
+                        <div ng-show="aluminiumblock[order.id]">
+                            <label style="background-color:#FFD700" class="item item-text-wrap">  Aluminium / Fit Off    </label>
+                        </div>
+
+                        <div ng-show="finishingblock[order.id]">
+                            <label style="background-color:#FFD700" class="item item-text-wrap">  Finishing     </label>
+                        </div>
+
+                        <div ng-show="detailingblock[order.id]">
+                        <label style="background-color:#FFD700" class="item item-text-wrap">  Detailing Canopy  </label>
+                        </div>
+
+                        <div ng-show="watertestingblock[order.id]">
+                            <label style="background-color:#FFD700" class="item item-text-wrap">  Water Testing </label>
+                        </div>
+
+
+                        <div ng-show="qcblock[order.id]">
+                        <label style="background-color:#ffff17" class="item item-text-wrap"> QC </label>
+                        </div>
+                        <div ng-show="qcblock1[order.id]">
+                            <label style="background-color:#FF4500" class="item item-text-wrap"> QC </label>
+                        </div>
+                         
+                        <div ng-show="waterblock[order.id]">
+                         <!--   <label style="background-color:#ffff17" class="item item-text-wrap">  Water Testing     </label> -->
+                        </div>
+
+                        <div ng-show="waterblock1[order.id]">
+                         <!--   <label style="background-color:#FF4500" class="item item-text-wrap"> Ready For Water Testing     </label> -->
+                        </div>
+
+                        <div ng-show="finalqcblock[order.id]">
+                            <label style="background-color:#FFD700" class="item item-text-wrap">  Final QC     </label>
+                        </div>
+                        
+                        <div ng-show="dispatchblock1[order.id]">
+                            <label style="background-color:#00FF00" class="item item-text-wrap"> Ready For Dispatch     </label>
+                        </div>
+                        
+                        <div ng-show="completeblock[order.id]">
+                            <div> 
+                                <label style="background-color:#D3D3D3;height:25px" class="item item-text-wrap"> Dispatched    </label>
+                            </div>
+                        </div>
+
+                        <div ng-show="order.hold_caravans==1">
+                            <div> 
+                                <label style="background-color:#ffffff;height:25px" class="item item-text-wrap"> On Hold   </label>
+                            </div>
+                        </div>
+                        
+                    </td>
+ 
+                     <!-- 3 -->   
+                    <td ng-if="!order.month_header">
+                        {{ order.order_status }} 
+                    </td>
+
+                     <!-- 3 -->   
+                    <td ng-if="!order.month_header">
+                        <a href="{{ order.url }}" target="_blank">Manage </a>
+                    </td> 
+                    <!-- 4 -->    
+                    
+                    <td ng-if="!order.month_header">
+                     
+                        <div ng-show="order.hold_caravans==0">
+                        <input type="checkbox" id="cb10" ng-model="hold_caravans_cur" name="hold_caravans_cur"   ng-checked="false" ng-change="hold_caravans_cur ? hold_order_fun(order) :  !hold_order_fun(order) "/>
+                        <h5>  Hold  </h5> 
+                        </div>
+
+                        <div ng-show="order.hold_caravans==1">
+                        <input type="checkbox" id="cb11" ng-model="hold_caravans_cur" name="hold_caravans_cur"   ng-checked="true" ng-click="hold_order_fun(order)"/>
+                        <h5>  Release   </h5> 
+                        </div>
+                        
+                    </td>
+                    
+               
+
+                
+                <!-- 5 --> 
+                    <td ng-if="!order.month_header" >
+                        {{ order.chassis }}
+                    </td>
+                <!-- 6 --> 
+                    <td ng-if="!order.month_header" >
+                        {{ order.order_id }}
+                    </td>
+                <!-- 7 -->    
+                    <td ng-if="!order.month_header">
+                        {{ order.model_series }}
+                    </td>
+
+                <!-- 8 -->    
+                    <td ng-if="!order.month_header">
+                        {{ order.dealership }} 
+                    </td>
+                <!-- 9 -->
+                    <td ng-if="!order.month_header">
+                        {{ order.production_date | date: AppSettings.FORMAT_DATE_WEEKDAY_JS }}
+                    </td>
+                <!-- 10 -->    
+                    <td ng-if="!order.month_header"> 
+                        <div> {{ order.planned_dispatch_date | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.planned_dispatch_date">
+                            {{ plandispdate[order.id] | date : 'dd-MM-yyyy' }} 
+                        </div>
+                    </td>
+
+                <!-- 11 --> 
+                
+                    <td ng-if="!order.month_header">
+                        <div>
+                            {{ order.actual_production_date | date : 'dd-MM-yyyy' }}
+                        </div>
+                        <div ng-if="!order.actual_production_date">
+                            <input type="checkbox" id='actual_prod'  ng-model="actual_prod" ng-change="actual_prod ? checkproddate(order) : !checkproddate(order)" >  
+                            <div ng-show="actual_prod">
+                                <label id="lblproddate" name="lblproddate" class="item item-text-wrap">
+                                    <h5>{{ getTodaysDate | date :"dd-MM-yyyy" }}</h5>
+                                </label>
+                            </div>
+                        </div>    
+                    <bar-spinner ng-if="actual_prod_date_loading[order.id]"></bar-spinner>          
+                    </td>
+
+                <!-- 8 
+                    <td ng-if="!order.month_header"> 
+
+                        <input type="text" ng-model="order.prod_comments_from" ng-blur="onProdCommentChange($event, order)"ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.prod_comments_from }}" />
+                        <bar-spinner ng-if="prodCommentLoading[order.id]"></bar-spinner>
+                    </td>
+                -->
+                <!-- 12 -->    
+                    <td ng-if="!order.month_header">
+                        <div > {{ order.chassis_section | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.chassis_section">
+                            <input type="checkbox" id='chassis_section_chkbox'  ng-model="chassis_section_chkbox" ng-change="chassis_section_chkbox ? isSectionDateChanged(order) : !isSectionDateChanged(order)" >  
+                            <div ng-show="chassis_section">
+                                <label id="lblsecdate" name="lblsecdate" class="item item-text-wrap"> 
+                                    <h5>  {{ getTodaysDate | date :"dd-MM-yyyy" }}  </h5>
+                                </label>
+                            </div>
+                        </div>
+                        <bar-spinner ng-if="chassis_section_date_loading[order.id]"></bar-spinner>               
+                    </td>
+                <!-- 13 -->    
+                    <td ng-if="!order.month_header">                
+                        <input type="text" ng-model="order.chassis_section_comments" ng-blur="onChasisSectionCommentChange($event, order)" ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.chassis_section_comments }}" />
+                        <bar-spinner ng-if="onChasisSectionCommentLoading[order.id]"></bar-spinner>
+                    </td>
+
+
+                <!-- 14 -->    
+                    <td ng-if="!order.month_header">
+                        <div > {{ order.building | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.building">
+                        <input id="building_chkbox" type="checkbox" ng-model="building_chkbox" ng-change="building_chkbox ? isBuildingDateChanged(order) : !isBuildingDateChanged(order)" >  
+                            <div ng-show="building">
+                                <label id="lblbuilddate" name="lblbuilddate" class="item item-text-wrap"> 
+                                    <h5>  {{ getTodaysDate | date :"dd-MM-yyyy" }}  </h5>
+                                </label>
+                            </div>
+                        </div>
+                        <bar-spinner ng-if="building_date_loading[order.id]"></bar-spinner>               
+                    </td>
+                <!-- 15 -->    
+                    <td ng-if="!order.month_header">                
+                        <input type="text" ng-model="order.building_comments" ng-blur="onBuildingCommentChange($event, order)" ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.building_comments }}" />
+                        <bar-spinner ng-if="onBuildingCommentLoading[order.id]"></bar-spinner>
+                    </td>
+                <!-- 16 -->    
+                    <td ng-if="!order.month_header">
+                        <div > {{ order.prewire_section | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.prewire_section">
+                        <input id="prewire_chkbox" type="checkbox" ng-model="prewire_chkbox" ng-change="prewire_chkbox ? isPrewireDateChanged(order) : !isPrewireDateChanged(order)" >  
+                            <div ng-show="prewire_section">
+                                <label id="lblprewiredate" name="lblprewiredate" class="item item-text-wrap"> 
+                                    <h5>  {{ getTodaysDate | date :"dd-MM-yyyy" }}  </h5>
+                                </label>
+                            </div>
+                        </div>
+                        <bar-spinner ng-if="prewire_date_loading[order.id]"></bar-spinner>               
+                    </td>
+                <!-- 17 -->    
+                    <td ng-if="!order.month_header">                
+                        <input type="text" ng-model="order.prewire_comments" ng-blur="onPrewireCommentChange($event, order)" ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.prewire_comments }}" />
+                        <bar-spinner ng-if="onPrewireCommentLoading[order.id]"></bar-spinner>
+                    </td>
+                    
+                      <!-- 16 -->    
+                    <td ng-if="!order.month_header">
+                        <div > {{ order.plumbing_date | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.plumbing_date">
+                        <input id="plumbing_chkbox" type="checkbox" ng-model="plumbing_chkbox" ng-change="plumbing_chkbox ? isPlumbingDateChanged(order) : !isPlumbingDateChanged(order)" >  
+                            <div ng-show="plumbing_date">
+                                <label id="lblplumbingdate" name="lblplumbingdate" class="item item-text-wrap"> 
+                                    <h5>  {{ getTodaysDate | date :"dd-MM-yyyy" }}  </h5>
+                                </label>
+                            </div>
+                        </div>
+                        <bar-spinner ng-if="plumbing_date_loading[order.id]"></bar-spinner>               
+                    </td>
+                <!-- 17 -->    
+                    <td ng-if="!order.month_header">                
+                        <input type="text" ng-model="order.plumbing_comments" ng-blur="onPlumbingCommentChange($event, order)" ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.plumbing_comments }}" />
+                        <bar-spinner ng-if="onPlumbingCommentLoading[order.id]"></bar-spinner>
+                    </td>
+                
+
+                <!-- 18 -->    
+                    <td ng-if="!order.month_header">
+                        <div > {{ order.aluminium_date | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.aluminium_date">
+                            <input id="aluminium_chkbox" type="checkbox"   ng-model="aluminium_chkbox" ng-change="aluminium_chkbox ? isAluminiumDateChanged(order) : !isAluminiumDateChanged()" >  
+                            <div ng-show="aluminium_chkbox">
+                                <label id="lblaludate" name="lblaludate" class="item item-text-wrap"> 
+                                    <h5>  {{ getTodaysDate | date :"dd-MM-yyyy" }}  </h5>
+                                </label>
+                            </div>
+                        </div>
+                        <bar-spinner ng-if="aluminium_date_loading[order.id]"></bar-spinner>               
+                    </td>
+                <!-- 19 -->    
+                    <td ng-if="!order.month_header">                
+                        <input type="text" ng-model="order.aluminium_comments" ng-blur="onAluminiumCommentChange($event, order)"ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.aluminium_comments }}" />
+                        <bar-spinner ng-if="onAluminiumCommentLoading[order.id]"></bar-spinner>
+                    </td>
+
+                <!-- 20 -->    
+                    <td ng-if="!order.month_header">
+                        <div > {{ order.finishing | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.finishing">
+                            <input id='finishing_chkbox' type="checkbox"   ng-model="finishing_chkbox" ng-change="finishing_chkbox ? isFinishingDateChanged(order) : !isFinishingDateChanged()" >  
+                            <div ng-show="finishing_chkbox">
+                                <label id="lblfindate" name="lblfindate" class="item item-text-wrap"> 
+                                    <h5>  {{ getTodaysDate | date :"dd-MM-yyyy" }}  </h5>
+                                </label>
+                            </div>
+                        </div>
+                        <bar-spinner ng-if="finishing_date_loading[order.id]"></bar-spinner>               
+                    </td>
+                <!-- 21 -->    
+                    <td ng-if="!order.month_header">                
+                        <input type="text" ng-model="order.finishing_comments" ng-blur="onFinishingCommentChange($event, order)"ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.finishing_comments }}" />
+                        <bar-spinner ng-if="onFinishingCommentLoading[order.id]"></bar-spinner>
+                    </td>
+
+                     <!-- 22 -->    
+                    <td ng-if="!order.month_header">
+                        <div > {{ order.detailing_date | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.detailing_date">
+                            <input id='detailing_chkbox' type="checkbox"   ng-model="detailing_chkbox" ng-change="detailing_chkbox ? isDetailingDateChanged(order) : !isDetailingDateChanged()" >  
+                            <div ng-show="detailing_chkbox">
+                                <label id="lbldetailingdate" name="lbldetailingdate" class="item item-text-wrap">
+                                    <h5>  {{ getTodaysDate | date :"dd-MM-yyyy" }}  </h5>
+                                </label>
+                            </div>
+                        </div>
+                        <bar-spinner ng-if="detailing_date_loading[order.id]"></bar-spinner>               
+                    </td>
+                <!-- 23 -->   
+
+                    <td ng-if="!order.month_header">                
+                        <input type="text" ng-model="order.detailing_comments"  
+                        ng-blur="onDetailingCommentChange($event, order)"ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.detailing_comments }}" />
+                        <bar-spinner ng-if="onDetailingCommentLoading[order.id]"></bar-spinner>
+                    </td>
+
+                    <!-- 24 -->    
+                    <td ng-if="!order.month_header">
+                        <div > {{ order.watertest_date | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.watertest_date">
+                            <input id='watertest_chkbox' type="checkbox"   ng-model="watertest_chkbox" ng-change="watertest_chkbox ? isWatertestDateChanged(order) : !isWatertestDateChanged()" >  
+                            <div ng-show="watertest_chkbox">
+                                <label id="lblwaterdate" name="lblwaterdate" class="item item-text-wrap"> 
+                                    <h5>  {{ getTodaysDate | date :"dd-MM-yyyy" }}  </h5>
+                                </label>
+                            </div>
+                        </div>
+                        <bar-spinner ng-if="watertest_date_loading[order.id]"></bar-spinner>               
+                    </td>
+                <!-- 25 -->    
+                    <td ng-if="!order.month_header">                
+                        <input type="text" ng-model="order.watertest_comments" ng-blur="onWaterTestCommentChange($event, order)"ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.watertest_comments }}" />
+                        <bar-spinner ng-if="onWatertestCommentLoading[order.id]"></bar-spinner>
+                    </td>
+
+                    <!-- 16 -->    
+                    <!-- 9 -->    
+                <!--    <td ng-if="!order.month_header"> 
+                        <div > {{ order.planned_qc_date | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.planned_qc_date">
+                        {{ planqcdate[order.id] | date : 'dd-MM-yyyy' }} 
+                        </div> 
+                    </td>
+                -->
+                <!-- 26 -->    
+                    <td ng-if="!order.month_header">
+                        <div >  {{ order.actual_qc_date | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.actual_qc_date">
+                            <input type="checkbox" id='actual_qc'  ng-model="actual_qc" ng-change="actual_qc ? isColorOk(order) : isColorNotOk()" >  
+                            <div ng-show="actual_qc">
+                                <label id="lblqcdate" name="lblqcdate" class="item item-text-wrap"> 
+                                    <h5>  {{ getTodaysDate | date :"dd-MM-yyyy" }}  </h5>
+                                </label>
+                            </div>
+                        </div>
+                        <bar-spinner ng-if="actual_qc_date_loading[order.id]"></bar-spinner>               
+                    </td>
+                <!-- 27 -->    
+                    <td ng-if="!order.month_header">                
+                        <input type="text" ng-model="order.qc_comments_from" ng-blur="onQCCommentChange($event, order)"ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.qc_comments_from }}" />
+                        <bar-spinner ng-if="qcCommentLoading[order.id]"></bar-spinner>
+                    </td>
+                             
+                
+                <!-- 12 -->    
+                     
+                     
+                <!-- 13 -->    
+                <!--     <td ng-if="!order.month_header">
+                   
+                        <div> {{ order.actual_watertest_date | date:'dd-MM-yyyy' }} </div>
+                   
+                        <div ng-if="!order.actual_watertest_date">
+    
+                            <input id="water_test" type="checkbox" ng-model="water_test" ng-change="water_test ? checkwaterfun(order) : !checkwaterfun(order)">  
+                    
+                            <div ng-show="water_test">
+                                <label class="item item-text-wrap"> 
+                                    <h5> {{ getTodaysDate | date :"dd-MM-yyyy" }} </h5> 
+                                </label>
+                            <bar-spinner ng-if="actual_water_test_date_loading[order.id]"></bar-spinner> 
+                            </div>
+                        </div>
+                    </td>
+                -->
+                <!-- 14 -->    
+                <!-- <td ng-if="!order.month_header">
+                        <input type="text" ng-model="order.watertest_comments" ng-blur="onWaterCommentChange($event, order)"ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.watertest_comments }}" />
+                        <bar-spinner ng-if="waterCommentLoading[order.id]"></bar-spinner> 
+                    </td>
+                -->
+                <!-- 28 -->    
+                    <td ng-if="!order.month_header">                  
+                        <div > {{ order.final_qc_date | date:'dd-MM-yyyy' }} </div>                   
+
+                        <div ng-if = "checkweights(order)">
+                        <font face="Arial" color='red'>Set Weights
+                        </font>  
+                        </div>
+                        <div ng-if = "checkallweights(order)"> 
+                            <div ng-if="!order.final_qc_date">   
+                                <input id="final_qc" type="checkbox" ng-model="final_qc" ng-change="final_qc ? checkfinalqcfun(order) : !checkfinalqcfun(order)">  
+                                <div ng-show="final_qc">
+                                    <label class="item item-text-wrap"> 
+                                        <h5> {{ getTodaysDate | date :"dd-MM-yyyy" }} </h5> 
+                                    </label> 
+                                </div>
+                            </div>
+                        </div>
+                        <bar-spinner ng-if="final_qc_date_loading[order.id]"></bar-spinner> 
+                    </td>
+                <!-- 29 -->    
+                    <td ng-if="!order.month_header">
+                        <input type="text" ng-model="order.final_qc_comments" ng-blur="onFinalQCCommentChange($event, order)" ng-model-options="{ updateOn: 'blur', debounce:0 }" value=" Hello!" + "{{ order.final_qc_comments }}" />
+                        <bar-spinner ng-if="FinalQCCommentLoading[order.id]"></bar-spinner> 
+                    </td>
+
+
+
+                
+                <!-- 30 -->    
+                    <td ng-if="!order.month_header">
+                        <div> {{ order.actual_dispatch_date | date : 'dd-MM-yyyy' }} </div>
+                        <div ng-if="!order.actual_dispatch_date"> 
+                            <input type="checkbox" ng-model="actual_dispatch" ng-change="actual_dispatch ? checkdatefun(order) : !checkdatefun1(order)"> 
+                            <div ng-show="actual_dispatch">
+                                <label class="item item-text-wrap"  >
+                                    <h5> {{ getTodaysDate | date :"dd-MM-yyyy" }} </h5> 
+                                </label>
+                            </div>
+                             
+                        </div>
+                        <bar-spinner ng-if="actual_dispatch_date_loading[order.id]"></bar-spinner> 
+                    </td>
+                    
+                    <!-- 31 -->    
+                    <td ng-if="!order.month_header" class="comments">
+                        <input class="input-comments" type="text" placeholder="Enter Dispatch Comments..." maxlength="2000" ng-model="order.dispatch_comments" ng-blur="onDispatchCommentChange($event, order)"ng-model-options="{ updateOn: 'blur', debounce:0 }" value="{{ order.dispatch_comments }}"  />
+                        <bar-spinner ng-if="dispatchCommentLoading[order.id]"></bar-spinner>
+                    </td>
+                 
+
+                    
+                    
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="modal fade" id="moveOrderModal">
+   <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title modal_title"> {{ modalTitle }} </h4>
+            </div>
+            <div class="modal-body">
+                <form name="move_orders_form">
+
+                    <div class="row move_orders">
+                        <span class="col-md-4 col-md-offset-2">
+                            <label>Schedule Month </label>
+                            <select ng-model="move_month" ng-options="month.value as month.title|date: AppSettings.FORMAT_DATE_MONTH_SHORT_JS for month in monthList"
+                              no-dirty-check>
+                                <option value="">Select</option>
+                            </select>
+                        </span>
+                        <span class="col-md-3">
+                            <label> Order Position</label>
+                            <input type="number" placeholder="" min="1" max="99999" maxlength="5" ng-model="new_position"/>
+                        </span>
+                    </div>
+                </form>
+
+                <div class="alert alert-warning" ng-if="clone.message">{{ clone.message }}</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" ng-disabled="!(move_month && new_position)" ng-click="onMoveCmd()">Move</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

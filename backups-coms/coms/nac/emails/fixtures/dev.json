@@ -1,0 +1,35 @@
+[
+{
+  "fields": {
+    "deleted": null,
+    "message": "<p>Dear %%lead_first_name%%</p>\r\n\r\n<p>Thank you for your interest in New Age. We offer a large variety of products with features and price points that cover all of our customers&#39; needs. Come by and have a look.</p>\r\n\r\n<p>Regards</p>\r\n\r\n<p><strong>%%sales_rep_name%%</strong><br />\r\n<em>%%dealership_name%%</em></p>\r\n",
+    "name": "Customer Introductory Email",
+    "role": null,
+    "subject": "Thank you for your interest in New Age!"
+  },
+  "model": "emails.emailtemplate",
+  "pk": 1
+},
+{
+  "fields": {
+    "deleted": null,
+    "message": "<p><strong>Dear %%lead_first_name%%</strong></p>\r\n\r\n<p>Thank you for placing your trust in New Age Caravans. Your order will be delivered in 2 weeks.</p>\r\n\r\n<p>Thanks</p>\r\n\r\n<p><strong>%%sales_rep_name%%</strong><br />\r\n<em>%%dealership_name%%</em></p>\r\n",
+    "name": "Order Thanks Email",
+    "role": null,
+    "subject": "Thank you for your Order!"
+  },
+  "model": "emails.emailtemplate",
+  "pk": 2
+},
+{
+  "fields": {
+    "deleted": null,
+    "message": "<p>Dear %%lead_first_name%%</p>\r\n\r\n<p>At New Age, we never want to lose a good customer. Which is why we give you a life-time discounted purchase offer of 5%, in case you change your mind and want to buy a caravan from us again. Thank you for your interest.</p>\r\n\r\n<p>Regards</p>\r\n\r\n<p><strong>%%sales_rep_name%%</strong><br />\r\n<em>%%dealership_name%%</em></p>\r\n",
+    "name": "Email to no more interested customers",
+    "role": null,
+    "subject": "We are sad to see you go!"
+  },
+  "model": "emails.emailtemplate",
+  "pk": 3
+}
+]

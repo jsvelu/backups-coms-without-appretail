@@ -1,0 +1,30 @@
+
+#report-index {
+    margin-top: 30px;
+}
+
+#report-index table th {
+  background-color: #eeeeee;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  border-top-style: none;
+  color: black;
+  font-weight: bold;
+}
+
+#report-index table td, table th {
+  border-color: #dddddd #999999;
+  border-image: none;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 0;
+  padding: 12px !important;
+}
+
+#report-index table td:last-child {
+  text-align: center;
+}
+
+#report-index table label {
+  margin-right: 15px;
+}

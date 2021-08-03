@@ -1,0 +1,167 @@
+{% extends "admin/base_site.html" %}
+{% load alliance_bundle %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+    <link rel="stylesheet" type="text/css" href="{% static "reports/css/index.css" %}" />
+{% endblock %}
+
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+    <script type="text/javascript">
+        var BASE_RUNSHEET_URL = '{% url 'reports:runsheet' show_id='' %}';
+        var BASE_INVOICE_URL = '/reports/invoice_csv/';
+        var BASE_SALES_URL = '/reports/sales/';
+        window.dateFormat = '{{ APP_SETTINGS.FORMAT_DATE_DATEPICKER_DASH_FMT_JS }}';
+    </script>
+    <script type="text/javascript" src="{% static "reports/js/index.js" %}"></script>
+{% endblock %}
+
+{% block bodyclass %}reports-index{% endblock %}
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    Reports
+{% endblock %}
+
+{% block page_heading %}Reports{% endblock %}
+{% block page_subheading_wrapper %}{% endblock %}
+
+{% block content %}
+
+    <div id="report-index">
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Parameters</th>
+                    <th>Export</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {%  if can_export_runsheet %}
+                <tr>
+                    <td>Runsheet</td>
+                    <td>
+                        <label for="show">
+                            Show:
+                        </label>
+                        <select id="show">
+                            <option value="">--- Select Show ---</option>
+                            {% for show in shows %}
+                                <option value="{{ show.id }}">{{ show.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <a id="runsheet-link" class="btn btn-default" target="_blank">Export</a>
+                        <button id="runsheet-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                    </td>
+                </tr>
+                {%  endif %}
+                {%  if can_export_sales_user or can_export_sales_any %}
+                <tr>
+                    <td>Sales</td>
+                    <td>
+                        <label for="dealership">
+                            Dealership:
+                        </label>
+                        <select id="dealership">
+                            <option value="">--- Select Dealership ---</option>
+                            {% for dealership in dealerships %}
+                                <option value="{{ dealership.id }}">{{ dealership.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <hr/>
+
+                        <label for="order_date">
+                            Order Date:
+                        </label>
+                        <div id="order_date">
+                            <span>
+                                <label>
+                                    From :
+                                    <input type="text" id="sales-date-from" name="sales-date-from" />
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </label>
+                            </span>
+                            <span>
+                                <label>
+                                    To :
+                                    <input type="text" id="sales-date-to" name="sales-date-to" />
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </label>
+                            </span>
+                        </div>
+                    </td>
+
+                    <td>
+                        <a id="sales-link" class="btn btn-default" target="_blank">Export</a>
+                        <button id="sales-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                    </td>
+                </tr>
+                {%  endif %}
+                {% if can_export_invoice %}
+                <tr>
+                    <td>Invoice</td>
+                    <td>
+                        <div class="row">
+                            <div id="option_change" class="col-md-10">
+                                <label for="placed_date" >
+                                  <input type="radio" name="order_filter" id="production_date" value="production_date"> Production Date
+                                </label>
+                                <label for="placed_date" >
+                                  <input type="radio" name="order_filter" id="order_placed_date" value="order_placed_date"> Order Placed Date
+                                </label>
+                            </div>
+                        </div>
+                        <div  class="row">
+                            <div id="placed_date" class="col-md-8">
+                                <span>
+                                    <label>
+                                        From :
+                                        <input type="text" id="date-from" name="date-from" />
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </label>
+                                </span>
+                                <span>
+                                    <label>
+                                        To :
+                                        <input type="text" id="date-to" name="date-to" />
+                                        <i class="glyphicon glyphicon-calendar"></i>
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <a id="invoice-link" class="btn btn-default" target="_blank">Export</a>
+                        <button id="invoice-link-disabled" class="btn btn-default" disabled="disabled">Export</button>
+                    </td>
+                </tr>
+                {% endif %}
+                {% if can_export_colorsheet %}
+                <tr>
+                    <td>Orders requiring selections</td>
+                    <td></td>
+                    <td>
+                        <a id="colorselection-link" class="btn btn-default" target="_blank" href="{% url 'reports:color' %}">Export</a>
+                    </td>
+                </tr>
+                {%  endif %}
+
+            </tbody>
+        </table>
+    </div>
+
+{% endblock %}
+
+{% block object-tools %}{% endblock %}

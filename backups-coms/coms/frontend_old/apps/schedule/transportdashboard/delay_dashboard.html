@@ -1,0 +1,205 @@
+<div id="combined_dashboard">
+    <top-bar>
+        <h2 class="top-bar__title">Caravans Delay Dashboard</h2>
+    </top-bar>
+
+    <messages>{{ order.messages }}</messages>
+</div>
+
+<div id="transport_dashboard">
+    
+    <div class="content">
+        <table style="table-layout:fixed">
+            <thead>
+                <tr>
+                    <th style="background-color: #f49e95">SNo</th>                                              
+                    <th style="background-color: #f49e95">Order Id </th>                                              
+                    <th style="background-color: #f49e95">Chassis </th>                          
+                    <th style="background-color: #f49e95">Manage</th>                          
+                    
+                    <th style="background-color: #f49e95">Planned Chassis </th>                          
+                    <th style="background-color: #f49e95">Actual Chassis </th>                       
+                    <th style="background-color: #f49e95">Chassis Delay </th>
+
+                    <th style="background-color: #82c0ea">Planned Building  </th>
+                    <th style="background-color: #82c0ea">Actual Building  </th>                       
+                    <th style="background-color: #82c0ea">Building Delay  </th>                                              
+                    <th style="background-color: #c3c6c9">Planned  Pre-Wire  </th>
+                    <th style="background-color: #c3c6c9">Actual Pre-Wire  </th>
+                    <th style="background-color: #c3c6c9">Pre-Wire Delay  </th>                                                                  
+                    <th style="background-color: #76f4db">Planned Aluminium / <br> Fit Off  </th> 
+                    <th style="background-color: #76f4db">Actual Aluminium / <br> Fit Off  </th> 
+                    <th style="background-color: #76f4db">Planned Aluminium / <br> Fit Off Delay  </th> 
+
+                    <th style="background-color: #d074f4">Planned Finishing  </th>
+                    <th style="background-color: #d074f4">Actual Finishing  </th>
+                    <th style="background-color: #d074f4">Finishing  </th>
+
+                    <th style="background-color: #ABB2B9">Planned Detailing Canopy  </th>
+                    <th style="background-color: #ABB2B9">Actual Detailing Canopy  </th>
+                    <th style="background-color: #ABB2B9">Detailing Canopy Delay  </th>
+
+                    <th style="background-color: #A9CCE3">Planned Water Testing  </th>                 
+                    <th style="background-color: #A9CCE3">Actual Water Testing  </th>                    
+                    <th style="background-color: #A9CCE3">Water Testing Delay  </th>                    
+
+                    <th style="background-color: #5ee796">Planned QC  </th>
+                    <th style="background-color: #5ee796">Actual QC  </th>
+                    <th style="background-color: #5ee796"> QC Delay  </th>
+                    
+                    <th style="background-color: #f9d959">Planned Final QC </th>
+                    <th style="background-color: #f9d959">Actual Final QC </th>
+                    <th style="background-color: #f9d959">Final QC  Delay </th>
+                     
+                </tr>
+            </thead>
+            <tbody>
+                 
+                                <tr ng-repeat="order in delay_list | filter: { production_unit : 1 }" ng-class-odd="'odd'" ng-class-even="'even'">               
+                                    <td>
+                                        {{ $index }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.id }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.chassis }}
+                                    </td>
+                                    <td>
+                                    <a href="{{ order.url }}" target="_blank"> {{ order.chassis }} </a> 
+                                    </td>
+                                    <td>
+                                        {{ order.actual_chassis }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.planned_chassis }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.chassis_delay }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.actual_building }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.planned_building }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.building_delay }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ order.actual_prewire }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.planned_prewire }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.prewire_delay }}
+                                    </td>
+
+
+
+                                    <td>
+                                        {{ order.actual_aluminium }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.planned_aluminium }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.aluminium_delay }}
+                                    </td>
+
+
+
+                                    <td>
+                                        {{ order.actual_finishing }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.planned_finishing }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.finishing_delay }}
+                                    </td>
+
+
+
+                                    <td>
+                                        {{ order.actual_detailing }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.planned_detailing }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.detailing_delay }}
+                                    </td>
+
+
+
+                                    <td>
+                                        {{ order.actual_watertest }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.planned_watertest }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.watertest_delay }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ order.actual_qc }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.planned_actual_qc }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.actual_qc_delay }}
+                                    </td>
+
+
+                                    <td>
+                                        {{ order.actual_final_qc }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.planned_final_qc }}
+                                    </td>
+
+                                    <td>
+                                        {{ order.final_qc_delay }}
+                                    </td>
+
+
+                                </tr>
+                                  
+                            <tbody>
+                        </table>
+                 
+    </div>  
+</div>
+
+
+ 
+
+
+</div>

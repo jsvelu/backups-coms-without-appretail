@@ -1,0 +1,25 @@
+{% extends 'newage/printable/base_print.html' %}
+
+{% load static_or_data %}
+
+{% block css %}
+    {% include "caravans/printable/floor_plan.css" %}
+{% endblock css %}
+
+{% block container %}
+    <div class="row">
+        <div class="col-sm-12">
+            <h1>{{ series.name }} ({{ series.code }}) Series Floor Plan</h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            {% if floor_plan %}
+                <img src="{% static_or_data floor_plan.photo file_path_mode %}" alt="Series floor plan">
+            {% else %}
+                No floor plan available
+            {% endif %}
+        </div>
+    </div>
+{% endblock container %}

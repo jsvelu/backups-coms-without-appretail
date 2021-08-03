@@ -1,0 +1,9 @@
+-r base.txt
+
+# WSGI server
+gunicorn>=19.3
+
+# static file server
+whitenoise>=2.0
+
+django-anymail>=1.2

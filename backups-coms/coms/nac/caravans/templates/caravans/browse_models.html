@@ -1,0 +1,56 @@
+{% extends "admin/base_site.html" %}
+{% load staticfiles %}
+{% load alliance_bundle %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+    <script>
+        $(function() {
+            $('#accordion').accordion({
+                collapsible: true,
+                heightStyle: "content",
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block bodyclass %}caravans-browse-models{% endblock %}
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/models.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    Models
+{% endblock %}
+
+{% block page_heading %}Models{% endblock %}
+
+{% block content %}
+    <div class="panel-group" id="accordion">
+        {% for model in models %}
+            <div class="panel-title">
+                {{ model.logo_tag|safe }} {{ model }}
+            </div>
+            <table class="panel-body">
+                {% for series in model.series_list %}
+                    <tr>
+                        <td>{{ series }}</td>
+                        <td><a href="{% url "caravans:browse_specs" series.id %}" target="_blank">View Specs</a></td>
+                        <td><a href="{% url "caravans:browse_option_upgrade_specs" series.id %}" target="_blank">View Options Upgrades</a></td>
+                        <td><a href="{% url "caravans:browse_floor_plan" series.id %}" target="_blank">View Floor Plan</a></td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+        {% endfor %}
+        
+    </div>
+{% endblock %}
+ 

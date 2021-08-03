@@ -1,0 +1,2 @@
+{% for row in data %}{{ row.id }}^{{ row.dealership }}^{{ row.chassis}}^{{ row.model|safe }}^{{ row.series|safe }}^{{ row.customer }}^{{ parts_deadline }}^{{ row.length }}^{{ row.width }}^{{ row.sku_code|safe }}^{{ row.quantity|floatformat }}^{{ row.order_date }}^{{ row.description|safe }}^{{ row.parent|safe }}
+{% endfor %}

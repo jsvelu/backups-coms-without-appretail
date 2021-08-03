@@ -1,0 +1,143 @@
+{% extends "admin/base_site.html" %}
+{% load alliance_bundle %}
+{% load append_get %}
+{% load floppyforms %}
+{% load render_table from django_tables2 %}
+{% load staticfiles %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'css' %}
+{% endblock %}
+
+{% block extrascript %}
+    {{ block.super }}
+    {% alliance_bundle 'shared-bower-jqueryui' 'js' %}
+    <script type="text/javascript" src="{% static "orders/js/bom.js" %}"></script>
+{% endblock %}
+
+{% block bodyclass %}orders-bom{% endblock %}
+
+{% block breadcrumb_icon %}
+    <img src="{% static 'newage/icons/orders.png' %}">
+{% endblock %}
+
+{% block breadcrumbs %}
+    <a href="{% url 'orders:list' %}">Orders</a> > <a href="{% url 'orders:bom' %}">Bill of Materials</a>
+{% endblock %}
+
+{% block page_heading %}Orders{% endblock %}
+{% block page_subheading %}Bill of Materials{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row top-margin-40">
+            <div class="col-sm-12">
+                <h4>Specify a date range for the Bill of Materials export</h4>
+            </div>
+        </div>
+
+        <form method="post" action="{% url 'orders:bom' %}" id="main_form">
+            {% csrf_token %}
+            {% form form using %}
+                {% formconfig row using "floppyforms/rows/bootstrap.html" %}
+                <div class="row top-margin-20">
+                    <div class="col-sm-4">
+                        {% formrow form.start_date %}
+                    </div>
+                    <div class="col-sm-4">
+                        {% formrow form.end_date %}
+                    </div>
+                    <div class="col-sm-4">
+                    </div>
+                </div>
+
+            {% endform %}
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <button type="submit" class="btn btn-primary" id="btn_show" name="btn_action" value="show_report">Generate Report</button>
+                </div>
+            </div>
+
+            <!-- Orders List -->
+            <div class="row top-margin-40">
+                {% if order_table %}
+                    {% render_table order_table %}
+                    <div class="row top-margin-10">
+                        <span class="record-count">Total Records: {{ order_table.paginator.count }}</span>
+                        {% for page_num in order_table.paginator.page_range %}
+                            <a class="btn btn-default btn-small {% if page_num|slugify == request.GET.page %}active{% endif %}"
+                               href="{% append_get page=page_num %}">{{ page_num }}</a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- BOM -->
+            {% if report %}
+                <input type="hidden" id="hdn_supplier_tab" name="hdn_supplier_tab" value="{{ default_supplier_id }}">
+                <div class="row top-margin-40">
+                    <ul class="nav nav-tabs">
+                        {% for s, d in report %}
+                            <li {% if forloop.counter0 == 0 %}class="active"{% endif %}><a data-toggle="tab" href="#supplier{{ s.pk }}">{{ s.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+
+                    <div class="tab-content">
+                        {% for s, d in report %}
+                            <div id="supplier{{ s.pk }}" class="tab-pane fade {% if forloop.counter0 == 0 %}in active{% endif %}">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Chassis No.</th>
+                                                <th>Code</th>
+                                                <th>Description</th>
+                                                <th>Quantity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for item in d %}
+                                                <tr>
+                                                    <td>{{ item.chassis }}</td>
+                                                    <td>{{ item.code }}</td>
+                                                    <td>{{ item.description }}</td>
+                                                    <td>{{ item.count|floatformat }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            <tr>
+                                                <td colspan="4">
+                                                    <h4>Total Items: {{ d|length }}</h4>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row top-margin-10">
+                                    <div class="col-sm-12">
+                                        {% if s.is_bom_ostendo_exportable %}
+                                            <button type="submit" class="btn btn-primary" id="btn_ostendo" name="btn_action" value="ostendo_export">Ostendo Export</button>
+                                        {% endif %}
+                                        {% if s.is_bom_csv_exportable %}
+                                            <button type="submit" class="btn btn-primary" id="btn_csv" name="btn_action" value="csv_export">CSV Export</button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+        </form>
+
+    </div>
+
+    <div id="id_date_error_dialog" title="Invalid date range selection">
+      <p>The end date must be greater than or equal to the start date.</p>
+    </div>
+
+{% endblock %}
+
+{% block object-tools %}{% endblock %}
